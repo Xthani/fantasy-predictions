@@ -1,0 +1,44 @@
+---
+description: Mandatory git commit message format (task id + summary)
+alwaysApply: true
+---
+
+# Git Commit Message Format
+
+**Mandatory** for every commit in this repository.
+
+## Format
+
+```text
+FP-<N>: <short summary>
+```
+
+| Part | Rule |
+|------|------|
+| `FP-<N>` | Task id from tracker (e.g. `FP-3`). Uppercase `FP`, hyphen, digits only. |
+| `:` | Single colon + one space after task id |
+| Summary | Short imperative summary in English (or Russian if user prefers — match recent commits); no period at end; ≤ 72 chars total line preferred |
+
+## Examples
+
+```text
+FP-3: close Sprint 0 documentation
+FP-12: add match feed mock data
+FP-1: fix energy distribution on manual style
+```
+
+## Invalid (do not use)
+
+```text
+close Sprint 0                    # missing task id
+FP-3 close Sprint 0             # missing colon
+FP-3:                           # empty summary
+[FP-3] close Sprint 0           # wrong prefix format
+FP-3: close Sprint 0.           # trailing period (avoid)
+```
+
+## Agent workflow
+
+- Ask user for task id (`FP-N`) if unknown before committing.
+- Never commit without the `FP-<N>:` prefix unless user explicitly overrides for this one commit.
+- Use HEREDOC for `git commit -m` to preserve formatting.

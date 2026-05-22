@@ -1,4 +1,62 @@
+# Dependencies
 node_modules
+
+# Production build
 dist
+dist-ssr
+
+# Vite
+.vite
+node_modules/.vite
+
+# TypeScript
+*.tsbuildinfo
+node_modules/.tmp
+
+# Environment (secrets — never commit)
+.env
+.env.*
+!.env.example
+
+# Local overrides (Vite: .env.local, etc.)
 *.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage (when added)
+coverage
+
+# Lint / format caches (when added)
+.eslintcache
+.prettiercache
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Editors — local settings only (shared config can be force-added)
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# Cursor — ignore local agent state; keep shared rules in repo
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+
+# Optional tooling
+*.pem
+.vercel
+.netlify
+.turbo
+.cache

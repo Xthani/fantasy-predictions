@@ -1,0 +1,83 @@
+---
+description: Project memory — docs workflow, product safety, tech rules
+alwaysApply: true
+---
+
+# Project Memory Rules
+
+## Core rules
+
+- Always read `/docs/PROJECT_VISION.md` before making product-level decisions.
+- Always read `/docs/GAME_RULES.md` before changing game logic.
+- Always read `/docs/PROJECT_ROADMAP.md` before starting implementation.
+- Always check `/docs/API_CONTRACT.md` before creating or changing API/service contracts.
+- Always update `/docs/SPRINT_LOG.md` after meaningful implementation progress.
+- Always update `/docs/DECISION_LOG.md` when a product, technical or architecture decision is made.
+- Always add postponed ideas to `/docs/BACKLOG.md`.
+- Always update `/docs/GLOSSARY.md` when introducing a new project term.
+- Always update `/docs/UX_NOTES.md` when changing UX principles, onboarding, mobile-first behavior or interface flow.
+
+## Product safety rules
+
+- Never turn the project into a betting, casino, gambling or real-money wagering app.
+- Never add real-money bets, withdrawals, deposits, bookmaker branding or casino-like UX.
+- Virtual currency is only an in-game resource.
+- Monetization must not create pay-to-win mechanics.
+- Paid features may include cosmetics, no ads, profile styling, badges, themes or advanced stats.
+- The product must feel like football RPG + fantasy football manager + prediction league, not a sportsbook.
+
+## Git commits
+
+- **Mandatory format:** `FP-<N>: <short summary>` — see `.cursor/rules/git-commit-format.mdc`.
+- Ask for task id if unknown before committing.
+
+## Documentation workflow
+
+After every meaningful code change, update documentation if needed:
+
+- changed game rules → update `GAME_RULES.md`
+- changed roadmap/progress → update `PROJECT_ROADMAP.md` or `SPRINT_LOG.md`
+- added new endpoint/service contract → update `API_CONTRACT.md`
+- made product/architecture decision → update `DECISION_LOG.md`
+- added future idea → update `BACKLOG.md`
+- added new term → update `GLOSSARY.md`
+- changed UX behavior → update `UX_NOTES.md`
+
+Do not silently change product direction.
+
+## Tech dependency rule
+
+When installing libraries, always prefer latest stable versions.
+
+Before adding a library:
+
+- check current `package.json`;
+- avoid unnecessary dependencies;
+- prefer simple and maintainable solutions;
+- do not install outdated packages unless there is a strong reason;
+- document important dependency decisions in `DECISION_LOG.md`.
+
+## Current project template rule
+
+The app is a **bare React 19 + Vite 8 + TypeScript** template.
+
+Before implementing features, check:
+
+- `package.json` — scripts and dependencies;
+- `src/` — only `main.tsx`, `App.tsx`, `vite-env.d.ts`;
+- `vite.config.ts` — `@/` alias, port 3000;
+- `tsconfig.json` + `tsconfig.node.json` — strict TS;
+- no router, no CSS system, no mock layer, no ESLint/Prettier yet.
+
+See `PROJECT_ROADMAP.md` → **Current Tech State** and `SPRINT_LOG.md` for what is done vs missing.
+
+## Product summary (quick reference)
+
+Mobile-first football prediction RPG / fantasy football manager:
+
+- **Exact Score** is the main Player input;
+- system derives **Prediction Components**;
+- **Energy** (100 per match) is distributed by **Defensive / Balanced / Aggressive / Manual Style**;
+- **Official Prediction** affects **Official Rating**; others go to **Shadow Stats**;
+- **Club**, **Bot Club**, **Bot Player**, **Virtual Match**, **Division**, **Team Energy** for league play;
+- no real-money wagering; monetization later: ads / subscription / cosmetics only.

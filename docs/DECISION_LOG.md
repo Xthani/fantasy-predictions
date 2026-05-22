@@ -100,3 +100,12 @@ Format: **Decision NNN** — title, Context, Decision, Reason, Status.
 - **Decision:** **npm** only; runtime: `react@19.2.6`, `react-dom@19.2.6`; dev: `vite@8.0.14`, `typescript@6.0.3`, `@vitejs/plugin-react-swc@4.3.1`, `@types/*`. No router, CSS system, lint, or mocks until Sprint 1. Node **20+** recommended (verified on 24.x).
 - **Reason:** Minimal surface; add dependencies incrementally per roadmap.
 - **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 012 — Frontend structure: FSD-light
+
+- **Context:** Sprint 1 needs a clear folder and import policy before app shell and features land.
+- **Decision:** Adopt **FSD-light** with layers `app`, `pages`, `features`, `shared`. Full rules in `.cursor/rules/00-core.mdc` (always) and `10-architecture.mdc` (structure tasks). Project summary and exceptions in `docs/ARCHITECTURE.md`.
+- **Reason:** Scalable MVP without a meta-framework; pragmatic rules (YAGNI, no empty folders, barrels when needed); aligns with planned `shared/mocks/` and `app/styles/tokens.css`.
+- **Status:** Accepted (2026-05-22)

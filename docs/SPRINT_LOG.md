@@ -6,7 +6,7 @@
 
 **Status:** Done (2026-05-22)
 
-**Goal:** Prepare project memory, English documentation, and frontend foundation.
+**Goal:** Prepare project memory, English documentation, frontend foundation, and FSD-light architecture policy.
 
 ### Done
 
@@ -21,6 +21,8 @@
 - UI direction: `DESIGN_TOKENS.md` (dark premium tokens + wire sketches)
 - Mock data plan: `MOCK_DATA.md` (entities, volumes, `src/shared/mocks/` layout)
 - `API_CONTRACT.md` linked to mock plan
+- FSD-light Cursor rules: `.cursor/rules/00-core.mdc`, `.cursor/rules/10-architecture.mdc`
+- `docs/ARCHITECTURE.md` — project-specific architecture summary + exception registry
 
 ### Deliverables
 
@@ -28,6 +30,7 @@
 |----------|------|
 | Design tokens sketch | `docs/DESIGN_TOKENS.md` |
 | Mock data plan | `docs/MOCK_DATA.md` |
+| Frontend architecture (FSD-light) | `docs/ARCHITECTURE.md` + `.cursor/rules/00-core.mdc`, `10-architecture.mdc` |
 | Dependency baseline | `docs/DECISION_LOG.md` → Decision 011 |
 
 ### Tech snapshot (Sprint 0 close)

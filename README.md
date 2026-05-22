@@ -61,10 +61,12 @@ fantasy-predictions/
 ├── README.md
 ├── public/             # (опционально) статические ассеты
 └── src/
-    ├── main.tsx        # createRoot, StrictMode
+    ├── main.tsx        # createRoot, StrictMode (→ app/ в Sprint 1)
     ├── App.tsx         # Корневой компонент
     └── vite-env.d.ts   # Типы Vite (import.meta.env и др.)
 ```
+
+Целевая структура после Sprint 1 — **FSD-light**: `app/`, `pages/`, `features/`, `shared/`. Подробности: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), правила для Cursor — `.cursor/rules/00-core.mdc`, `10-architecture.mdc`.
 
 ## Архитектурный выбор
 
@@ -72,7 +74,7 @@ fantasy-predictions/
 
 - **Прозрачность**: каждый слой (роутинг, стейт, стили) добавляется осознанно, без наследия шаблона.
 - **Размер бандла и скорость**: нет неиспользуемого кода фреймворка на старте.
-- **Гибкость**: проще встроить FSD, собственный API-слой, i18n и CI/CD без борьбы с conventions чужого стека.
+- **Гибкость**: FSD-light (`docs/ARCHITECTURE.md`), собственный API-слой, i18n и CI/CD без борьбы с conventions чужого стека.
 
 ### Почему SWC (`@vitejs/plugin-react-swc`)
 
@@ -101,10 +103,11 @@ import { App } from '@/App';
 | `PROJECT_ROADMAP.md` | Roadmap, текущий спринт |
 | `SPRINT_LOG.md` | Журнал спринтов |
 | `DESIGN_TOKENS.md` | Дизайн-токены (тёмная тема) |
+| `ARCHITECTURE.md` | FSD-light: слои, импорты, решения проекта |
 | `MOCK_DATA.md` | План мок-данных для MVP |
 | `GAME_RULES.md` | Игровые правила |
 
-**Текущий статус:** Sprint 0 завершён → следующий **Sprint 1** (app shell, routing, тема в коде).
+**Текущий статус:** Sprint 0 завершён → **Sprint 1** (app shell, routing, тема в коде, папки `src/` по FSD-light).
 
 ## Скрипты npm
 

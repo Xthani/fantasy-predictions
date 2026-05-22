@@ -10,7 +10,9 @@ alwaysApply: true
 - Always read `/docs/PROJECT_VISION.md` before making product-level decisions.
 - Always read `/docs/GAME_RULES.md` before changing game logic.
 - Always read `/docs/PROJECT_ROADMAP.md` before starting implementation.
+- Always read `/docs/ARCHITECTURE.md` before changing `src/` structure, layers, imports, or feature boundaries.
 - Always check `/docs/API_CONTRACT.md` before creating or changing API/service contracts.
+- Cursor layer rules: `00-core.mdc` (always), `10-architecture.mdc` (structure/refactor tasks).
 - Always update `/docs/SPRINT_LOG.md` after meaningful implementation progress.
 - Always update `/docs/DECISION_LOG.md` when a product, technical or architecture decision is made.
 - Always add postponed ideas to `/docs/BACKLOG.md`.
@@ -39,6 +41,7 @@ After every meaningful code change, update documentation if needed:
 - changed roadmap/progress → update `PROJECT_ROADMAP.md` or `SPRINT_LOG.md`
 - added new endpoint/service contract → update `API_CONTRACT.md`
 - made product/architecture decision → update `DECISION_LOG.md`
+- changed frontend structure or architecture policy → update `ARCHITECTURE.md` (and exception registry if applicable)
 - added future idea → update `BACKLOG.md`
 - added new term → update `GLOSSARY.md`
 - changed UX behavior → update `UX_NOTES.md`
@@ -64,7 +67,7 @@ The app is a **bare React 19 + Vite 8 + TypeScript** template.
 Before implementing features, check:
 
 - `package.json` — scripts and dependencies;
-- `src/` — only `main.tsx`, `App.tsx`, `vite-env.d.ts`;
+- `src/` — only `main.tsx`, `App.tsx`, `vite-env.d.ts` (FSD folders in Sprint 1 per `ARCHITECTURE.md`);
 - `vite.config.ts` — `@/` alias, port 3000;
 - `tsconfig.json` + `tsconfig.node.json` — strict TS;
 - no router, no CSS system, no mock layer, no ESLint/Prettier yet.

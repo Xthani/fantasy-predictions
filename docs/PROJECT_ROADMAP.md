@@ -22,7 +22,7 @@ Prepare mobile-first frontend foundation for MVP. No game logic in app yet.
 | `tsconfig.node.json` for Vite config | ✅ | — |
 | Scripts: `dev`, `build`, `preview` | ✅ | — |
 | Package manager | npm | — |
-| `src/` structure | `main.tsx`, `App.tsx`, `vite-env.d.ts` only | feature folders |
+| `src/` structure | `main.tsx`, `App.tsx`, `vite-env.d.ts` only | FSD-light: `app`, `pages`, `features`, `shared` (see `ARCHITECTURE.md`) |
 | Routing | — | react-router or equivalent |
 | Layout / mobile shell | — | app layout, bottom nav |
 | Theme / CSS tokens | inline styles only | dark premium design system |
@@ -60,6 +60,7 @@ fantasy-predictions/
 - [x] Confirm dependencies & document tech state (`DECISION_LOG.md` Decision 011)
 - [x] Base UI direction (`DESIGN_TOKENS.md`, `UX_NOTES.md`)
 - [x] Mock data plan (`MOCK_DATA.md`)
+- [x] FSD-light architecture policy (`ARCHITECTURE.md`, Cursor rules `00-core`, `10-architecture`)
 
 ### Sprint 1 — App Shell & UI Foundation
 
@@ -139,7 +140,7 @@ fantasy-predictions/
 1. Add routing (e.g. React Router — document in `DECISION_LOG.md`)
 2. App layout + mobile viewport shell
 3. CSS variables / theme tokens (dark premium)
-4. `src/` feature folders (`app`, `pages`, `shared`, `entities` — pick one convention)
+4. `src/` FSD-light folders (`app`, `pages`, `features`, `shared` — see `ARCHITECTURE.md`)
 5. Mock data module for matches / players / clubs
 6. ESLint + Prettier
 7. Replace placeholder `App.tsx` with shell + empty routes

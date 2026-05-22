@@ -8,7 +8,9 @@
 UI block (demoable) → tech closure (lint, refactor) → backend brief (contracts prompt)
 ```
 
-Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** is a deliberate shortcut to first playable UX on mocks (Decision 013).
+Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** is a deliberate shortcut to first playable UX (Decision 013).
+
+**Текущая правда по фронту:** [`CURRENT_STATE.md`](CURRENT_STATE.md) — что на API, что на моках, что делать дальше.
 
 ---
 
@@ -18,12 +20,12 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 |------|--------|
 | Sprint 0 — Setup & docs | **Done** |
 | Sprint 1 — App shell | **In progress** |
-| **Block A — Fast onboarding** | **Done** — UI + tech + [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md) |
-| Block B — TBD | **Next** (API integration or next UI slice) |
+| **Block A — Fast onboarding** | **Done** — UI + tech + backend brief |
+| **Partial API wiring** | **In progress** — auth + leagues live; clubs/matches — mocks |
 
 ## Current Goal
 
-**Block A closed.** Next: backend implements P0 from `BACKEND_BRIEF.md`, then frontend wires HTTP (Block B).
+Подключать фронт **по мере готовности бэка**, по одной ручке. Сейчас живые: Google auth + leagues. Детали и очередь: **`CURRENT_STATE.md`**.
 
 ---
 
@@ -36,23 +38,24 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 | FSD-light (`app`, `pages`, `features`, `shared`) | ✅ |
 | Design tokens in `app/styles/tokens.css` | ✅ |
 | Mobile shell `AppShell` (max-width 480px) | ✅ |
-| Shared UI | `Button`, `Screen`, `SearchField` |
-| Mocks | `leagues`, `favoriteClubs`, `matches` |
-| Local persistence | `fp_session`, `fp_preferences`, `fp_quick_predictions` |
+| Shared UI | `Button`, `Screen`, `SearchField`, `Toast` |
+| HTTP client | ✅ `shared/api/httpClient.ts` |
+| **API wired** | ✅ auth (Google + email), ✅ `GET /api/leagues` |
+| **Still mocks** | clubs, matches, quick predictions |
+| Local persistence | auth keys + `fp_preferences`, `fp_quick_predictions` |
 | ESLint / Prettier | ✅ |
-| Bottom tab navigation | ❌ later block |
-| Real API client | ❌ after backend P0 |
-| Backend brief | ✅ `BACKEND_BRIEF.md` |
+| Bottom tab navigation | ❌ later |
+| Backend brief (future endpoints) | ✅ `BACKEND_BRIEF.md` |
 | Game logic (energy, official, club league) | ❌ Sprint 4+ |
 
 **Routes today:**
 
-| Path | Screen |
-|------|--------|
-| `/login` | Google mock + reserved email/sign-up |
-| `/onboarding/leagues` | Multi-select leagues + search |
-| `/onboarding/clubs` | Multi-select clubs by league + search |
-| `/matches` | Feed + league chips + quick Exact Score sheet |
+| Path | Screen | Data source |
+|------|--------|-------------|
+| `/login` | Google + email sign-in/sign-up | API |
+| `/onboarding/leagues` | Multi-select leagues + search | API |
+| `/onboarding/clubs` | Multi-select clubs | Mocks (empty until favorite-clubs API) |
+| `/matches` | Feed + filters + quick Exact Score | Mocks + localStorage |
 
 ---
 
@@ -78,19 +81,22 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 ### Sprint 1 — App Shell & UI Foundation
 
 - [x] Routing, layout, theme tokens, base components (partial: no Card, no tabs)
-- [x] Block A fast onboarding UI on mocks
-- [x] Block A — fast onboarding UI + tech + backend brief
+- [x] Block A fast onboarding UI
+- [x] Block A — tech + backend brief
+- [x] Partial API: auth + leagues
+- [ ] Wire remaining Block A endpoints when backend ready (see `CURRENT_STATE.md`)
 
 ### Sprint 2 — Onboarding (classic)
 
-- [x] League + favorite club pick *(covered by Block A variant)*
+- [x] League + favorite club pick *(Block A variant)*
 - [ ] Country, full profile
-- [ ] Defer until after Block B or backend integration
+- [ ] Defer until after more API slices or backend
 
 ### Sprint 3 — Match Feed
 
-- [x] List, filters, cards *(Block A)*
+- [x] List, filters, cards *(Block A mocks)*
 - [ ] Status chips: open / locked / finished in UI
+- [ ] `GET /api/matches/week` when backend ready
 
 ### Sprint 4 — Prediction Core
 
@@ -127,6 +133,9 @@ Economy, transfers, scout, monetization (cosmetics / no ads only), social, creat
 
 ## Recommended order (next moves)
 
-1. **Backend** — implement P0 from `BACKEND_BRIEF.md`.
-2. **Block B (frontend)** — `shared/api/httpClient` + replace mocks for Block A flows.
-3. **Block B or C (UI)** — tab shell and/or full prediction screen (energy, styles).
+См. приоритетную таблицу в **`CURRENT_STATE.md`**.
+
+1. **Backend next:** `GET /api/favorite-clubs` (unblocks clubs step with API league ids).
+2. **Frontend:** wire clubs API по образцу `features/onboarding/api/leagues.ts`.
+3. Затем preferences PUT, matches week, predictions — по готовности бэка.
+4. **Без бэка (опционально):** tab shell, match status chips, full prediction screen.

@@ -4,5 +4,7 @@ export type League = {
   countryName: string;
   countryCode: string;
   isActive: boolean;
-  crestEmoji: string;
+  crestUrl?: string;
+  crestEmoji?: string;
+  season?: string;
 };

@@ -16,10 +16,13 @@ export const OnboardingLeaguesPage = () => {
     toggleLeague,
     filteredActive,
     filteredInactive,
-    isEmpty,
+    isListEmpty,
     canContinue,
     saveAndContinue,
     selectedCount,
+    loadStatus,
+    loadError,
+    retryLoad,
   } = useLeaguesPage();
 
   const handleContinue = () => {
@@ -45,50 +48,67 @@ export const OnboardingLeaguesPage = () => {
         </>
       }
     >
-      <SearchField value={search} onChange={setSearch} placeholder="Поиск лиги или страны" />
+      {loadStatus === 'loading' ? (
+        <p className={styles.stateMessage}>Загружаем лиги…</p>
+      ) : null}
 
-      {isEmpty ? (
-        <p className={styles.empty}>Ничего не найдено. Попробуй другой запрос.</p>
-      ) : (
+      {loadStatus === 'error' ? (
+        <div className={styles.stateBlock}>
+          <p className={styles.stateMessage}>{loadError}</p>
+          <Button type="button" onClick={retryLoad}>
+            Повторить
+          </Button>
+        </div>
+      ) : null}
+
+      {loadStatus === 'success' ? (
         <>
-          {filteredActive.length > 0 ? (
-            <section>
-              <h2 className={styles.sectionLabel}>
-                <span className={styles.sectionBar} />
-                Активные лиги
-              </h2>
-              <ul className={styles.list}>
-                {filteredActive.map((league) => (
-                  <li key={league.id}>
-                    <LeagueListItem
-                      league={league}
-                      selected={selectedIds.includes(league.id)}
-                      onToggle={toggleLeague}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
+          <SearchField value={search} onChange={setSearch} placeholder="Поиск лиги или страны" />
 
-          {filteredInactive.length > 0 ? (
-            <section className={styles.inactiveSection}>
-              <h2 className={styles.sectionLabel}>
-                <span className={styles.sectionBar} />
-                Скоро
-              </h2>
-              <p className={styles.hint}>Эти лиги появятся позже — пока выбрать нельзя</p>
-              <ul className={styles.list}>
-                {filteredInactive.map((league) => (
-                  <li key={league.id}>
-                    <LeagueListItem league={league} selected={false} onToggle={toggleLeague} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
+          {isListEmpty ? (
+            <p className={styles.empty}>Ничего не найдено. Попробуй другой запрос.</p>
+          ) : (
+            <>
+              {filteredActive.length > 0 ? (
+                <section>
+                  <h2 className={styles.sectionLabel}>
+                    <span className={styles.sectionBar} />
+                    Активные лиги
+                  </h2>
+                  <ul className={styles.list}>
+                    {filteredActive.map((league) => (
+                      <li key={league.id}>
+                        <LeagueListItem
+                          league={league}
+                          selected={selectedIds.includes(league.id)}
+                          onToggle={toggleLeague}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+
+              {filteredInactive.length > 0 ? (
+                <section className={styles.inactiveSection}>
+                  <h2 className={styles.sectionLabel}>
+                    <span className={styles.sectionBar} />
+                    Скоро
+                  </h2>
+                  <p className={styles.hint}>Эти лиги появятся позже — пока выбрать нельзя</p>
+                  <ul className={styles.list}>
+                    {filteredInactive.map((league) => (
+                      <li key={league.id}>
+                        <LeagueListItem league={league} selected={false} onToggle={toggleLeague} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+            </>
+          )}
         </>
-      )}
+      ) : null}
     </Screen>
   );
 };

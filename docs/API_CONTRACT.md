@@ -1,39 +1,36 @@
 # API Contract
 
-## Current State
+## Current State (frontend)
 
-- **Block A UI** complete on mocks (`src/shared/mocks/`).
-- **Backend handoff:** `BACKEND_BRIEF.md` (full task + acceptance criteria).
-- No HTTP client in frontend yet — integrate after P0 endpoints exist.
+**Source of truth:** [`CURRENT_STATE.md`](CURRENT_STATE.md).
 
-Entity shapes: `MOCK_DATA.md`.
+| Method | Path | Frontend |
+|--------|------|----------|
+| POST | `/api/auth/google` | ✅ Wired |
+| POST | `/api/auth/login`, `/signup`, `/refresh`, `/logout`, GET `/me` | ✅ Wired (if backend responds) |
+| GET | `/api/leagues` | ✅ Wired |
+| GET | `/api/favorite-clubs` | ⏳ Planned — mocks on UI |
+| PUT | `/api/players/me/preferences` | ⏳ Planned — `fp_preferences` local |
+| GET | `/api/matches/week` | ⏳ Planned — mocks |
+| POST/GET | `/api/predictions` | ⏳ Planned — localStorage |
+
+**Mocks** (`src/shared/mocks/`): clubs, matches — until backend ready.
+
+**Draft / future endpoints:** `BACKEND_BRIEF.md`, sections below.
+
+Entity shapes (mocks): `MOCK_DATA.md`.
 
 ---
 
-## Block A scope (implement first)
+## Conventions (live)
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/api/auth/google` | Login |
-| GET | `/api/leagues` | Onboarding leagues |
-| GET | `/api/favorite-clubs` | Onboarding favorite clubs (`leagueIds`) |
-| PUT | `/api/players/me/preferences` | Save favorite leagues/clubs |
-| GET | `/api/players/me/preferences` | Load preferences (P1) |
-| GET | `/api/matches/week` | Match feed (`leagueIds`) |
-| POST | `/api/predictions` | Exact Score only |
-| GET | `/api/predictions/me` | List player predictions |
-
-**Not Block A:** game `/api/clubs` (squad), energy, official picks, virtual match — see end of doc.
-
-## Conventions (planned)
-
-| Item | Plan |
+| Item | Rule |
 |------|------|
-| Base URL | `TBD` (e.g. `https://api.example.com`) |
-| Auth | Bearer JWT after login |
+| Base URL | `VITE_API_BASE_URL` (no trailing `/api`) |
+| Auth | `Authorization: Bearer <accessToken>`; public routes: `auth: false` in `httpRequest` |
 | Format | JSON |
-| Errors | `{ "code": string, "message": string, "details"?: unknown }` |
-| Time | ISO 8601 UTC |
+| Errors | `{ "code"?: string, "message": string \| string[] }` → `ApiError` |
+| Ngrok | Header `ngrok-skip-browser-warning: true` when host contains `ngrok-free.dev` |
 
 ---
 
@@ -75,9 +72,29 @@ Entity shapes: `MOCK_DATA.md`.
 
 **Purpose:** List leagues for onboarding (active + coming soon).
 
-**Query:** `search?`, `countryId?`
+**Query:** `search?`, `countryId?` (optional; frontend filters client-side today)
 
-**Response:** `{ "leagues": League[] }` — `League`: `id`, `name`, `countryCode`, `isActive`, `crestUrl?`
+**Response `200` (backend snake_case):**
+
+```json
+{
+  "leagues": [
+    {
+      "league_id": "302",
+      "league_name": "La Liga",
+      "country_id": "6",
+      "country_name": "Spain",
+      "league_logo": "https://...",
+      "country_logo": "https://...",
+      "league_season": "2025/2026",
+      "display_order": 3,
+      "is_active": true
+    }
+  ]
+}
+```
+
+**Frontend domain `League`:** `id` ← `league_id`, `name` ← `league_name`, `countryName` ← `country_name`, `countryCode` ← `country_id`, `isActive` ← `is_active`, `crestUrl` ← `league_logo` || `country_logo`, `season` ← `league_season`. Sorted by `display_order`.
 
 ---
 

@@ -145,3 +145,12 @@ Format: **Decision NNN** — title, Context, Decision, Reason, Status.
 - **Decision:** ESLint 9 flat config (`eslint.config.js`), TypeScript-eslint, react-hooks, react-refresh; Prettier with eslint-config-prettier; scripts `lint`, `format`, `format:check`.
 - **Reason:** Enforce quality without blocking UI iteration earlier.
 - **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 017 — Incremental API wiring + CURRENT_STATE doc
+
+- **Context:** Backend ships endpoints gradually (auth Google, then leagues); full `BACKEND_BRIEF` must not be read as «frontend backlog».
+- **Decision:** Wire each endpoint in `features/*/api/` when backend is ready; keep mocks for other screens. Maintain **`docs/CURRENT_STATE.md`** as the single «what works / what next» file. Save `favoriteLeagues` (id+name) in `fp_preferences` for labels on mock-only steps.
+- **Reason:** Clear handoff for daily planning; honest UX when clubs/matches still mock (API league ids ≠ mock club ids).
+- **Status:** Accepted (2026-05-22)

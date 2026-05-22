@@ -21,7 +21,8 @@ import type {
   LoginInput,
   SignupInput,
 } from '@/features/auth/model/auth.types';
-import { ApiError, configureAuthClient } from '@/shared/api/httpClient';
+import { getAuthErrorMessage } from '@/features/auth/lib/authErrors';
+import { configureAuthClient } from '@/shared/api/httpClient';
 
 type AuthAction =
   | { type: 'loading' }
@@ -51,23 +52,6 @@ const initialState: AuthState = storedSession
       status: 'unauthenticated',
       error: null,
     };
-
-const getFriendlyAuthError = (error: unknown): string => {
-  if (error instanceof ApiError) {
-    if (error.status === 0) return error.message;
-    if (error.status === 401) return 'Неверный email, логин или пароль.';
-    if (error.status === 409) {
-      const code = error.code?.toUpperCase();
-      if (code?.includes('EMAIL')) return 'Аккаунт с таким email уже существует.';
-      if (code?.includes('LOGIN')) return 'Такой логин уже занят.';
-      return 'Аккаунт с такими данными уже существует.';
-    }
-    if (error.status >= 500) return 'Сервер временно недоступен. Попробуй позже.';
-    return error.message;
-  }
-
-  return 'Что-то пошло не так. Попробуй ещё раз.';
-};
 
 const reducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -142,7 +126,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         await persistAuth(await action());
       } catch (error) {
-        dispatch({ type: 'error', payload: getFriendlyAuthError(error) });
+        dispatch({ type: 'error', payload: getAuthErrorMessage(error) });
         throw error;
       }
     },
@@ -171,7 +155,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 
   const restoreSession = useCallback(async () => {
-    dispatch({ type: 'loading' });
     const session = await getStoredAuthSession();
 
     if (!session) {
@@ -179,6 +162,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return;
     }
 
+    // Do not dispatch `loading` here: RequireAuth unmounts children, which remounts
+    // data pages and repeats API calls (e.g. GET /api/leagues twice on reload).
     try {
       const user = await getCurrentUser();
       const restoredSession = { ...session, user };

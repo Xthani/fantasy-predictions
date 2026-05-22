@@ -9,11 +9,13 @@ alwaysApply: true
 
 - Always read `/docs/PROJECT_VISION.md` before making product-level decisions.
 - Always read `/docs/GAME_RULES.md` before changing game logic.
+- Always read `/docs/CURRENT_STATE.md` first for «what works / what next» on the frontend.
 - Always read `/docs/PROJECT_ROADMAP.md` before starting implementation.
 - Always read `/docs/DEVELOPMENT_WORKFLOW.md` for block rhythm (UI → tech → backend brief).
 - Always read `/docs/ARCHITECTURE.md` before changing `src/` structure, layers, imports, or feature boundaries.
 - Always check `/docs/API_CONTRACT.md` before creating or changing API/service contracts.
 - Cursor layer rules: `00-core.mdc` (always), `10-architecture.mdc` (structure/refactor tasks).
+- Always update `/docs/CURRENT_STATE.md` when wiring or removing a live API endpoint.
 - Always update `/docs/SPRINT_LOG.md` after meaningful implementation progress.
 - Always update `/docs/DECISION_LOG.md` when a product, technical or architecture decision is made.
 - Always add postponed ideas to `/docs/BACKLOG.md`.

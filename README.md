@@ -99,30 +99,32 @@ import { App } from '@/App';
 
 | Файл | Содержание |
 |------|------------|
+| **`CURRENT_STATE.md`** | **Что работает на API, что на моках, что делать дальше** |
 | `PROJECT_VISION.md` | Видение продукта |
 | `PROJECT_ROADMAP.md` | Roadmap, Block A vs Sprint 1–9 |
 | `DEVELOPMENT_WORKFLOW.md` | Ритм: UI → tech → backend brief |
-| `SPRINT_LOG.md` | Журнал спринтов, чеклист Block A |
-| `BACKEND_BRIEF.md` | Промпт-пак для бэка (после Block A) |
+| `SPRINT_LOG.md` | Журнал спринтов |
+| `BACKEND_BRIEF.md` | Спека для бэка (будущие ручки) |
 | `DESIGN_TOKENS.md` | Дизайн-токены (тёмная тема) |
 | `ARCHITECTURE.md` | FSD-light: слои, импорты, решения проекта |
 | `MOCK_DATA.md` | План мок-данных для MVP |
 | `GAME_RULES.md` | Игровые правила |
 
-**Текущий статус:** **Block A закрыт** (UI + lint + бриф для бэка). Бэкенду: [`docs/BACKEND_BRIEF.md`](docs/BACKEND_BRIEF.md).
+**Текущий статус:** см. [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md).
 
-### Демо-путь (Block A)
+### Демо-путь
 
 ```bash
+cp .env.example .env   # VITE_API_BASE_URL, VITE_GOOGLE_WEB_CLIENT_ID
 npm run dev
 ```
 
-1. Открыть [http://localhost:3000/login](http://localhost:3000/login) → **Продолжить с Google**
-2. Выбрать одну или несколько лиг → **Далее**
-3. Выбрать один или несколько клубов → **К матчам**
-4. Тап по матчу → указать счёт → **Сохранить прогноз**
+1. [http://localhost:3000/login](http://localhost:3000/login) → **Google** (API)
+2. Лиги → **Далее** (API)
+3. Клубы — моки; после лиг из API список пуст до ручки favorite-clubs (см. `CURRENT_STATE.md`)
+4. Матчи + quick score — моки + `fp_quick_predictions`
 
-Данные в `localStorage` (`fp_session`, `fp_preferences`, `fp_quick_predictions`). Сброс: очистить storage в DevTools и обновить страницу.
+Сброс storage: `CURRENT_STATE.md`.
 
 ## Скрипты npm
 

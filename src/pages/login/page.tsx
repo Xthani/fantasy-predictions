@@ -27,6 +27,12 @@ const initialSignupForm: SignupFormState = {
   displayName: '',
 };
 
+/** Google Identity Services accept width in pixels only (not CSS %). */
+const getGoogleButtonWidth = (): number => {
+  if (typeof window === 'undefined') return 400;
+  return Math.min(400, Math.max(280, Math.floor(window.innerWidth - 48)));
+};
+
 const getRedirectPath = (state: unknown): string => {
   if (state && typeof state === 'object' && 'from' in state) {
     const from = (state as { from: unknown }).from;
@@ -57,6 +63,7 @@ export const LoginPage = () => {
   const redirectPath = useMemo(() => getRedirectPath(location.state), [location.state]);
   const isLoading = status === 'loading';
   const googleClientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID;
+  const googleButtonWidth = getGoogleButtonWidth();
 
   if (user) {
     return <Navigate to="/" replace />;
@@ -176,7 +183,7 @@ export const LoginPage = () => {
                 void handleGoogleCredential(credentialResponse.credential)
               }
               onError={() => setGoogleError('Вход через Google был отменён или не завершился.')}
-              width="100%"
+              width={googleButtonWidth}
               text="continue_with"
               useOneTap={false}
             />

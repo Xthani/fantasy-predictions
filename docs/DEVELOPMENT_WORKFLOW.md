@@ -2,6 +2,8 @@
 
 **Frontend leads the project.** The app is built in visible UI blocks first; infrastructure and backend follow from what the UI proved.
 
+**Что работает сейчас:** [`CURRENT_STATE.md`](CURRENT_STATE.md).
+
 ---
 
 ## Rhythm (per block)
@@ -20,27 +22,38 @@ Do **not** write the full backend brief before the UI path is walked end-to-end 
 
 ## Block naming
 
-| Block | Product slice | Backend contracts (draft in `API_CONTRACT.md`) |
-|-------|---------------|-----------------------------------------------|
-| **A** | Fast onboarding: login → leagues → clubs → matches → quick Exact Score | Auth, leagues, clubs, preferences, matches week, quick prediction |
-| **B** | TBD (e.g. full prediction screen, tab shell, profile) | TBD |
-| **C+** | Game loop from `PROJECT_ROADMAP` Sprint 4–9 | TBD |
+| Block | Product slice | Backend |
+|-------|---------------|---------|
+| **A** | Fast onboarding: login → leagues → clubs → matches → quick Exact Score | UI done; **auth + leagues on API**; rest mocks until backend |
+| **B+** | Tabs, full prediction, profile, game loop | Per `PROJECT_ROADMAP` |
+
+`BACKEND_BRIEF.md` describes **целевые** ручки для бэка, не обязательный полный чеклист на сегодня.
 
 ---
 
 ## Frontend-led rules
 
 - New dependencies only when a **visible** screen or shared UI needs them.
-- Mocks in `shared/mocks/` mirror future API shapes; pages do not call real HTTP until Block A backend integration.
-- After each UI block: update `SPRINT_LOG.md`, `PROJECT_ROADMAP.md`, and contract sections in `API_CONTRACT.md`.
+- Mocks in `shared/mocks/` for screens **без готового API**; replace with `features/<name>/api/` + `httpClient` when backend ships.
+- After each integration slice: update **`CURRENT_STATE.md`**, `SPRINT_LOG.md`, `API_CONTRACT.md` (live section).
 - Russian UI copy in components; English in `/docs`.
+
+---
+
+## Wiring a new backend endpoint (checklist)
+
+1. Add `features/<feature>/api/<resource>.ts` — raw DTO + `map*` + `fetch*`.
+2. Use `httpRequest` from `shared/api/httpClient.ts`.
+3. Page hook: `useAsyncRequest` or feature-specific hook; **loading / error / empty / success**.
+4. Map errors via `shared/lib/getApiErrorMessage` + `features/<feature>/lib/*Errors.ts` if needed.
+5. Update `CURRENT_STATE.md` and `API_CONTRACT.md`.
 
 ---
 
 ## Current focus
 
-**Block A:** **Done** (2026-05-22) — see `SPRINT_LOG.md`.
+**Done:** Block A UI, auth API, leagues API, refactor aligned with auth patterns.
 
-**Backend handoff:** [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md) — ready to send.
+**Next (when backend ready):** `GET /api/favorite-clubs` — see `CURRENT_STATE.md`.
 
-**Next:** Backend P0 implementation → frontend Block B (HTTP integration).
+**Optional without backend:** tab shell, match status UI, prediction depth (Sprint 4).

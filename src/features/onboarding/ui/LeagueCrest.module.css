@@ -1,0 +1,39 @@
+.frame {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.frameLogo {
+  background: #eef1f5;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.frameFallback {
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: var(--space-1);
+}
+
+.emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.fallback {
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}

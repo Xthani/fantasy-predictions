@@ -1,3 +1,4 @@
+import { LeagueCrest } from '@/features/onboarding/ui/LeagueCrest';
 import type { League } from '@/shared/types/league';
 import styles from './LeagueListItem.module.css';
 
@@ -24,9 +25,7 @@ export const LeagueListItem = ({ league, selected, onToggle }: LeagueListItemPro
       onClick={() => onToggle(league.id)}
       aria-pressed={selected}
     >
-      <span className={styles.crest} aria-hidden>
-        {league.crestEmoji}
-      </span>
+      <LeagueCrest league={league} />
       <span className={styles.info}>
         <p className={styles.name}>{league.name}</p>
         <p className={styles.meta}>{league.countryName}</p>

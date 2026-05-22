@@ -15,7 +15,8 @@ export const OnboardingClubsPage = () => {
     selectedIds,
     toggleClub,
     groupedByLeague,
-    isEmpty,
+    isCatalogUnavailable,
+    isSearchEmpty,
     hasLeagues,
     canContinue,
     saveAndContinue,
@@ -55,7 +56,17 @@ export const OnboardingClubsPage = () => {
     >
       <SearchField value={search} onChange={setSearch} placeholder="Поиск клуба" />
 
-      {isEmpty ? (
+      {isCatalogUnavailable ? (
+        <div className={styles.catalogNotice}>
+          <p className={styles.empty}>
+            Клубы для выбранных лиг появятся, когда бэкенд отдаст каталог команд. Сейчас
+            подключены только лиги из API.
+          </p>
+          <p className={styles.hint}>
+            Следующий шаг — каталог клубов с бэкенда для выбранных лиг.
+          </p>
+        </div>
+      ) : isSearchEmpty ? (
         <p className={styles.empty}>Ничего не найдено. Попробуй другой запрос.</p>
       ) : (
         groupedByLeague.map(({ leagueId, leagueName, clubs }) => (

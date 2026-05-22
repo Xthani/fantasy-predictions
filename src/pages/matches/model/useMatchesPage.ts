@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react';
-import { getPreferences } from '@/features/onboarding/lib/preferencesStorage';
+import { getLeagueNameById, getPreferences } from '@/features/onboarding/lib/preferencesStorage';
 import {
   getQuickPredictions,
   saveQuickPrediction,
 } from '@/features/quick-prediction/lib/predictionsStorage';
 import type { LeagueFilterOption } from '@/features/match-feed/ui/LeagueFilterChips';
 import { getMatchesByLeagueIds } from '@/shared/mocks/matches';
-import { getMockLeagues } from '@/shared/mocks/leagues';
 import type { Match } from '@/shared/types/match';
 
 const ALL_FILTER = 'all';
@@ -26,10 +25,9 @@ export const useMatchesPage = () => {
   }, [predictions]);
 
   const filterOptions: LeagueFilterOption[] = useMemo(() => {
-    const leagueMap = new Map(getMockLeagues().map((l) => [l.id, l.name]));
     const leagueChips = favoriteLeagueIds.map((id) => ({
       id,
-      label: leagueMap.get(id) ?? id,
+      label: getLeagueNameById(id),
     }));
     return [{ id: ALL_FILTER, label: 'Все' }, ...leagueChips];
   }, [favoriteLeagueIds]);

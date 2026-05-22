@@ -1,31 +1,27 @@
 import { useMemo, useState } from 'react';
-import { getPreferences, setFavoriteClubIds } from '@/features/onboarding/lib/preferencesStorage';
+import {
+  getLeagueNameById,
+  getPreferences,
+  setFavoriteClubIds,
+} from '@/features/onboarding/lib/preferencesStorage';
+import { normalizeSearchQuery } from '@/shared/lib/normalizeSearchQuery';
 import { getClubsByLeagueIds } from '@/shared/mocks/favoriteClubs';
-import { getMockLeagues } from '@/shared/mocks/leagues';
-
-const normalize = (value: string) => value.trim().toLowerCase();
 
 export const useClubsPage = () => {
   const { favoriteLeagueIds, favoriteClubIds: savedClubIds } = getPreferences();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>(savedClubIds);
 
-  const leagueNameById = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const league of getMockLeagues()) {
-      map.set(league.id, league.name);
-    }
-    return map;
-  }, []);
-
   const clubsInLeagues = useMemo(() => getClubsByLeagueIds(favoriteLeagueIds), [favoriteLeagueIds]);
 
-  const query = normalize(search);
+  const query = normalizeSearchQuery(search);
 
   const filteredClubs = useMemo(() => {
     if (!query) return clubsInLeagues;
     return clubsInLeagues.filter(
-      (club) => normalize(club.name).includes(query) || normalize(club.shortName).includes(query),
+      (club) =>
+        normalizeSearchQuery(club.name).includes(query) ||
+        normalizeSearchQuery(club.shortName).includes(query),
     );
   }, [clubsInLeagues, query]);
 
@@ -40,12 +36,13 @@ export const useClubsPage = () => {
       .filter((id) => groups.has(id))
       .map((leagueId) => ({
         leagueId,
-        leagueName: leagueNameById.get(leagueId) ?? leagueId,
+        leagueName: getLeagueNameById(leagueId),
         clubs: groups.get(leagueId) ?? [],
       }));
-  }, [filteredClubs, favoriteLeagueIds, leagueNameById]);
+  }, [filteredClubs, favoriteLeagueIds]);
 
-  const isEmpty = filteredClubs.length === 0;
+  const isCatalogUnavailable = clubsInLeagues.length === 0;
+  const isSearchEmpty = !isCatalogUnavailable && filteredClubs.length === 0;
   const hasLeagues = favoriteLeagueIds.length > 0;
 
   const toggleClub = (clubId: string) => {
@@ -67,7 +64,8 @@ export const useClubsPage = () => {
     selectedIds,
     toggleClub,
     groupedByLeague,
-    isEmpty,
+    isCatalogUnavailable,
+    isSearchEmpty,
     hasLeagues,
     canContinue,
     saveAndContinue,

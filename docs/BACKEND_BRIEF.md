@@ -1,10 +1,12 @@
 # Backend Brief — Block A (handoff)
 
-**Status:** Ready for implementation (2026-05-22)
+**Status:** Living handoff doc (2026-05-22)
 
 **Audience:** Backend team or AI agent building the API for Fantasy Predictions.
 
-**Frontend state:** Block A UI is complete on mocks. Replace `localStorage` with these endpoints without changing screen flows.
+**Frontend reality (not the full brief scope):** see [`CURRENT_STATE.md`](CURRENT_STATE.md). **Already integrated on frontend:** `POST /api/auth/google` (and email auth routes), `GET /api/leagues`. **UI still on mocks:** favorite-clubs, matches, predictions until those endpoints exist.
+
+**Goal of this file:** spec for **future** backend work — implement endpoints below; frontend wires each when ready.
 
 **Product:** Mobile-first football prediction game (NOT betting). Block A = **fast onboarding** + **first Exact Score** only. No energy, official picks, or game club yet.
 

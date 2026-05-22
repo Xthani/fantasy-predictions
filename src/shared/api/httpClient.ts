@@ -84,8 +84,14 @@ const getErrorCode = (payload: unknown): string | null => {
   return null;
 };
 
+const isNgrokApiHost = /ngrok-free\.dev/i.test(API_BASE_URL);
+
 const requestRaw = async (path: string, options: RequestOptions = {}): Promise<Response> => {
   const headers = new Headers({ Accept: 'application/json' });
+
+  if (isNgrokApiHost) {
+    headers.set('ngrok-skip-browser-warning', 'true');
+  }
 
   if (options.body !== undefined) {
     headers.set('Content-Type', 'application/json');

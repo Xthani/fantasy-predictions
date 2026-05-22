@@ -1,40 +1,57 @@
-import { useMemo, useState } from 'react';
-import { getMockLeagues } from '@/shared/mocks/leagues';
-import { getPreferences, setFavoriteLeagueIds } from '@/features/onboarding/lib/preferencesStorage';
-
-const normalize = (value: string) => value.trim().toLowerCase();
+import { useCallback, useMemo, useState } from 'react';
+import { fetchLeagues } from '@/features/onboarding/api/leagues';
+import { filterLeaguesBySearch, splitLeaguesByActive } from '@/features/onboarding/lib/filterLeagues';
+import { getLeaguesLoadErrorMessage } from '@/features/onboarding/lib/onboardingErrors';
+import { resolveLeagueSelection } from '@/features/onboarding/lib/leagueSelection';
+import {
+  getPreferences,
+  setFavoriteLeagues,
+} from '@/features/onboarding/lib/preferencesStorage';
+import { useAsyncRequest } from '@/shared/hooks/useAsyncRequest';
+import type { League } from '@/shared/types/league';
 
 export const useLeaguesPage = () => {
-  const allLeagues = useMemo(() => getMockLeagues(), []);
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>(
     () => getPreferences().favoriteLeagueIds,
   );
 
-  const activeLeagues = useMemo(() => allLeagues.filter((league) => league.isActive), [allLeagues]);
+  const syncSelectionWithCatalog = useCallback((leagues: League[]) => {
+    setSelectedIds((currentIds) =>
+      resolveLeagueSelection(currentIds, leagues, getPreferences().favoriteLeagueIds),
+    );
+  }, []);
 
-  const inactiveLeagues = useMemo(
-    () => allLeagues.filter((league) => !league.isActive),
-    [allLeagues],
+  const {
+    data: allLeagues,
+    status: loadStatus,
+    error: loadError,
+    retry: retryLoad,
+  } = useAsyncRequest({
+    request: fetchLeagues,
+    mapError: getLeaguesLoadErrorMessage,
+    onSuccess: syncSelectionWithCatalog,
+  });
+
+  const leagues = useMemo(() => allLeagues ?? [], [allLeagues]);
+
+  const { active: activeLeagues, inactive: inactiveLeagues } = useMemo(
+    () => splitLeaguesByActive(leagues),
+    [leagues],
   );
 
-  const query = normalize(search);
+  const filteredActive = useMemo(
+    () => filterLeaguesBySearch(activeLeagues, search),
+    [activeLeagues, search],
+  );
 
-  const filteredActive = useMemo(() => {
-    if (!query) return activeLeagues;
-    return activeLeagues.filter(
-      (l) => normalize(l.name).includes(query) || normalize(l.countryName).includes(query),
-    );
-  }, [activeLeagues, query]);
+  const filteredInactive = useMemo(
+    () => filterLeaguesBySearch(inactiveLeagues, search),
+    [inactiveLeagues, search],
+  );
 
-  const filteredInactive = useMemo(() => {
-    if (!query) return inactiveLeagues;
-    return inactiveLeagues.filter(
-      (l) => normalize(l.name).includes(query) || normalize(l.countryName).includes(query),
-    );
-  }, [inactiveLeagues, query]);
-
-  const isEmpty = filteredActive.length === 0 && filteredInactive.length === 0;
+  const isListEmpty =
+    loadStatus === 'success' && filteredActive.length === 0 && filteredInactive.length === 0;
 
   const toggleLeague = (leagueId: string) => {
     setSelectedIds((prev) =>
@@ -43,11 +60,15 @@ export const useLeaguesPage = () => {
   };
 
   const saveAndContinue = () => {
-    setFavoriteLeagueIds(selectedIds);
+    const selectedLeagues = leagues
+      .filter((league) => selectedIds.includes(league.id))
+      .map((league) => ({ id: league.id, name: league.name }));
+
+    setFavoriteLeagues(selectedLeagues);
     return true;
   };
 
-  const canContinue = selectedIds.length > 0;
+  const canContinue = loadStatus === 'success' && selectedIds.length > 0;
 
   return {
     search,
@@ -56,9 +77,12 @@ export const useLeaguesPage = () => {
     toggleLeague,
     filteredActive,
     filteredInactive,
-    isEmpty,
+    isListEmpty,
     canContinue,
     saveAndContinue,
     selectedCount: selectedIds.length,
+    loadStatus,
+    loadError,
+    retryLoad,
   };
 };

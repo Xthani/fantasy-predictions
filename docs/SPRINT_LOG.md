@@ -6,7 +6,7 @@
 
 **Status:** Done (2026-05-22)
 
-**Deliverables:** `/docs`, FSD-light, `ARCHITECTURE.md`, Decisions 001–012.
+**Deliverables:** `/docs`, FSD-light, `ARCHITECTURE.md`, Decisions 001–016.
 
 ---
 
@@ -18,21 +18,13 @@
 
 ### Achievement
 
-Demoable path: **Login → leagues → clubs → matches → Exact Score** on mocks + `localStorage`.
+Demoable path: **Login → leagues → clubs → matches → Exact Score**.
 
 | Phase | Done |
 |-------|------|
 | UI/UX | 4 screens, search, multi-select, quick score sheet, toast, redirects |
-| Tech | ESLint, Prettier, `npm run lint` / `format`, `shared/mocks/index.ts`, build green |
-| Backend | `BACKEND_BRIEF.md` ready — P0 endpoints, acceptance criteria, copy-paste task |
-
-### Handoff for backend
-
-**Primary doc:** [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md)
-
-**Supporting:** [`API_CONTRACT.md`](API_CONTRACT.md) Block A table, [`MOCK_DATA.md`](MOCK_DATA.md), `src/shared/mocks/*`
-
-**P0 endpoints:** `POST /api/auth/google`, `GET /api/leagues`, `GET /api/favorite-clubs`, `PUT /api/players/me/preferences`, `GET /api/matches/week`, `POST /api/predictions`, `GET /api/predictions/me`
+| Tech | ESLint, Prettier, mocks, build green |
+| Backend brief | `BACKEND_BRIEF.md` for future endpoints |
 
 ### Demo path
 
@@ -40,35 +32,44 @@ Demoable path: **Login → leagues → clubs → matches → Exact Score** on mo
 npm run dev
 ```
 
-Login → Google → leagues → clubs → matches → save score → toast + card badge.
+Login (Google) → leagues → clubs → matches → save score.
 
-Reset: clear `localStorage` keys `fp_session`, `fp_preferences`, `fp_quick_predictions`.
+**Сброс:** см. `CURRENT_STATE.md` (ключи storage).
 
-### Quality gates (passed)
+---
+
+## Partial API integration (2026-05-22)
+
+**Status:** **In progress** — auth + leagues on real backend
+
+| Endpoint | Frontend |
+|----------|----------|
+| `POST /api/auth/google` (+ email auth) | ✅ `features/auth/api/auth.ts` |
+| `GET /api/leagues` | ✅ `features/onboarding/api/leagues.ts` |
+| `GET /api/favorite-clubs` | ⏳ mocks; empty UX on clubs step |
+| `PUT /api/players/me/preferences` | ⏳ `fp_preferences` local |
+| `GET /api/matches/week` | ⏳ mocks |
+| predictions | ⏳ localStorage |
+
+**Refactor:** shared `useAsyncRequest`, `getApiErrorMessage`, feature `*Errors.ts`, `LeagueCrest`, prefs `favoriteLeagues` (id+name for UI labels).
+
+**Source of truth:** [`CURRENT_STATE.md`](CURRENT_STATE.md)
+
+### Quality gates
 
 - [x] `npm run build`
 - [x] `npm run lint`
-- [x] `npm run format:check` (after format)
-- [x] README demo section
-- [x] Toast on save
 
 ---
 
 ## Sprint 1 — App Shell & UI Foundation
 
-**Status:** Block A complete; remainder open
+**Status:** In progress (Block A UI done; partial API done)
 
-**Done via Block A:** routing, tokens, shell, Button/Screen/SearchField/Toast, mocks (leagues, favoriteClubs, matches)
-
-**Next (Block B or integration):**
-
-- Wire `shared/api/httpClient` when backend P0 ready
-- Bottom tab navigation
-- `Card` component if needed
-- Or Sprint 4 prediction depth (energy, styles)
+**Next:** see `CURRENT_STATE.md` — favorite-clubs API first when backend ready.
 
 ---
 
 ## Sprint 2+
 
-See `PROJECT_ROADMAP.md`. Classic country/profile and game depth after Block A API integration.
+See `PROJECT_ROADMAP.md`.

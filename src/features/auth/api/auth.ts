@@ -46,15 +46,6 @@ export const normalizeAuthResponse = (response: RawAuthResponse): AuthResponse =
   refreshToken: response.refreshToken,
 });
 
-const mapCurrentUser = (user: RawAuthUser): AuthUser => ({
-  id: String(user.id ?? ''),
-  email: user.email ?? null,
-  login: user.login ?? null,
-  displayName: user.displayName ?? user.name ?? null,
-  avatarUrl: user.avatarUrl ?? user.avatar ?? user.image ?? null,
-  role: normalizeRole(user.role),
-});
-
 export const loginWithGoogle = async (idToken: string): Promise<AuthResponse> => {
   const response = await httpRequest<RawAuthResponse>('/api/auth/google', {
     method: 'POST',
@@ -78,7 +69,10 @@ export const signupWithEmailPassword = async (input: SignupInput): Promise<AuthR
 export const loginWithEmailPassword = async (input: LoginInput): Promise<AuthResponse> => {
   const response = await httpRequest<RawAuthResponse>('/api/auth/login', {
     method: 'POST',
-    body: input,
+    body: {
+      identifier: input.emailOrLogin,
+      password: input.password,
+    },
     auth: false,
   });
 
@@ -109,7 +103,7 @@ export const logout = async (refreshToken: string): Promise<void> => {
 
 export const getCurrentUser = async (): Promise<AuthUser> => {
   // TODO: Keep this endpoint aligned with the backend once /api/auth/me is implemented.
-  const response = await httpRequest<RawAuthUser>('/api/auth/me');
+  const response = await httpRequest<unknown>('/api/auth/me');
 
-  return mapCurrentUser(response);
+  return mapAuthUser(response);
 };

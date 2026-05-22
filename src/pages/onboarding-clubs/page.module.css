@@ -30,6 +30,20 @@
   margin-top: var(--space-2);
 }
 
+.catalogNotice {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border);
+}
+
+.catalogNotice .empty {
+  margin: 0 0 var(--space-3);
+}
+
+.catalogNotice .hint {
+  margin: 0;
+}
+
 .empty {
   padding: var(--space-5) var(--space-4);
   text-align: center;

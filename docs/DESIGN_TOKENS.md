@@ -19,8 +19,12 @@ See also `UX_NOTES.md` for principles and screen priorities.
 | `--color-text-primary` | `#F2F5F8` | Headings, primary labels |
 | `--color-text-secondary` | `#9AA8B8` | Meta, kickoff time, hints |
 | `--color-text-muted` | `#6B7A8C` | Placeholders, disabled |
-| `--color-accent` | `#3D8BFF` | Primary actions, links (cool blue, not neon green) |
-| `--color-accent-hover` | `#5A9DFF` | Hover / pressed primary |
+| `--color-accent` | `#3D8BFF` | Links, filters, info chips (cool blue) |
+| `--color-accent-hover` | `#5A9DFF` | Hover / pressed blue |
+| `--color-gold` | `#C9A227` | Premium CTA, stepper active, key borders (reference style) |
+| `--color-gold-bright` | `#E8C547` | Gradient top stop for primary buttons |
+| `--color-gold-text` | `#1A1408` | Text on gold buttons |
+| `--gradient-gold` | `linear-gradient(180deg, #E8C547 0%, #C9A227 100%)` | Main CTA (login, save prediction) |
 | `--color-success` | `#2DB87A` | Correct pick, positive form (muted, no flash) |
 | `--color-warning` | `#E6A23C` | Deadline soon, lock approaching |
 | `--color-danger` | `#E85D5D` | Errors, locked missed deadline |

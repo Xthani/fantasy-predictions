@@ -100,14 +100,29 @@ import { App } from '@/App';
 | Файл | Содержание |
 |------|------------|
 | `PROJECT_VISION.md` | Видение продукта |
-| `PROJECT_ROADMAP.md` | Roadmap, текущий спринт |
-| `SPRINT_LOG.md` | Журнал спринтов |
+| `PROJECT_ROADMAP.md` | Roadmap, Block A vs Sprint 1–9 |
+| `DEVELOPMENT_WORKFLOW.md` | Ритм: UI → tech → backend brief |
+| `SPRINT_LOG.md` | Журнал спринтов, чеклист Block A |
+| `BACKEND_BRIEF.md` | Промпт-пак для бэка (после Block A) |
 | `DESIGN_TOKENS.md` | Дизайн-токены (тёмная тема) |
 | `ARCHITECTURE.md` | FSD-light: слои, импорты, решения проекта |
 | `MOCK_DATA.md` | План мок-данных для MVP |
 | `GAME_RULES.md` | Игровые правила |
 
-**Текущий статус:** Sprint 0 завершён → **Sprint 1** (app shell, routing, тема в коде, папки `src/` по FSD-light).
+**Текущий статус:** **Block A закрыт** (UI + lint + бриф для бэка). Бэкенду: [`docs/BACKEND_BRIEF.md`](docs/BACKEND_BRIEF.md).
+
+### Демо-путь (Block A)
+
+```bash
+npm run dev
+```
+
+1. Открыть [http://localhost:3000/login](http://localhost:3000/login) → **Продолжить с Google**
+2. Выбрать одну или несколько лиг → **Далее**
+3. Выбрать один или несколько клубов → **К матчам**
+4. Тап по матчу → указать счёт → **Сохранить прогноз**
+
+Данные в `localStorage` (`fp_session`, `fp_preferences`, `fp_quick_predictions`). Сброс: очистить storage в DevTools и обновить страницу.
 
 ## Скрипты npm
 
@@ -116,6 +131,9 @@ import { App } from '@/App';
 | `npm run dev` | Dev-сервер с HMR (порт 3000) |
 | `npm run build` | `tsc` + production bundle в `dist/` |
 | `npm run preview` | Локальный preview собранного `dist/` |
+| `npm run lint` | ESLint по `src/` |
+| `npm run format` | Prettier write |
+| `npm run format:check` | Prettier check (CI) |
 
 ## Лицензия
 

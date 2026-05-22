@@ -2,10 +2,28 @@
 
 ## Current State
 
-- Frontend is a **bare React/Vite template** — no API client yet.
-- MVP development should use **mock data** in `src/` until backend exists.
-- Entity shapes, volumes, and folder layout: `MOCK_DATA.md`.
-- This document is a **draft** for frontend/backend alignment.
+- **Block A UI** complete on mocks (`src/shared/mocks/`).
+- **Backend handoff:** `BACKEND_BRIEF.md` (full task + acceptance criteria).
+- No HTTP client in frontend yet — integrate after P0 endpoints exist.
+
+Entity shapes: `MOCK_DATA.md`.
+
+---
+
+## Block A scope (implement first)
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| POST | `/api/auth/google` | Login |
+| GET | `/api/leagues` | Onboarding leagues |
+| GET | `/api/favorite-clubs` | Onboarding favorite clubs (`leagueIds`) |
+| PUT | `/api/players/me/preferences` | Save favorite leagues/clubs |
+| GET | `/api/players/me/preferences` | Load preferences (P1) |
+| GET | `/api/matches/week` | Match feed (`leagueIds`) |
+| POST | `/api/predictions` | Exact Score only |
+| GET | `/api/predictions/me` | List player predictions |
+
+**Not Block A:** game `/api/clubs` (squad), energy, official picks, virtual match — see end of doc.
 
 ## Conventions (planned)
 
@@ -21,13 +39,80 @@
 
 ## Future API Draft
 
+### Auth (onboarding)
+
+#### `POST /api/auth/google`
+
+**Purpose:** Exchange Google ID token for session JWT.
+
+**Body:** `{ "idToken": string }`
+
+**Response:** `{ "accessToken": string, "player": Player }`
+
+---
+
+#### `POST /api/auth/register`
+
+**Purpose:** Manual account (planned after Google-only launch).
+
+**Body:** `{ "email": string, "password": string, "displayName": string }`
+
+**Response:** same as Google login.
+
+---
+
+#### `POST /api/auth/login`
+
+**Purpose:** Email/password sign-in (planned).
+
+**Body:** `{ "email": string, "password": string }`
+
+---
+
+### Player preferences (fast onboarding)
+
+#### `GET /api/leagues`
+
+**Purpose:** List leagues for onboarding (active + coming soon).
+
+**Query:** `search?`, `countryId?`
+
+**Response:** `{ "leagues": League[] }` — `League`: `id`, `name`, `countryCode`, `isActive`, `crestUrl?`
+
+---
+
+#### `GET /api/favorite-clubs`
+
+**Purpose:** Favorite clubs picker (onboarding). **Not** game squad clubs.
+
+**Query:** `leagueIds` (required, array), `search?`
+
+**Response:** `{ "clubs": FavoriteClub[] }` — `id`, `name`, `shortName`, `leagueId`, `crestUrl?`
+
+---
+
+#### `PUT /api/players/me/preferences`
+
+**Purpose:** Save favorite leagues + clubs after onboarding.
+
+**Body:**
+
+```json
+{
+  "favoriteLeagueIds": ["league_la_liga"],
+  "favoriteClubIds": ["club_real_madrid"]
+}
+```
+
+---
+
 ### Matches
 
 #### `GET /api/matches/week`
 
-**Purpose:** Weekly match feed for active league.
+**Purpose:** Weekly match feed for player's favorite leagues.
 
-**Query:** `leagueId`, `week`, `countryId?`
+**Query:** `leagueIds` (array, required), `week?`, `from?`, `to?`
 
 **Response (draft):**
 
@@ -69,13 +154,13 @@
 {
   "matchId": "m_1",
   "homeScore": 2,
-  "awayScore": 1,
-  "style": "balanced",
-  "energyDistribution": {}
+  "awayScore": 1
 }
 ```
 
-**Response:** prediction id, components, lock time.
+**Block A:** scores only. **Later:** `style`, `energyDistribution`.
+
+**Response:** `{ "id", "matchId", "homeScore", "awayScore", "savedAt" }`
 
 ---
 
@@ -124,11 +209,11 @@
 
 ---
 
-### Clubs
+### Clubs (game — NOT Block A)
 
 #### `GET /api/clubs`
 
-**Purpose:** List clubs (starter + bot), filters for onboarding.
+**Purpose:** List joinable game clubs (starter + bot). Distinct from `GET /api/favorite-clubs`.
 
 ---
 

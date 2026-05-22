@@ -109,3 +109,39 @@ Format: **Decision NNN** — title, Context, Decision, Reason, Status.
 - **Decision:** Adopt **FSD-light** with layers `app`, `pages`, `features`, `shared`. Full rules in `.cursor/rules/00-core.mdc` (always) and `10-architecture.mdc` (structure tasks). Project summary and exceptions in `docs/ARCHITECTURE.md`.
 - **Reason:** Scalable MVP without a meta-framework; pragmatic rules (YAGNI, no empty folders, barrels when needed); aligns with planned `shared/mocks/` and `app/styles/tokens.css`.
 - **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 013 — Fast onboarding flow (mock UI first)
+
+- **Context:** No backend yet; need playable path to first Exact Score; visual reference is premium dark + gold, not bookmaker UX.
+- **Decision:** Onboarding order: **Login (Google mock + reserved email/sign-up UI) → multi league pick → multi club pick (filtered by leagues) → match feed with quick score**. Defer country, game club join, energy/official mechanics on this path.
+- **Reason:** Fast time-to-fun; backend contracts drafted in `API_CONTRACT.md` from real screens.
+- **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 014 — React Router for Sprint 1 shell
+
+- **Context:** Multi-step onboarding and future tabs need client routing.
+- **Decision:** Add `react-router-dom` (latest stable); routes under `pages/`, guards via mock session in `features/auth`.
+- **Reason:** Minimal dependency; no meta-framework; matches FSD-light `pages/` layer.
+- **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 015 — Frontend-led delivery in three phases per block
+
+- **Context:** Need clear rhythm: demoable UI first, then tooling, then backend contracts — without mixing lint/refactor into active UI work.
+- **Decision:** Each **block** (starting with **Block A — fast onboarding**) ships as: **(1) UI/UX on mocks** → **(2) tech closure** (ESLint, Prettier, refactors) → **(3) backend brief** (`BACKEND_BRIEF.md` from proven screens). Frontend sets pace; full Sprint 2–9 map remains for later game depth.
+- **Reason:** Touchable slices for stakeholders and backend; contracts match real flows; less throwaway infra work.
+- **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 016 — Block A-tech: ESLint + Prettier
+
+- **Context:** Close Block A with maintainable tooling before backend handoff.
+- **Decision:** ESLint 9 flat config (`eslint.config.js`), TypeScript-eslint, react-hooks, react-refresh; Prettier with eslint-config-prettier; scripts `lint`, `format`, `format:check`.
+- **Reason:** Enforce quality without blocking UI iteration earlier.
+- **Status:** Accepted (2026-05-22)

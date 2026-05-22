@@ -1,146 +1,132 @@
 # Project Roadmap
 
+## Development approach
+
+**Frontend-led delivery** — see `DEVELOPMENT_WORKFLOW.md`.
+
+```text
+UI block (demoable) → tech closure (lint, refactor) → backend brief (contracts prompt)
+```
+
+Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** is a deliberate shortcut to first playable UX on mocks (Decision 013).
+
+---
+
 ## Current Status
 
-**Sprint 0 — Project Setup / Documentation / Frontend foundation** (Done)
-
-**Sprint 1 — App Shell & UI Foundation** (Next)
+| Item | Status |
+|------|--------|
+| Sprint 0 — Setup & docs | **Done** |
+| Sprint 1 — App shell | **In progress** |
+| **Block A — Fast onboarding** | **Done** — UI + tech + [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md) |
+| Block B — TBD | **Next** (API integration or next UI slice) |
 
 ## Current Goal
 
-Prepare mobile-first frontend foundation for MVP. No game logic in app yet.
+**Block A closed.** Next: backend implements P0 from `BACKEND_BRIEF.md`, then frontend wires HTTP (Block B).
 
 ---
 
-## Current Tech State (bare template)
+## Current Tech State
 
-| Area | Present | Missing |
-|------|---------|---------|
-| React 19 + react-dom | ✅ | — |
-| Vite 8 + SWC plugin | ✅ | — |
-| TypeScript strict + `@/` alias | ✅ | — |
-| `tsconfig.node.json` for Vite config | ✅ | — |
-| Scripts: `dev`, `build`, `preview` | ✅ | — |
-| Package manager | npm | — |
-| `src/` structure | `main.tsx`, `App.tsx`, `vite-env.d.ts` only | FSD-light: `app`, `pages`, `features`, `shared` (see `ARCHITECTURE.md`) |
-| Routing | — | react-router or equivalent |
-| Layout / mobile shell | — | app layout, bottom nav |
-| Theme / CSS tokens | inline styles only | dark premium design system |
-| Mock data | plan in `MOCK_DATA.md` | implementation in `src/shared/mocks/` |
-| Design tokens | sketch in `DESIGN_TOKENS.md` | CSS in `src/app/styles/` |
-| ESLint / Prettier | — | recommended in Sprint 1 |
-| Backend / API client | — | mock first per `API_CONTRACT.md` |
+| Area | Status |
+|------|--------|
+| React 19 + Vite 8 + TS strict | ✅ |
+| `react-router-dom` | ✅ |
+| FSD-light (`app`, `pages`, `features`, `shared`) | ✅ |
+| Design tokens in `app/styles/tokens.css` | ✅ |
+| Mobile shell `AppShell` (max-width 480px) | ✅ |
+| Shared UI | `Button`, `Screen`, `SearchField` |
+| Mocks | `leagues`, `favoriteClubs`, `matches` |
+| Local persistence | `fp_session`, `fp_preferences`, `fp_quick_predictions` |
+| ESLint / Prettier | ✅ |
+| Bottom tab navigation | ❌ later block |
+| Real API client | ❌ after backend P0 |
+| Backend brief | ✅ `BACKEND_BRIEF.md` |
+| Game logic (energy, official, club league) | ❌ Sprint 4+ |
 
-**Folder structure today:**
+**Routes today:**
 
-```text
-fantasy-predictions/
-├── docs/
-├── .cursor/rules/
-├── index.html
-├── package.json
-├── tsconfig.json
-├── tsconfig.node.json
-├── vite.config.ts
-└── src/
-    ├── main.tsx
-    ├── App.tsx
-    └── vite-env.d.ts
-```
+| Path | Screen |
+|------|--------|
+| `/login` | Google mock + reserved email/sign-up |
+| `/onboarding/leagues` | Multi-select leagues + search |
+| `/onboarding/clubs` | Multi-select clubs by league + search |
+| `/matches` | Feed + league chips + quick Exact Score sheet |
 
 ---
 
-## MVP Roadmap
+## Block A vs classic sprints (mapping)
 
-### Sprint 0 — Setup & Documentation
+| Block A (done on mocks) | Overlaps roadmap |
+|-------------------------|------------------|
+| Login + shell + tokens | Sprint 1 |
+| Leagues + clubs onboarding | Sprint 2 (simplified; no country) |
+| Match feed + filters | Sprint 3 |
+| Quick Exact Score only | Sprint 4 (partial) |
 
-- [x] Bare React/Vite/TS template
-- [x] `/docs` + `project-memory.mdc`
-- [x] English product docs aligned with game design
-- [x] Confirm dependencies & document tech state (`DECISION_LOG.md` Decision 011)
-- [x] Base UI direction (`DESIGN_TOKENS.md`, `UX_NOTES.md`)
-- [x] Mock data plan (`MOCK_DATA.md`)
-- [x] FSD-light architecture policy (`ARCHITECTURE.md`, Cursor rules `00-core`, `10-architecture`)
+**Not in Block A:** energy, styles, components, official/shadow, profile rating, game club, virtual match, bots.
+
+---
+
+## MVP Roadmap (full product — unchanged direction)
+
+### Sprint 0 — Setup & Documentation ✅
+
+- [x] Template, docs, FSD-light, design tokens sketch, mock plan
 
 ### Sprint 1 — App Shell & UI Foundation
 
-- [ ] Routing
-- [ ] App layout (mobile-first)
-- [ ] Theme tokens (dark premium sports)
-- [ ] Basic components (Button, Card, Screen, etc.)
-- [ ] ESLint / Prettier (if approved)
+- [x] Routing, layout, theme tokens, base components (partial: no Card, no tabs)
+- [x] Block A fast onboarding UI on mocks
+- [x] Block A — fast onboarding UI + tech + backend brief
 
-### Sprint 2 — Onboarding
+### Sprint 2 — Onboarding (classic)
 
-- [ ] Profile creation
-- [ ] Country selection
-- [ ] Active league selection
-- [ ] Optional favorite club / tournaments
+- [x] League + favorite club pick *(covered by Block A variant)*
+- [ ] Country, full profile
+- [ ] Defer until after Block B or backend integration
 
 ### Sprint 3 — Match Feed
 
-- [ ] Weekly match list
-- [ ] Filters
-- [ ] Match cards
-- [ ] Match status (open / locked / finished)
+- [x] List, filters, cards *(Block A)*
+- [ ] Status chips: open / locked / finished in UI
 
 ### Sprint 4 — Prediction Core
 
-- [ ] Exact Score input
-- [ ] Prediction Components display
-- [ ] Energy + Defensive / Balanced / Aggressive / Manual Style
-- [ ] Points preview
+- [x] Exact Score input *(quick sheet only)*
+- [ ] Prediction Components, Energy, Styles, points preview
 
 ### Sprint 5 — Official Picks
 
-- [ ] Select Official Predictions (limit)
-- [ ] Numbering / ordering
-- [ ] Shadow vs Official UI
-- [ ] Deadline lock (4h rule)
+- [ ] Official vs Shadow, limits, deadlines
 
 ### Sprint 6 — Player Profile
 
-- [ ] Official Rating 0–110
-- [ ] Form
-- [ ] Official stats vs Shadow Stats
+- [ ] Official Rating, form, stats
 
-### Sprint 7 — Clubs
+### Sprint 7 — Clubs (game)
 
-- [ ] Starter clubs list
-- [ ] Bot Club
-- [ ] Club screen + squad
+- [ ] Starter clubs, Bot Club, squad screen
 
 ### Sprint 8 — Virtual Match
 
-- [ ] Starting XI
-- [ ] Team style + Team Energy
-- [ ] Match result + contribution breakdown
+- [ ] XI, Team Energy, results
 
 ### Sprint 9 — Divisions & Bots
 
-- [ ] Divisions + league table
-- [ ] Bot Player logic
-- [ ] Bot Club automation
+- [ ] Table, Bot Player, Bot Club automation
 
 ---
 
 ## Later (post-MVP)
 
-- Economy (virtual currency loops)
-- **Transfer Offer**, **Contract**
-- **Scout**, **Negotiator**
-- Monetization (ads / subscription / cosmetics)
-- Social sharing
-- Creator / community leagues
+Economy, transfers, scout, monetization (cosmetics / no ads only), social, creator leagues — see `PROJECT_VISION.md`.
 
 ---
 
-## Recommended Next Technical Steps (Sprint 0 → 1)
+## Recommended order (next moves)
 
-1. Add routing (e.g. React Router — document in `DECISION_LOG.md`)
-2. App layout + mobile viewport shell
-3. CSS variables / theme tokens (dark premium)
-4. `src/` FSD-light folders (`app`, `pages`, `features`, `shared` — see `ARCHITECTURE.md`)
-5. Mock data module for matches / players / clubs
-6. ESLint + Prettier
-7. Replace placeholder `App.tsx` with shell + empty routes
+1. **Backend** — implement P0 from `BACKEND_BRIEF.md`.
+2. **Block B (frontend)** — `shared/api/httpClient` + replace mocks for Block A flows.
+3. **Block B or C (UI)** — tab shell and/or full prediction screen (energy, styles).

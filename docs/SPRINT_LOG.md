@@ -6,57 +6,69 @@
 
 **Status:** Done (2026-05-22)
 
-**Goal:** Prepare project memory, English documentation, frontend foundation, and FSD-light architecture policy.
+**Deliverables:** `/docs`, FSD-light, `ARCHITECTURE.md`, Decisions 001–012.
 
-### Done
+---
 
-- Bare **React 19 + Vite 8 + TypeScript 6** template
-- Strict TS, `@/` path alias, `tsconfig.node.json`, `@types/node`
-- Production build: `tsc` + `vite build`
-- `/docs` structure created
-- `.cursor/rules/project-memory.mdc` with maintenance rules
-- Full docs refactor: English, Exact Score mechanics, roadmap sprints 0–9
-- Product decisions 001–011 in `DECISION_LOG.md`
-- Tech state confirmed: npm, pinned versions, no extra runtime deps (Decision 011)
-- UI direction: `DESIGN_TOKENS.md` (dark premium tokens + wire sketches)
-- Mock data plan: `MOCK_DATA.md` (entities, volumes, `src/shared/mocks/` layout)
-- `API_CONTRACT.md` linked to mock plan
-- FSD-light Cursor rules: `.cursor/rules/00-core.mdc`, `.cursor/rules/10-architecture.mdc`
-- `docs/ARCHITECTURE.md` — project-specific architecture summary + exception registry
+## Block A — Fast Onboarding (mock-first)
 
-### Deliverables
+**Status:** **Done** (2026-05-22)
 
-| Artifact | Path |
-|----------|------|
-| Design tokens sketch | `docs/DESIGN_TOKENS.md` |
-| Mock data plan | `docs/MOCK_DATA.md` |
-| Frontend architecture (FSD-light) | `docs/ARCHITECTURE.md` + `.cursor/rules/00-core.mdc`, `10-architecture.mdc` |
-| Dependency baseline | `docs/DECISION_LOG.md` → Decision 011 |
+**Phases:** UI ✅ · Tech ✅ · Backend brief ✅
 
-### Tech snapshot (Sprint 0 close)
+### Achievement
 
-| Item | Value |
-|------|--------|
-| Package manager | npm |
-| Node (verified) | v24.14.1 |
-| Runtime deps | react 19.2.6, react-dom 19.2.6 |
-| Dev | vite 8.0.14, typescript 6.0.3, @vitejs/plugin-react-swc 4.3.1 |
-| Missing (Sprint 1+) | router, CSS tokens in code, mocks module, lint, feature folders |
+Demoable path: **Login → leagues → clubs → matches → Exact Score** on mocks + `localStorage`.
+
+| Phase | Done |
+|-------|------|
+| UI/UX | 4 screens, search, multi-select, quick score sheet, toast, redirects |
+| Tech | ESLint, Prettier, `npm run lint` / `format`, `shared/mocks/index.ts`, build green |
+| Backend | `BACKEND_BRIEF.md` ready — P0 endpoints, acceptance criteria, copy-paste task |
+
+### Handoff for backend
+
+**Primary doc:** [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md)
+
+**Supporting:** [`API_CONTRACT.md`](API_CONTRACT.md) Block A table, [`MOCK_DATA.md`](MOCK_DATA.md), `src/shared/mocks/*`
+
+**P0 endpoints:** `POST /api/auth/google`, `GET /api/leagues`, `GET /api/favorite-clubs`, `PUT /api/players/me/preferences`, `GET /api/matches/week`, `POST /api/predictions`, `GET /api/predictions/me`
+
+### Demo path
+
+```bash
+npm run dev
+```
+
+Login → Google → leagues → clubs → matches → save score → toast + card badge.
+
+Reset: clear `localStorage` keys `fp_session`, `fp_preferences`, `fp_quick_predictions`.
+
+### Quality gates (passed)
+
+- [x] `npm run build`
+- [x] `npm run lint`
+- [x] `npm run format:check` (after format)
+- [x] README demo section
+- [x] Toast on save
 
 ---
 
 ## Sprint 1 — App Shell & UI Foundation
 
-**Status:** Not started
+**Status:** Block A complete; remainder open
 
-**Goal:** Mobile-first app shell, routing, theme in code, base components, mock modules.
+**Done via Block A:** routing, tokens, shell, Button/Screen/SearchField/Toast, mocks (leagues, favoriteClubs, matches)
 
-### Next
+**Next (Block B or integration):**
 
-1. Routing (document choice in `DECISION_LOG.md` when added)
-2. App layout + mobile viewport shell (`--layout-max-width` from `DESIGN_TOKENS.md`)
-3. `src/app/styles/tokens.css` from design tokens
-4. Feature folders + `src/shared/mocks/` per `MOCK_DATA.md`
-5. Basic components: Button, Card, Screen
-6. ESLint / Prettier (if approved)
-7. Replace placeholder `App.tsx` with shell + empty routes
+- Wire `shared/api/httpClient` when backend P0 ready
+- Bottom tab navigation
+- `Card` component if needed
+- Or Sprint 4 prediction depth (energy, styles)
+
+---
+
+## Sprint 2+
+
+See `PROJECT_ROADMAP.md`. Classic country/profile and game depth after Block A API integration.

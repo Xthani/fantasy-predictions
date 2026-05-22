@@ -13,7 +13,9 @@ src/
 ├── shared/
 │   ├── mocks/
 │   │   ├── index.ts          # re-exports
-│   │   ├── matches.ts
+│   │   ├── leagues.ts        # ✅ implemented
+│   │   ├── favoriteClubs.ts  # ✅ implemented (onboarding favorites)
+│   │   ├── matches.ts        # ✅ implemented
 │   │   ├── players.ts
 │   │   ├── clubs.ts
 │   │   ├── bots.ts
@@ -31,6 +33,35 @@ No API client in Sprint 1 — pages import mocks directly; swap to fetch layer l
 ---
 
 ## Entity shapes (MVP minimum)
+
+### `League` (onboarding)
+
+| Field | Type | Notes |
+|-------|------|--------|
+| `id` | string | e.g. `league_la_liga` |
+| `name` | string | Display name |
+| `countryName` | string | For search |
+| `countryCode` | string | ISO-style |
+| `isActive` | boolean | Inactive leagues shown disabled |
+| `crestEmoji` | string | Mock crest until `crestUrl` from API |
+
+**Volume:** 5–8 leagues (mix active + coming soon). **File:** `src/shared/mocks/leagues.ts`.
+
+---
+
+### `FavoriteClub` (onboarding)
+
+| Field | Type | Notes |
+|-------|------|--------|
+| `id` | string | e.g. `club_real_madrid` |
+| `name` | string | Display name |
+| `shortName` | string | Abbreviation |
+| `leagueId` | string | FK to `League.id` |
+| `crestEmoji` | string | Mock until `crestUrl` |
+
+**Volume:** ~3–4 clubs per active league. **File:** `src/shared/mocks/favoriteClubs.ts`. Filter: `GET /api/clubs?leagueIds=…`.
+
+---
 
 ### `Match`
 

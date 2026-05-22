@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
-import { getSession } from '@/features/auth/lib/sessionStorage';
+import { useAuth } from '@/features/auth/model/authContext';
 
 type RequireAuthProps = {
   children: ReactNode;
@@ -8,9 +8,13 @@ type RequireAuthProps = {
 
 export const RequireAuth = ({ children }: RequireAuthProps) => {
   const location = useLocation();
-  const session = getSession();
+  const { status, user } = useAuth();
 
-  if (!session) {
+  if (status === 'loading' || status === 'idle') {
+    return null;
+  }
+
+  if (!user) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 

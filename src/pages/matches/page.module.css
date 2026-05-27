@@ -38,6 +38,23 @@
   gap: var(--space-3);
 }
 
+.loadMoreBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.profileCta {
+  margin-top: var(--space-4);
+}
+
+.profileLink {
+  display: block;
+  text-decoration: none;
+}
+
 .sheetError,
 .sheetSaving {
   position: fixed;

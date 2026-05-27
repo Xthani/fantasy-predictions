@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/features/auth/model/authContext';
+import { useAuth } from '@/features/auth';
 import { Button } from '@/shared/ui/Button/Button';
 import { Screen } from '@/shared/ui/Screen/Screen';
 import styles from './page.module.css';
@@ -15,7 +15,7 @@ const getRedirectPath = (state: unknown): string => {
     if (typeof from === 'string' && from !== '/login') return from;
   }
 
-  return '/onboarding/leagues';
+  return '/';
 };
 
 export const LoginPage = () => {

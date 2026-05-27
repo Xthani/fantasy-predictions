@@ -31,6 +31,20 @@
 | JSON | camelCase |
 | Errors | `{ code, message }` |
 
+### Pagination (catalog)
+
+List endpoints support `offset`/`limit` and return `pagination: { offset, limit, total, hasMore }`:
+
+- `GET /api/leagues`
+- `GET /api/clubs`
+- `GET /api/matches`
+
+Frontend uses:
+
+- `/matches`: append next page with `offset += limit`
+- `/onboarding/clubs`: per-league loading by sending a single `leagueIds=<id>` per section
+- `/onboarding/leagues`: pagination primarily for search results
+
 ### Auth body
 
 - **Register:** `{ login, password, displayName? }` — без email
@@ -41,6 +55,16 @@
 
 - `{ favoriteLeagueIds }` после шага лиг
 - `{ favoriteClubIds }` после шага клубов
+
+Frontend behavior: onboarding is **local-first**. Selected ids are stored immediately in localStorage and PATCH is used to sync backend profile. This keeps step navigation responsive; backend profile remains the recovery source on reload/login.
+
+Local keys:
+
+- `fp_favoriteLeagues`
+- `fp_favoriteClubIds`
+- `fp_hasAnyPrediction`
+
+These keys are cleared when the frontend enters unauthenticated state, so local onboarding progress is not shared between users on the same device.
 
 ### Query arrays
 

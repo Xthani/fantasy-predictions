@@ -1,0 +1,241 @@
+.section {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footerStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.kpi {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.kpiLabel {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.kpiValue {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.link {
+  font-size: var(--text-caption);
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.muted {
+  margin: 0;
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+}
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+  font-size: var(--text-label);
+}
+
+.chipIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-bg-overlay);
+}
+
+.chipImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.chipText {
+  white-space: nowrap;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clubCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.clubCrest {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-bg-overlay);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.clubImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.clubFallback {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.clubInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.clubName {
+  font-size: var(--text-label);
+  color: var(--color-text-primary);
+}
+
+.clubMeta {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+}
+
+.predictionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.predictionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.predictionScore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  height: 34px;
+  padding: 0 var(--space-2);
+  border-radius: 10px;
+  background: var(--color-gold-soft);
+  border: 1px solid var(--color-border-gold-subtle);
+  color: var(--color-text-primary);
+  font-weight: 800;
+}
+
+.predictionBody {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.predictionTitle {
+  font-size: var(--text-label);
+  color: var(--color-text-primary);
+}
+
+.predictionMeta {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+}
+
+.actionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.label {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.value {
+  margin: 0;
+  font-size: var(--text-label);
+  color: var(--color-text-primary);
+}

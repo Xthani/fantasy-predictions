@@ -15,7 +15,7 @@ FSD-light: `app`, `pages`, `features`, `shared`. Правила агента: `.
 | UI language | Russian |
 | Styles | CSS variables `app/styles/tokens.css`; SCSS Modules, camelCase |
 | HTTP | `shared/api/httpClient.ts`; domain calls in `features/*/api/` |
-| Data | `pages` → `features` → `shared` |
+| Data | `pages` → `features` public API (`index.ts`) → `shared` |
 
 ---
 
@@ -49,7 +49,8 @@ pages  ← leaf nodes
 | Данные | Источник |
 |--------|----------|
 | Auth, profile, leagues, clubs, matches, predictions | `fantasy-predictions-back` API |
-| Выбор лиг/клубов в сессии | `OnboardingProvider` (in-memory) + PATCH профиля |
+| Выбор лиг/клубов в сессии | local-first `OnboardingProvider` + `features/onboarding/lib/onboardingStorage.ts`; PATCH профиля идёт фоном; logout очищает локальный прогресс |
+| Завершение первого прогноза | local flag `fp_hasAnyPrediction` + `GET /api/predictions/me` для восстановления |
 | Эмодзи гербов лиг | локальный fallback `leagueCrestFallback.ts` (API не отдаёт `crestEmoji`) |
 
 ---
@@ -57,6 +58,20 @@ pages  ← leaf nodes
 ## Async UI
 
 Каждый async-блок: **loading / error / empty / success**. Хук `shared/hooks/useAsyncRequest.ts` — `mapError` не создавать inline (стабильная ссылка).
+
+---
+
+## Public feature APIs
+
+Фичи, используемые несколькими страницами, имеют `index.ts`:
+
+- `features/auth`
+- `features/onboarding`
+- `features/profile`
+- `features/match-feed`
+- `features/quick-prediction`
+
+Страницы не импортируют внутренние пути `features/<name>/api`, `features/<name>/model`, `features/<name>/lib` или `features/<name>/ui` напрямую.
 
 ---
 

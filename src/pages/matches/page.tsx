@@ -1,7 +1,7 @@
-import { Link, Navigate } from 'react-router-dom';
-import { MatchCard } from '@/features/match-feed/ui/MatchCard';
-import { OnboardingStepper } from '@/features/onboarding/ui/OnboardingStepper';
-import { QuickScoreSheet } from '@/features/quick-prediction/ui/QuickScoreSheet';
+import { Link } from 'react-router-dom';
+import { MatchCard } from '@/features/match-feed';
+import { OnboardingStepper } from '@/features/onboarding';
+import { QuickScoreSheet } from '@/features/quick-prediction';
 import { useMatchesPage } from '@/pages/matches/model/useMatchesPage';
 import { Button } from '@/shared/ui/Button/Button';
 import { Screen } from '@/shared/ui/Screen/Screen';
@@ -9,13 +9,16 @@ import styles from './page.module.css';
 
 export const MatchesPage = () => {
   const {
-    hasLeagues,
-    hasClubs,
     matches,
     loadStatus,
     loadError,
     retryLoad,
     predictionsByMatchId,
+    hasAnyPrediction,
+    hasMoreMatches,
+    loadMoreMatches,
+    isLoadingMore,
+    loadMoreError,
     activeMatch,
     activePrediction,
     openMatch,
@@ -26,20 +29,12 @@ export const MatchesPage = () => {
     isFavoriteClub,
   } = useMatchesPage();
 
-  if (!hasLeagues) {
-    return <Navigate to="/onboarding/leagues" replace />;
-  }
-
-  if (!hasClubs) {
-    return <Navigate to="/onboarding/clubs" replace />;
-  }
-
   return (
     <>
       <Screen
         eyebrow="Онбординг"
         title="Матчи недели"
-        subtitle="До 10 ближайших матчей твоих лиг и клубов"
+        subtitle="Ближайшие матчи твоих лиг и клубов"
         footer={<OnboardingStepper current={3} total={3} />}
       >
         {loadStatus === 'loading' ? <p className={styles.stateMessage}>Загружаем матчи…</p> : null}
@@ -78,6 +73,27 @@ export const MatchesPage = () => {
               );
             })}
           </ul>
+        ) : null}
+
+        {loadStatus === 'success' && matches.length > 0 ? (
+          <div className={styles.loadMoreBlock}>
+            {loadMoreError ? <p className={styles.stateMessage}>{loadMoreError}</p> : null}
+            {hasMoreMatches ? (
+              <Button type="button" disabled={isLoadingMore} onClick={() => void loadMoreMatches()}>
+                {isLoadingMore ? 'Загружаем…' : 'Показать ещё'}
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+
+        {loadStatus === 'success' && hasAnyPrediction ? (
+          <div className={styles.profileCta}>
+            <Link to="/profile" className={styles.profileLink}>
+              <Button type="button" variant="secondary" fullWidth>
+                В профиль
+              </Button>
+            </Link>
+          </div>
         ) : null}
 
         <Link className={styles.backLink} to="/onboarding/clubs">

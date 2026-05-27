@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { OnboardingStepper } from '@/features/onboarding/ui/OnboardingStepper';
-import { LeagueListItem } from '@/features/onboarding/ui/LeagueListItem';
+import { LeagueListItem, OnboardingStepper } from '@/features/onboarding';
 import { useLeaguesPage } from '@/pages/onboarding-leagues/model/useLeaguesPage';
 import { Button } from '@/shared/ui/Button/Button';
 import { Screen } from '@/shared/ui/Screen/Screen';
@@ -25,11 +24,16 @@ export const OnboardingLeaguesPage = () => {
     retryLoad,
     saveStatus,
     saveError,
+    hasMoreLeagues,
+    isSearchActive,
+    isLoadingMore,
+    loadMoreError,
+    loadMoreLeagues,
   } = useLeaguesPage();
 
   const handleContinue = async () => {
     if (!canContinue) return;
-    if (await saveAndContinue()) navigate('/onboarding/clubs');
+    if (await saveAndContinue()) navigate('/onboarding/clubs', { state: { fromOnboarding: true } });
   };
 
   return (
@@ -91,6 +95,24 @@ export const OnboardingLeaguesPage = () => {
                       </li>
                     ))}
                   </ul>
+                  {isSearchActive ? (
+                    <div className={styles.loadMoreBlock}>
+                      {loadMoreError ? (
+                        <p className={styles.stateMessage}>{loadMoreError}</p>
+                      ) : null}
+                      {hasMoreLeagues ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className={styles.loadMoreButton}
+                          disabled={isLoadingMore}
+                          onClick={() => void loadMoreLeagues()}
+                        >
+                          {isLoadingMore ? 'Загружаем…' : 'Показать ещё'}
+                        </Button>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </section>
               ) : null}
 

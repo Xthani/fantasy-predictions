@@ -15,10 +15,13 @@
 | 1 | `/onboarding/leagues` | `GET /api/leagues`, `PATCH /api/profiles/me` |
 | 2 | `/onboarding/clubs` | `GET /api/clubs`, `PATCH /api/profiles/me` |
 | 3 | `/matches` | `GET /api/matches`, `POST /api/predictions`, `GET /api/predictions/me` |
+| 4 | `/profile` | `GET /api/profiles/me`, `GET /api/predictions/me`, catalog lookups |
 
 **Сессия:** `localStorage` → `fp_accessToken`, заголовок `Authorization: Bearer …`.
 
-**Онбординг:** выбор лиг/клубов в `OnboardingProvider` (in-memory) + синхронизация с профилем через PATCH.
+**Онбординг:** local-first. Выбор лиг/клубов и факт первого прогноза сразу пишутся в `localStorage` через `OnboardingProvider`; PATCH профиля синхронизирует бэкенд в фоне. На reload guard восстанавливает состояние из локального storage и профиля; при logout / unauthenticated локальный прогресс очищается.
+
+**Пагинация:** `/api/leagues`, `/api/clubs`, `/api/matches` используют `offset/limit` + `pagination.hasMore`; клубы догружаются отдельно под каждой выбранной лигой.
 
 ---
 
@@ -54,6 +57,7 @@ E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
 | Onboarding | `features/onboarding/api/leagues.ts`, `clubs.ts` |
 | Matches | `features/match-feed/api/matches.ts` |
 | Predictions | `features/quick-prediction/api/predictions.ts` |
+| Profile | `pages/profile/page.tsx` |
 
 ---
 
@@ -61,7 +65,7 @@ E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
 
 Определяется продуктом. Кандидаты после Phase 1:
 
-- logout в UI, guard онбординга по `GET /api/profiles/me`
+- профиль: нормальная история прогнозов с названиями матчей (нужен backend contract: predictions with match snapshot или matches by ids)
 - фильтры лиг на ленте матчей
 - energy / official picks / game club (см. `PROJECT_ROADMAP.md`)
 

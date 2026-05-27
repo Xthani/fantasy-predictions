@@ -50,6 +50,7 @@ UI block → tech closure → API wiring → docs sync
 | `/onboarding/leagues` | Leagues | API |
 | `/onboarding/clubs` | Clubs | API |
 | `/matches` | Match feed + quick score | API |
+| `/profile` | Profile summary + saved predictions | API + local onboarding state |
 
 ---
 
@@ -59,6 +60,7 @@ UI block → tech closure → API wiring → docs sync
 |----------------|--------------|
 | Login + onboarding + match feed | Sprint 1–3 |
 | Quick Exact Score only | Sprint 4+ (energy, components, official) |
+| Local-first onboarding completion → profile | Full profile/game identity |
 | — | Sprint 5–9: profile rating, game club, virtual match, bots |
 
 ---
@@ -80,6 +82,7 @@ UI block → tech closure → API wiring → docs sync
 ### Sprint 3 — Match Feed
 
 - [x] List, cards, quick score *(Block A)*
+- [x] Offset pagination + profile CTA after first prediction
 - [ ] League filter chips, status UX (open/locked/finished)
 
 ### Sprint 4 — Prediction Core

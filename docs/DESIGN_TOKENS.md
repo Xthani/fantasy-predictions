@@ -15,7 +15,11 @@ See also `UX_NOTES.md` for principles and screen priorities.
 | `--color-bg-base` | `#0B0E12` | App background |
 | `--color-bg-elevated` | `#141A22` | Cards, bottom sheet |
 | `--color-bg-muted` | `#1C2430` | Secondary panels, chips |
+| `--color-bg-soft` | `rgba(255, 255, 255, 0.03)` | Subtle rows / profile cards |
+| `--color-bg-subtle` | `rgba(255, 255, 255, 0.04)` | Lightweight chips |
+| `--color-bg-overlay` | `rgba(0, 0, 0, 0.3)` | Crest/icon containers |
 | `--color-border` | `#2A3544` | Dividers, card outline |
+| `--color-border-subtle` | `rgba(255, 255, 255, 0.08)` | Soft outlines on dark cards |
 | `--color-text-primary` | `#F2F5F8` | Headings, primary labels |
 | `--color-text-secondary` | `#9AA8B8` | Meta, kickoff time, hints |
 | `--color-text-muted` | `#6B7A8C` | Placeholders, disabled |
@@ -24,6 +28,8 @@ See also `UX_NOTES.md` for principles and screen priorities.
 | `--color-gold` | `#C9A227` | Premium CTA, stepper active, key borders (reference style) |
 | `--color-gold-bright` | `#E8C547` | Gradient top stop for primary buttons |
 | `--color-gold-text` | `#1A1408` | Text on gold buttons |
+| `--color-gold-soft` | `rgba(201, 162, 39, 0.14)` | Muted gold score / badge background |
+| `--color-border-gold-subtle` | `rgba(201, 162, 39, 0.22)` | Muted gold border |
 | `--gradient-gold` | `linear-gradient(180deg, #E8C547 0%, #C9A227 100%)` | Main CTA (login, save prediction) |
 | `--color-success` | `#2DB87A` | Correct pick, positive form (muted, no flash) |
 | `--color-warning` | `#E6A23C` | Deadline soon, lock approaching |
@@ -72,6 +78,8 @@ Club-specific accents (jersey colors) are applied as `--color-club-accent` per s
 | `--radius-md` | 12px | Cards, inputs |
 | `--radius-lg` | 16px | Modals, bottom sheets |
 | `--shadow-card` | `0 4px 24px rgba(0, 0, 0, 0.35)` | Match cards, elevated panels |
+| `--shadow-floating` | `0 10px 24px rgba(0, 0, 0, 0.35)` | Secondary floating buttons |
+| `--shadow-inner-light` | `inset 0 1px 0 rgba(255, 255, 255, 0.06)` | Thin top highlight on dark controls |
 
 ---
 

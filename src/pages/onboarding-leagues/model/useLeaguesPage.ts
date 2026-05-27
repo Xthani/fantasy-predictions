@@ -1,44 +1,35 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchLeagues } from '@/features/onboarding/api/leagues';
-import { splitLeaguesByActive } from '@/features/onboarding/lib/filterLeagues';
-import { getLeaguesLoadErrorMessage } from '@/features/onboarding/lib/onboardingErrors';
-import { resolveLeagueSelection } from '@/features/onboarding/lib/leagueSelection';
-import { useOnboarding } from '@/features/onboarding/model/onboardingContext';
-import { getMyProfile, patchMyProfile } from '@/features/profile/api/profile';
-import { getProfileSaveErrorMessage } from '@/features/profile/lib/profileErrors';
+import {
+  fetchLeagues,
+  getLeaguesLoadErrorMessage,
+  resolveLeagueSelection,
+  splitLeaguesByActive,
+  useOnboarding,
+} from '@/features/onboarding';
+import { getProfileSaveErrorMessage, patchMyProfile } from '@/features/profile';
 import { useAsyncRequest } from '@/shared/hooks/useAsyncRequest';
 import type { League } from '@/shared/types/league';
+import type { PaginationMeta } from '@/shared/types/pagination';
 
 const SEARCH_DEBOUNCE_MS = 300;
+const DEFAULT_LIMIT = 6;
 
 export const useLeaguesPage = () => {
-  const { favoriteLeagues, setFavoriteLeagues, setFavoriteClubIds } = useOnboarding();
+  const { favoriteLeagues, setFavoriteLeagues } = useOnboarding();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [leaguesList, setLeaguesList] = useState<League[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(search), SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [search]);
-
-  const applyProfileSelection = useCallback(
-    (loadedLeagues: League[], favoriteLeagueIds: string[], favoriteClubIds: string[]) => {
-      const validIds = resolveLeagueSelection(favoriteLeagueIds, loadedLeagues);
-      setSelectedIds(validIds);
-      setFavoriteLeagues(
-        loadedLeagues
-          .filter((league) => validIds.includes(league.id))
-          .map((league) => ({ id: league.id, name: league.name })),
-      );
-      if (favoriteClubIds.length > 0) {
-        setFavoriteClubIds(favoriteClubIds);
-      }
-    },
-    [setFavoriteClubIds, setFavoriteLeagues],
-  );
 
   const syncSelectionWithCatalog = useCallback(
     (loadedLeagues: League[]) => {
@@ -53,29 +44,23 @@ export const useLeaguesPage = () => {
           loadedLeagues,
         );
       });
-
-      void (async () => {
-        try {
-          const profile = await getMyProfile();
-          if (profile.favoriteLeagueIds.length > 0) {
-            applyProfileSelection(
-              loadedLeagues,
-              profile.favoriteLeagueIds,
-              profile.favoriteClubIds,
-            );
-          }
-        } catch {
-          // Профиль ещё пустой — нормально для нового пользователя.
-        }
-      })();
     },
-    [applyProfileSelection, favoriteLeagues],
+    [favoriteLeagues],
   );
 
-  const loadLeagues = useCallback(() => fetchLeagues(debouncedSearch), [debouncedSearch]);
+  const loadLeagues = useCallback(async () => {
+    setLoadMoreError(null);
+    const { leagues, pagination } = await fetchLeagues({
+      search: debouncedSearch,
+      offset: 0,
+      limit: DEFAULT_LIMIT,
+    });
+    setPagination(pagination);
+    setLeaguesList(leagues);
+    return leagues;
+  }, [debouncedSearch]);
 
   const {
-    data: allLeagues,
     status: loadStatus,
     error: loadError,
     retry: retryLoad,
@@ -85,7 +70,33 @@ export const useLeaguesPage = () => {
     onSuccess: syncSelectionWithCatalog,
   });
 
-  const leagues = useMemo(() => allLeagues ?? [], [allLeagues]);
+  const leagues = useMemo(() => leaguesList, [leaguesList]);
+
+  const hasMoreLeagues = pagination?.hasMore ?? false;
+  const isSearchActive = debouncedSearch.trim().length > 0;
+
+  const loadMoreLeagues = useCallback(async () => {
+    if (loadStatus !== 'success') return;
+    if (!pagination?.hasMore) return;
+    if (isLoadingMore) return;
+
+    setIsLoadingMore(true);
+    setLoadMoreError(null);
+
+    try {
+      const { leagues: next, pagination: nextPagination } = await fetchLeagues({
+        search: debouncedSearch,
+        offset: pagination.offset + pagination.limit,
+        limit: pagination.limit,
+      });
+      setLeaguesList((current) => [...current, ...next]);
+      setPagination(nextPagination);
+    } catch (error) {
+      setLoadMoreError(getLeaguesLoadErrorMessage(error));
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [debouncedSearch, isLoadingMore, loadStatus, pagination]);
 
   const { active: activeLeagues, inactive: inactiveLeagues } = useMemo(
     () => splitLeaguesByActive(leagues),
@@ -111,19 +122,21 @@ export const useLeaguesPage = () => {
 
     setSaveStatus('saving');
     setSaveError(null);
+    setFavoriteLeagues(selectedLeagues);
+    setSaveStatus('idle');
 
-    try {
-      await patchMyProfile({
-        favoriteLeagueIds: selectedLeagues.map((league) => league.id),
-      });
-      setFavoriteLeagues(selectedLeagues);
-      setSaveStatus('idle');
-      return true;
-    } catch (error) {
-      setSaveStatus('error');
-      setSaveError(getProfileSaveErrorMessage(error));
-      return false;
-    }
+    void (async () => {
+      try {
+        await patchMyProfile({
+          favoriteLeagueIds: selectedLeagues.map((league) => league.id),
+        });
+      } catch (error) {
+        setSaveStatus('error');
+        setSaveError(getProfileSaveErrorMessage(error));
+      }
+    })();
+
+    return true;
   };
 
   const canContinue = loadStatus === 'success' && selectedIds.length > 0 && saveStatus !== 'saving';
@@ -144,5 +157,10 @@ export const useLeaguesPage = () => {
     retryLoad,
     saveStatus,
     saveError,
+    hasMoreLeagues,
+    isSearchActive,
+    isLoadingMore,
+    loadMoreError,
+    loadMoreLeagues,
   };
 };

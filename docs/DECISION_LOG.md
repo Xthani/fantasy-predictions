@@ -50,3 +50,11 @@ Superseded integration churn (mocks, old backends): [`archive/DECISION_LOG_ARCHI
 - **Context:** Phase 1 works; repo had duplicate backend docs and dead code.
 - **Decision:** No `BACKEND_*` / `MOCK_*` docs on frontend; no `shared/mocks/`; integration pointer only in `docs/INTEGRATION.md`; full guide stays in backend repo.
 - **Status:** Accepted (2026-05-27)
+
+---
+
+## Decision 023 — Local-first onboarding navigation
+
+- **Context:** Onboarding step transitions must not wait for profile PATCH/read-after-write consistency.
+- **Decision:** Store selected leagues, selected clubs, and first-prediction completion in localStorage through `OnboardingProvider`; sync backend profile/predictions separately. Guards may use backend data for recovery, but local state is authoritative for immediate step navigation. Local onboarding state is cleared when the app becomes unauthenticated.
+- **Status:** Accepted (2026-05-27)

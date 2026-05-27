@@ -7,6 +7,7 @@ Unified terms — use these names in code, docs, and UI copy (EN).
 | **Player** | Human user with profile, predictions, rating, club membership |
 | **Prediction** | Player's forecast for a real match, anchored on **Exact Score** |
 | **Exact Score** | Primary input: home and away goals (e.g. 2–1) |
+| **Local-first Onboarding** | Frontend flow where selected leagues/clubs and first-prediction completion are saved locally first, then synced to backend |
 | **Prediction Component** | Auto-derived market from Exact Score (outcome, totals, BTTS, etc.) |
 | **Energy** | 100 points per match to allocate across components |
 | **Defensive Style** | Energy bias toward safer components |

@@ -23,6 +23,11 @@
 - Live API: auth, profile, leagues, clubs, matches, predictions
 - Контракт: `fantasy-predictions-back` + `docs/INTEGRATION.md`
 - Fix: бесконечный fetch матчей (`mapError` в `useAsyncRequest`)
+- Frontend: матч-лента поддерживает пагинацию (`offset/limit` + «Показать ещё»)
+- Frontend: local-first онбординг (`localStorage` → быстрый переход, backend PATCH → sync)
+- Frontend: минимальный `/profile` с любимыми лигами/клубами и сохранёнными прогнозами
+- Tech closure: публичные `features/*/index.ts`; страницы больше не импортируют внутренности фич
+- Tech closure: local onboarding state очищается при logout / unauthenticated, профиль вынесен в page hook
 
 ---
 

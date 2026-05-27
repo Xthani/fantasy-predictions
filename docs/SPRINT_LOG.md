@@ -10,48 +10,34 @@
 
 ---
 
-## Block A — Fast Onboarding (mock-first)
+## Block A — Fast Onboarding UI
 
-**Status:** **Done** (2026-05-22)
-
-**Phases:** UI ✅ · Tech ✅ · Backend brief ✅
-
-### Achievement
-
-Demoable path: **Login → leagues → clubs → matches → Exact Score**.
-
-| Phase | Done |
-|-------|------|
-| UI/UX | 4 screens, search, multi-select, quick score sheet, toast, redirects |
-| Tech | ESLint, Prettier, mocks, build green |
-| Backend brief | `BACKEND_BRIEF.md` for future endpoints |
-
-### Demo path
-
-```bash
-npm run dev
-```
-
-Login (Google) → leagues → clubs → matches → save score.
-
-**Сброс:** см. `CURRENT_STATE.md` (ключи storage).
+**Status:** **Done** (2026-05-22) — экраны и UX; моки **удалены** 2026-05-24.
 
 ---
 
-## Partial API integration (2026-05-22)
+## Partial API integration
 
-**Status:** **In progress** — auth + leagues on real backend
+**Status:** **Waiting for backend** (2026-05-24)
 
 | Endpoint | Frontend |
 |----------|----------|
-| `POST /api/auth/google` (+ email auth) | ✅ `features/auth/api/auth.ts` |
-| `GET /api/leagues` | ✅ `features/onboarding/api/leagues.ts` |
-| `GET /api/favorite-clubs` | ⏳ mocks; empty UX on clubs step |
-| `PUT /api/players/me/preferences` | ⏳ `fp_preferences` local |
-| `GET /api/matches/week` | ⏳ mocks |
-| predictions | ⏳ localStorage |
+| `POST /api/auth/google` (+ email auth) | ✅ |
+| `GET /api/auth/me` | ✅ |
+| `GET /api/leagues` | ✅ |
+| `GET /api/profiles/me` | ✅ |
+| `PATCH /api/profiles/me` | ✅ — leagues + clubs |
+| `GET /api/teams?leagueIds=` | ✅ — clubs step |
+| `GET /api/matches` | ⏳ waiting — matches step stub |
+| predictions | ⏳ waiting |
 
-**Refactor:** shared `useAsyncRequest`, `getApiErrorMessage`, feature `*Errors.ts`, `LeagueCrest`, prefs `favoriteLeagues` (id+name for UI labels).
+### Frontend cleanup (2026-05-24)
+
+- Removed `shared/mocks/` entirely
+- Removed localStorage (`fp_preferences`, `fp_quick_predictions`, token keys)
+- Auth tokens → cookies (`authCookies.ts`)
+- Onboarding state → `OnboardingProvider` (in-memory only)
+- Clubs/matches pages → «ждём бэкенд» stubs
 
 **Source of truth:** [`CURRENT_STATE.md`](CURRENT_STATE.md)
 
@@ -64,9 +50,9 @@ Login (Google) → leagues → clubs → matches → save score.
 
 ## Sprint 1 — App Shell & UI Foundation
 
-**Status:** In progress (Block A UI done; partial API done)
+**Status:** In progress — auth + leagues live; **blocked on backend** for clubs, matches, profile.
 
-**Next:** see `CURRENT_STATE.md` — favorite-clubs API first when backend ready.
+**Next:** wire endpoints as backend ships them; see `CURRENT_STATE.md`.
 
 ---
 

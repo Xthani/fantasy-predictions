@@ -4,21 +4,21 @@
 
 **Source of truth:** [`CURRENT_STATE.md`](CURRENT_STATE.md).
 
+**Обновлено:** 2026-05-24. **Статус:** ждём бэкенд на шагах 3–6.
+
 | Method | Path | Frontend |
 |--------|------|----------|
 | POST | `/api/auth/google` | ✅ Wired |
-| POST | `/api/auth/login`, `/signup`, `/refresh`, `/logout`, GET `/me` | ✅ Wired (if backend responds) |
+| POST | `/api/auth/login`, `/signup`, `/refresh`, `/logout` | ✅ Wired (if backend responds) |
+| GET | `/api/auth/me` | ✅ Wired — restore session |
 | GET | `/api/leagues` | ✅ Wired |
-| GET | `/api/favorite-clubs` | ⏳ Planned — mocks on UI |
-| PUT | `/api/players/me/preferences` | ⏳ Planned — `fp_preferences` local |
-| GET | `/api/matches/week` | ⏳ Planned — mocks |
-| POST/GET | `/api/predictions` | ⏳ Planned — localStorage |
+| GET | `/api/profiles/me` | ✅ Wired — hydrate selection |
+| PATCH | `/api/profiles/me` | ✅ Wired — save `favoriteLeagueIds` on leagues step |
+| GET | `/api/teams?leagueIds=&name=` | ✅ Wired — clubs onboarding |
+| GET | `/api/matches` | ⏳ Waiting — match feed |
+| POST/GET | `/api/predictions` | ⏳ Waiting |
 
-**Mocks** (`src/shared/mocks/`): clubs, matches — until backend ready.
-
-**Draft / future endpoints:** `BACKEND_BRIEF.md`, sections below.
-
-Entity shapes (mocks): `MOCK_DATA.md`.
+**Mocks removed.** No localStorage for onboarding or predictions.
 
 ---
 
@@ -27,52 +27,39 @@ Entity shapes (mocks): `MOCK_DATA.md`.
 | Item | Rule |
 |------|------|
 | Base URL | `VITE_API_BASE_URL` (no trailing `/api`) |
-| Auth | `Authorization: Bearer <accessToken>`; public routes: `auth: false` in `httpRequest` |
+| Auth tokens | Cookies `fp_access_token`, `fp_refresh_token` |
+| API requests | `credentials: 'include'` + `Authorization: Bearer` from cookie |
 | Format | JSON |
 | Errors | `{ "code"?: string, "message": string \| string[] }` → `ApiError` |
 | Ngrok | Header `ngrok-skip-browser-warning: true` when host contains `ngrok-free.dev` |
 
 ---
 
-## Future API Draft
+## Live endpoints
 
-### Auth (onboarding)
+### Auth
 
 #### `POST /api/auth/google`
 
-**Purpose:** Exchange Google ID token for session JWT.
-
 **Body:** `{ "idToken": string }`
 
-**Response:** `{ "accessToken": string, "player": Player }`
+**Response:** `{ "accessToken": string, "refreshToken": string, "user": AuthUser }`
+
+Tokens saved to cookies on frontend. User kept in React state.
 
 ---
 
-#### `POST /api/auth/register`
+#### `GET /api/auth/me`
 
-**Purpose:** Manual account (planned after Google-only launch).
-
-**Body:** `{ "email": string, "password": string, "displayName": string }`
-
-**Response:** same as Google login.
+**Purpose:** Restore user on page reload when cookies present.
 
 ---
 
-#### `POST /api/auth/login`
-
-**Purpose:** Email/password sign-in (planned).
-
-**Body:** `{ "email": string, "password": string }`
-
----
-
-### Player preferences (fast onboarding)
+### Leagues
 
 #### `GET /api/leagues`
 
-**Purpose:** List leagues for onboarding (active + coming soon).
-
-**Query:** `search?`, `countryId?` (optional; frontend filters client-side today)
+**Query:** `search?` (optional; frontend also filters client-side today)
 
 **Response `200` (backend snake_case):**
 
@@ -94,68 +81,79 @@ Entity shapes (mocks): `MOCK_DATA.md`.
 }
 ```
 
-**Frontend domain `League`:** `id` ← `league_id`, `name` ← `league_name`, `countryName` ← `country_name`, `countryCode` ← `country_id`, `isActive` ← `is_active`, `crestUrl` ← `league_logo` || `country_logo`, `season` ← `league_season`. Sorted by `display_order`.
+**Frontend domain `League`:** `id` ← `league_id`, `name` ← `league_name`, `countryName` ← `country_name`, `countryCode` ← `country_id`, `isActive` ← `is_active`, `crestUrl` ← `league_logo` || `country_logo`.
+
+**Expected from backend:** 5 featured active leagues without search; full catalog via `search`.
 
 ---
 
-#### `GET /api/favorite-clubs`
+## Waiting for backend
 
-**Purpose:** Favorite clubs picker (onboarding). **Not** game squad clubs.
+### Profile
 
-**Query:** `leagueIds` (required, array), `search?`
+#### `GET /api/profiles/me`
 
-**Response:** `{ "clubs": FavoriteClub[] }` — `id`, `name`, `shortName`, `leagueId`, `crestUrl?`
-
----
-
-#### `PUT /api/players/me/preferences`
-
-**Purpose:** Save favorite leagues + clubs after onboarding.
-
-**Body:**
+**Response (camelCase):**
 
 ```json
 {
-  "favoriteLeagueIds": ["league_la_liga"],
-  "favoriteClubIds": ["club_real_madrid"]
+  "displayName": "Ivan",
+  "countryCode": "KG",
+  "avatarAssetId": "uuid-or-null",
+  "favoriteLeagueIds": ["302", "152"],
+  "favoriteClubIds": []
 }
 ```
+
+Frontend also accepts snake_case variants (`favorite_league_ids`, etc.).
+
+#### `PATCH /api/profiles/me`
+
+Partial update. **Wired on leagues step:**
+
+```json
+{
+  "favoriteLeagueIds": ["302", "152"]
+}
+```
+
+**Planned on clubs step:**
+
+```json
+{
+  "favoriteClubIds": ["76", "80"]
+}
+```
+
+Other fields: `displayName`, `countryCode`, `avatarAssetId` — reserved for profile screen later.
+
+---
+
+### Teams (onboarding)
+
+#### `GET /api/teams`
+
+**Wired on clubs step.**
+
+| Param | Used | Notes |
+|-------|------|-------|
+| `leagueIds` | ✅ | Id выбранных лиг; league mode → 2 команды на лигу |
+| `name` | ✅ | Поиск по имени (debounce 300ms) |
+| `ids` | ❌ | Id **команд**, не лиг — для нашего флоу не нужен |
+| `limit`, `offset` | ❌ | Только без league mode |
+| `allTeams` | ❌ | По умолчанию `false` → 2 на лигу |
+
+**Response:** `{ "teams": [{ "team_key", "team_name", "team_badge", ... }] }`
+
+Frontend maps: `id` ← `team_key`, `crestUrl` ← `team_badge`, `leagueId` из запроса (по одному `leagueIds` на запрос).
 
 ---
 
 ### Matches
 
-#### `GET /api/matches/week`
+#### `GET /api/matches?leagueIds=...&clubIds=...&limit=10`
 
-**Purpose:** Weekly match feed for player's favorite leagues.
-
-**Query:** `leagueIds` (array, required), `week?`, `from?`, `to?`
-
-**Response (draft):**
-
-```json
-{
-  "week": 12,
-  "matches": [
-    {
-      "id": "m_1",
-      "homeTeam": "Madrid Crown",
-      "awayTeam": "Sevilla Reds",
-      "kickoffAt": "2026-05-25T18:00:00Z",
-      "status": "open",
-      "competition": "La Liga"
-    }
-  ]
-}
-```
-
----
-
-#### `GET /api/matches/:id`
-
-**Purpose:** Single match for prediction screen.
-
-**Response (draft):** match + lock state + user prediction if any.
+**Rules:** Only matches of selected clubs in selected leagues; sorted by `kickoffAt ASC`; max 10.
 
 ---
 
@@ -163,116 +161,17 @@ Entity shapes (mocks): `MOCK_DATA.md`.
 
 #### `POST /api/predictions`
 
-**Purpose:** Create prediction (Exact Score + style + energy split).
-
-**Body (draft):**
-
-```json
-{
-  "matchId": "m_1",
-  "homeScore": 2,
-  "awayScore": 1
-}
-```
-
-**Block A:** scores only. **Later:** `style`, `energyDistribution`.
-
-**Response:** `{ "id", "matchId", "homeScore", "awayScore", "savedAt" }`
-
----
+**Body:** `{ "matchId": string, "homeScore": number, "awayScore": number }`
 
 #### `GET /api/predictions/me`
 
-**Purpose:** List current Player predictions (official + shadow flags).
+List current player predictions for match cards.
 
 ---
 
-#### `PATCH /api/predictions/:id`
+## Future API Draft
 
-**Purpose:** Update before deadline (4h rule). Rejected if locked.
-
----
-
-### Official Picks
-
-#### `POST /api/league-picks`
-
-**Purpose:** Mark predictions as **Official Predictions** for the round.
-
-**Body (draft):**
-
-```json
-{
-  "predictionIds": ["p_1", "p_2"],
-  "order": [1, 2]
-}
-```
-
-**Response:** confirmed official list, shadow remainder.
-
----
-
-### Players
-
-#### `GET /api/players/me`
-
-**Purpose:** Current Player profile, **Official Rating**, form, stats.
-
----
-
-#### `GET /api/players/:id`
-
-**Purpose:** Public Player card (club, rating, form).
-
----
-
-### Clubs (game — NOT Block A)
-
-#### `GET /api/clubs`
-
-**Purpose:** List joinable game clubs (starter + bot). Distinct from `GET /api/favorite-clubs`.
-
----
-
-#### `GET /api/clubs/:id`
-
-**Purpose:** Club detail — squad, next **Virtual Match**, division.
-
----
-
-#### `POST /api/clubs/:id/apply`
-
-**Purpose:** Apply to join club. **Bot Club** may auto-accept.
-
-**Body:** `{ "message"?: string }`
-
----
-
-### Virtual Matches
-
-#### `GET /api/virtual-matches/current`
-
-**Purpose:** Active virtual fixture for Player's club — lineup deadline, Team Energy, opponent.
-
----
-
-### Divisions
-
-#### `GET /api/divisions/:id/table`
-
-**Purpose:** League table — clubs, points, played, virtual W/D/L.
-
-**Response (draft):**
-
-```json
-{
-  "divisionId": "d_1",
-  "season": "2025-26",
-  "rows": [
-    { "clubId": "c_1", "played": 5, "won": 3, "drawn": 1, "lost": 1, "points": 10 }
-  ]
-}
-```
+See `BACKEND_BRIEF.md` for full game MVP endpoints (official picks, game clubs, virtual match, etc.).
 
 ---
 
@@ -280,4 +179,3 @@ Entity shapes (mocks): `MOCK_DATA.md`.
 
 - Real-money wallet
 - Bookmaker odds feed
-- Internal transfer chat (see `DECISION_LOG.md` Decision 006)

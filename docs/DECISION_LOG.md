@@ -154,3 +154,12 @@ Format: **Decision NNN** — title, Context, Decision, Reason, Status.
 - **Decision:** Wire each endpoint in `features/*/api/` when backend is ready; keep mocks for other screens. Maintain **`docs/CURRENT_STATE.md`** as the single «what works / what next» file. Save `favoriteLeagues` (id+name) in `fp_preferences` for labels on mock-only steps.
 - **Reason:** Clear handoff for daily planning; honest UX when clubs/matches still mock (API league ids ≠ mock club ids).
 - **Status:** Accepted (2026-05-22)
+
+---
+
+## Decision 018 — Remove mocks and localStorage; cookies for auth only
+
+- **Context:** Mixed mock/API ids and localStorage made testing confusing. Backend not ready for clubs/matches/profile.
+- **Decision:** Delete `shared/mocks/` and all localStorage. Auth tokens in cookies (`authCookies.ts`). Onboarding in `OnboardingProvider` (in-memory). Clubs/matches = «waiting for backend» stubs.
+- **Reason:** Only auth + leagues are live; no fake data polluting real API flow.
+- **Status:** Accepted (2026-05-24)

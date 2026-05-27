@@ -1,64 +1,123 @@
-import { useMemo, useState } from 'react';
-import {
-  getLeagueNameById,
-  getPreferences,
-  setFavoriteClubIds,
-} from '@/features/onboarding/lib/preferencesStorage';
-import { normalizeSearchQuery } from '@/shared/lib/normalizeSearchQuery';
-import { getClubsByLeagueIds } from '@/shared/mocks/favoriteClubs';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { fetchTeamsByLeagueIds } from '@/features/onboarding/api/teams';
+import { getTeamsLoadErrorMessage } from '@/features/onboarding/lib/onboardingErrors';
+import { useOnboarding } from '@/features/onboarding/model/onboardingContext';
+import { getMyProfile, patchMyProfile } from '@/features/profile/api/profile';
+import { getProfileSaveErrorMessage } from '@/features/profile/lib/profileErrors';
+import { useAsyncRequest } from '@/shared/hooks/useAsyncRequest';
+import type { FavoriteClub } from '@/shared/types/favoriteClub';
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 export const useClubsPage = () => {
-  const { favoriteLeagueIds, favoriteClubIds: savedClubIds } = getPreferences();
+  const { favoriteLeagues, favoriteClubIds: savedClubIds, setFavoriteClubIds } = useOnboarding();
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>(savedClubIds);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'error'>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const clubsInLeagues = useMemo(() => getClubsByLeagueIds(favoriteLeagueIds), [favoriteLeagueIds]);
+  const leagueIds = useMemo(() => favoriteLeagues.map((league) => league.id), [favoriteLeagues]);
 
-  const query = normalizeSearchQuery(search);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(search), SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [search]);
 
-  const filteredClubs = useMemo(() => {
-    if (!query) return clubsInLeagues;
-    return clubsInLeagues.filter(
-      (club) =>
-        normalizeSearchQuery(club.name).includes(query) ||
-        normalizeSearchQuery(club.shortName).includes(query),
-    );
-  }, [clubsInLeagues, query]);
+  const loadTeams = useCallback(
+    () => fetchTeamsByLeagueIds(leagueIds, debouncedSearch),
+    [debouncedSearch, leagueIds],
+  );
+
+  const {
+    data: clubs,
+    status: loadStatus,
+    error: loadError,
+    retry: retryLoad,
+  } = useAsyncRequest({
+    request: loadTeams,
+    mapError: getTeamsLoadErrorMessage,
+  });
+
+  useEffect(() => {
+    if (leagueIds.length === 0) return;
+
+    let cancelled = false;
+
+    const hydrateFromProfile = async () => {
+      try {
+        const profile = await getMyProfile();
+        if (cancelled || profile.favoriteClubIds.length === 0) return;
+        setSelectedIds(profile.favoriteClubIds);
+        setFavoriteClubIds(profile.favoriteClubIds);
+      } catch {
+        // Профиль без клубов — нормально для первого прохода.
+      }
+    };
+
+    void hydrateFromProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [leagueIds, setFavoriteClubIds]);
+
+  const clubsInLeagues = useMemo(() => clubs ?? [], [clubs]);
 
   const groupedByLeague = useMemo(() => {
-    const groups = new Map<string, typeof filteredClubs>();
-    for (const club of filteredClubs) {
+    const groups = new Map<string, FavoriteClub[]>();
+    for (const club of clubsInLeagues) {
       const list = groups.get(club.leagueId) ?? [];
       list.push(club);
       groups.set(club.leagueId, list);
     }
-    return favoriteLeagueIds
-      .filter((id) => groups.has(id))
-      .map((leagueId) => ({
-        leagueId,
-        leagueName: getLeagueNameById(leagueId),
-        clubs: groups.get(leagueId) ?? [],
-      }));
-  }, [filteredClubs, favoriteLeagueIds]);
 
-  const isCatalogUnavailable = clubsInLeagues.length === 0;
-  const isSearchEmpty = !isCatalogUnavailable && filteredClubs.length === 0;
-  const hasLeagues = favoriteLeagueIds.length > 0;
+    return favoriteLeagues
+      .filter((league) => groups.has(league.id))
+      .map((league) => ({
+        leagueId: league.id,
+        leagueName: league.name,
+        clubs: groups.get(league.id) ?? [],
+      }));
+  }, [clubsInLeagues, favoriteLeagues]);
+
+  const isCatalogUnavailable =
+    loadStatus === 'success' && leagueIds.length > 0 && clubsInLeagues.length === 0;
+
+  const isSearchEmpty =
+    loadStatus === 'success' && !isCatalogUnavailable && groupedByLeague.length === 0;
 
   const toggleClub = (clubId: string) => {
+    setSaveError(null);
     setSelectedIds((prev) =>
       prev.includes(clubId) ? prev.filter((id) => id !== clubId) : [...prev, clubId],
     );
   };
 
-  const saveAndContinue = () => {
-    setFavoriteClubIds(selectedIds);
-    return true;
+  const saveAndContinue = async (): Promise<boolean> => {
+    if (selectedIds.length === 0) return false;
+
+    setSaveStatus('saving');
+    setSaveError(null);
+
+    try {
+      await patchMyProfile({ favoriteClubIds: selectedIds });
+      setFavoriteClubIds(selectedIds);
+      setSaveStatus('idle');
+      return true;
+    } catch (error) {
+      setSaveStatus('error');
+      setSaveError(getProfileSaveErrorMessage(error));
+      return false;
+    }
   };
 
-  const canContinue = selectedIds.length > 0;
+  const canContinue =
+    loadStatus === 'success' && selectedIds.length > 0 && saveStatus !== 'saving';
 
   return {
+    hasLeagues: favoriteLeagues.length > 0,
+    leagueCount: favoriteLeagues.length,
     search,
     setSearch,
     selectedIds,
@@ -66,10 +125,13 @@ export const useClubsPage = () => {
     groupedByLeague,
     isCatalogUnavailable,
     isSearchEmpty,
-    hasLeagues,
     canContinue,
     saveAndContinue,
     selectedCount: selectedIds.length,
-    leagueCount: favoriteLeagueIds.length,
+    loadStatus,
+    loadError,
+    retryLoad,
+    saveStatus,
+    saveError,
   };
 };

@@ -7,6 +7,9 @@ type ClubListItemProps = {
   onToggle: (clubId: string) => void;
 };
 
+const getFallbackLabel = (club: FavoriteClub): string =>
+  club.name.trim().charAt(0).toUpperCase() || '?';
+
 export const ClubListItem = ({ club, selected, onToggle }: ClubListItemProps) => (
   <button
     type="button"
@@ -15,7 +18,13 @@ export const ClubListItem = ({ club, selected, onToggle }: ClubListItemProps) =>
     aria-pressed={selected}
   >
     <span className={styles.crest} aria-hidden>
-      {club.crestEmoji}
+      {club.crestUrl ? (
+        <img className={styles.crestImg} src={club.crestUrl} alt="" loading="lazy" />
+      ) : club.crestEmoji ? (
+        <span className={styles.crestEmoji}>{club.crestEmoji}</span>
+      ) : (
+        <span className={styles.crestFallback}>{getFallbackLabel(club)}</span>
+      )}
     </span>
     <span className={styles.info}>
       <p className={styles.name}>{club.name}</p>

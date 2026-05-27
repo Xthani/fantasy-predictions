@@ -99,7 +99,7 @@ import { App } from '@/App';
 
 | Файл | Содержание |
 |------|------------|
-| **`CURRENT_STATE.md`** | **Что работает на API, что на моках, что делать дальше** |
+| **`CURRENT_STATE.md`** | **Что работает на API, что ждём от бэка** |
 | `PROJECT_VISION.md` | Видение продукта |
 | `PROJECT_ROADMAP.md` | Roadmap, Block A vs Sprint 1–9 |
 | `DEVELOPMENT_WORKFLOW.md` | Ритм: UI → tech → backend brief |
@@ -107,7 +107,7 @@ import { App } from '@/App';
 | `BACKEND_BRIEF.md` | Спека для бэка (будущие ручки) |
 | `DESIGN_TOKENS.md` | Дизайн-токены (тёмная тема) |
 | `ARCHITECTURE.md` | FSD-light: слои, импорты, решения проекта |
-| `MOCK_DATA.md` | План мок-данных для MVP |
+| `MOCK_DATA.md` | ~~План мок-данных~~ — **deprecated**, моки удалены |
 | `GAME_RULES.md` | Игровые правила |
 
 **Текущий статус:** см. [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md).
@@ -121,10 +121,10 @@ npm run dev
 
 1. [http://localhost:3000/login](http://localhost:3000/login) → **Google** (API)
 2. Лиги → **Далее** (API)
-3. Клубы — моки; после лиг из API список пуст до ручки favorite-clubs (см. `CURRENT_STATE.md`)
-4. Матчи + quick score — моки + `fp_quick_predictions`
+3. Клубы — **заглушка**, ждём API команд
+4. Матчи — **заглушка**, ждём API матчей
 
-Сброс storage: `CURRENT_STATE.md`.
+Auth-токены в cookies. Онбординг — только in-memory state (сбрасывается при reload).
 
 ## Скрипты npm
 

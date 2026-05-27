@@ -25,7 +25,7 @@ This file records **project-specific** choices and the **exception registry**. U
 | i18n | **Single-language** for MVP — short UI strings in JSX allowed; no i18n library at start |
 | UI language | Russian for user-facing copy (consistent across UI; no mixed EN toasts) |
 | Styles (Sprint 1+) | CSS variables in `app/styles/tokens.css` per `DESIGN_TOKENS.md`; SCSS Modules with **camelCase** class names when introduced |
-| HTTP / API | Transport only in `shared/api/`; domain calls in `features/<name>/api/`; mocks in `shared/mocks/` per `MOCK_DATA.md` |
+| HTTP / API | Transport only in `shared/api/`; domain calls in `features/<name>/api/` |
 | Data flow | `pages` → `features` (via `index.ts` barrel when required) → `shared` |
 
 ---
@@ -39,7 +39,7 @@ src/
   app/           # providers, layout, styles (tokens.css), App.tsx, main.tsx
   pages/         # route pages (thin orchestration)
   features/      # business slices (api / model / ui / index.ts)
-  shared/        # ui, hooks, utils, api (transport), mocks, types
+  shared/        # ui, hooks, utils, api (transport), types
 ```
 
 Current template (pre–Sprint 1): flat `main.tsx`, `App.tsx` at `src/` root — migrate into `app/` when implementing the shell.
@@ -63,8 +63,8 @@ pages    ← leaf nodes; never imported by other layers
 
 Per `MOCK_DATA.md`:
 
-- Static mock data lives in `shared/mocks/`.
-- Sprint 1: feature `api/` modules or page orchestration may read mocks; replace with `shared/api` + real endpoints later without moving domain types out of features.
+- Screens without API show «waiting for backend» stubs; wire `features/<name>/api/` when backend ships.
+- Sprint 1: feature `api/` modules call `shared/api/httpClient`; onboarding state in `OnboardingProvider` (in-memory).
 
 ---
 
@@ -92,6 +92,5 @@ _None yet._ When adding an exception, use this format:
 ## Related docs
 
 - `DESIGN_TOKENS.md` — visual tokens → `app/styles/tokens.css`
-- `MOCK_DATA.md` — mock entities and `shared/mocks/` layout
-- `API_CONTRACT.md` — endpoint shapes when leaving mocks
+- `API_CONTRACT.md` — endpoint shapes (live + planned)
 - `DECISION_LOG.md` — Decision 012 (FSD-light adoption)

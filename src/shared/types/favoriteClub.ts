@@ -3,5 +3,6 @@ export type FavoriteClub = {
   name: string;
   leagueId: string;
   shortName: string;
-  crestEmoji: string;
+  crestUrl?: string;
+  crestEmoji?: string;
 };

@@ -22,16 +22,21 @@ export const OnboardingClubsPage = () => {
     saveAndContinue,
     selectedCount,
     leagueCount,
+    loadStatus,
+    loadError,
+    retryLoad,
+    saveStatus,
+    saveError,
   } = useClubsPage();
 
   if (!hasLeagues) {
     return <Navigate to="/onboarding/leagues" replace />;
   }
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!canContinue) return;
-    saveAndContinue();
-    navigate('/matches');
+    const saved = await saveAndContinue();
+    if (saved) navigate('/matches');
   };
 
   return (
@@ -42,10 +47,16 @@ export const OnboardingClubsPage = () => {
       footer={
         <>
           <p className={styles.selectionHint}>
-            {selectedCount > 0 ? `Выбрано: ${selectedCount}` : 'Выбери хотя бы один клуб'}
+            {saveStatus === 'saving'
+              ? 'Сохраняем выбор…'
+              : saveError
+                ? saveError
+                : selectedCount > 0
+                  ? `Выбрано: ${selectedCount}`
+                  : 'Выбери хотя бы один клуб'}
           </p>
-          <Button fullWidth disabled={!canContinue} onClick={handleContinue}>
-            К матчам
+          <Button fullWidth disabled={!canContinue} onClick={() => void handleContinue()}>
+            {saveStatus === 'saving' ? 'Сохранение…' : 'К матчам'}
           </Button>
           <OnboardingStepper current={2} total={3} />
           <Link className={styles.backLink} to="/onboarding/leagues">
@@ -54,41 +65,54 @@ export const OnboardingClubsPage = () => {
         </>
       }
     >
-      <SearchField value={search} onChange={setSearch} placeholder="Поиск клуба" />
+      {loadStatus === 'loading' ? (
+        <p className={styles.stateMessage}>Загружаем клубы…</p>
+      ) : null}
 
-      {isCatalogUnavailable ? (
-        <div className={styles.catalogNotice}>
-          <p className={styles.empty}>
-            Клубы для выбранных лиг появятся, когда бэкенд отдаст каталог команд. Сейчас
-            подключены только лиги из API.
-          </p>
-          <p className={styles.hint}>
-            Следующий шаг — каталог клубов с бэкенда для выбранных лиг.
-          </p>
+      {loadStatus === 'error' ? (
+        <div className={styles.stateBlock}>
+          <p className={styles.stateMessage}>{loadError}</p>
+          <Button type="button" onClick={retryLoad}>
+            Повторить
+          </Button>
         </div>
-      ) : isSearchEmpty ? (
-        <p className={styles.empty}>Ничего не найдено. Попробуй другой запрос.</p>
-      ) : (
-        groupedByLeague.map(({ leagueId, leagueName, clubs }) => (
-          <section key={leagueId} className={styles.leagueSection}>
-            <h2 className={styles.sectionLabel}>
-              <span className={styles.sectionBar} />
-              {leagueName}
-            </h2>
-            <ul className={styles.list}>
-              {clubs.map((club) => (
-                <li key={club.id}>
-                  <ClubListItem
-                    club={club}
-                    selected={selectedIds.includes(club.id)}
-                    onToggle={toggleClub}
-                  />
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))
-      )}
+      ) : null}
+
+      {loadStatus === 'success' ? (
+        <>
+          <SearchField value={search} onChange={setSearch} placeholder="Поиск клуба" />
+
+          {isCatalogUnavailable ? (
+            <div className={styles.catalogNotice}>
+              <p className={styles.empty}>
+                Для выбранных лиг бэкенд не вернул клубы. Проверь, что лиги сохранены в профиле.
+              </p>
+            </div>
+          ) : isSearchEmpty ? (
+            <p className={styles.empty}>Ничего не найдено. Попробуй другой запрос.</p>
+          ) : (
+            groupedByLeague.map(({ leagueId, leagueName, clubs }) => (
+              <section key={leagueId} className={styles.leagueSection}>
+                <h2 className={styles.sectionLabel}>
+                  <span className={styles.sectionBar} />
+                  {leagueName}
+                </h2>
+                <ul className={styles.list}>
+                  {clubs.map((club) => (
+                    <li key={club.id}>
+                      <ClubListItem
+                        club={club}
+                        selected={selectedIds.includes(club.id)}
+                        onToggle={toggleClub}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))
+          )}
+        </>
+      ) : null}
     </Screen>
   );
 };

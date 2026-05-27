@@ -105,6 +105,7 @@ const requestRaw = async (path: string, options: RequestOptions = {}): Promise<R
   return fetch(resolveUrl(path), {
     method: options.method ?? 'GET',
     headers,
+    credentials: 'include',
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
 };

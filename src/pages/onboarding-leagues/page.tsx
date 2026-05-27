@@ -23,12 +23,14 @@ export const OnboardingLeaguesPage = () => {
     loadStatus,
     loadError,
     retryLoad,
+    saveStatus,
+    saveError,
   } = useLeaguesPage();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!canContinue) return;
-    saveAndContinue();
-    navigate('/onboarding/clubs');
+    const saved = await saveAndContinue();
+    if (saved) navigate('/onboarding/clubs');
   };
 
   return (
@@ -39,10 +41,16 @@ export const OnboardingLeaguesPage = () => {
       footer={
         <>
           <p className={styles.selectionHint}>
-            {selectedCount > 0 ? `Выбрано: ${selectedCount}` : 'Выбери хотя бы одну активную лигу'}
+            {saveStatus === 'saving'
+              ? 'Сохраняем выбор…'
+              : saveError
+                ? saveError
+                : selectedCount > 0
+                  ? `Выбрано: ${selectedCount}`
+                  : 'Выбери хотя бы одну активную лигу'}
           </p>
-          <Button fullWidth disabled={!canContinue} onClick={handleContinue}>
-            Далее
+          <Button fullWidth disabled={!canContinue} onClick={() => void handleContinue()}>
+            {saveStatus === 'saving' ? 'Сохранение…' : 'Далее'}
           </Button>
           <OnboardingStepper current={1} total={3} />
         </>

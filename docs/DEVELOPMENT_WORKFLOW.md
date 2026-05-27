@@ -6,36 +6,31 @@
 
 ---
 
-## Rhythm (per block)
+## Current phase: waiting for backend
 
-```text
-1. UI/UX block     → touchable screens on mocks (demoable product slice)
-2. Tech closure    → lint, format, small refactors, barrels, docs sync
-3. Backend pack    → large prompt / contract brief for API (only when UI + tech are stable)
-```
+Auth + leagues работают на API. Клубы, матчи, profile PUT — **заглушки на фронте**, ждём ручки.
 
-Do **not** mix heavy infra (ESLint, big refactors) into the middle of a UI block — it slows feedback and creates throwaway work.
-
-Do **not** write the full backend brief before the UI path is walked end-to-end — contracts come from real screens.
+**Моки удалены.** localStorage не используется (кроме cookies для JWT).
 
 ---
 
-## Block naming
+## Rhythm (per block)
 
-| Block | Product slice | Backend |
-|-------|---------------|---------|
-| **A** | Fast onboarding: login → leagues → clubs → matches → quick Exact Score | UI done; **auth + leagues on API**; rest mocks until backend |
-| **B+** | Tabs, full prediction, profile, game loop | Per `PROJECT_ROADMAP` |
-
-`BACKEND_BRIEF.md` describes **целевые** ручки для бэка, не обязательный полный чеклист на сегодня.
+```text
+1. UI/UX block     → touchable screens (stub or API)
+2. Tech closure    → lint, format, small refactors, docs sync
+3. Backend pack    → contract brief for API
+4. Wire endpoint   → features/<name>/api/ + hook + update CURRENT_STATE.md
+```
 
 ---
 
 ## Frontend-led rules
 
 - New dependencies only when a **visible** screen or shared UI needs them.
-- Mocks in `shared/mocks/` for screens **без готового API**; replace with `features/<name>/api/` + `httpClient` when backend ships.
-- After each integration slice: update **`CURRENT_STATE.md`**, `SPRINT_LOG.md`, `API_CONTRACT.md` (live section).
+- **No mocks** — screens without API show honest «waiting for backend» stubs.
+- Onboarding state lives in `OnboardingProvider` (in-memory); auth tokens in cookies.
+- After each integration slice: update **`CURRENT_STATE.md`**, `SPRINT_LOG.md`, `API_CONTRACT.md`.
 - Russian UI copy in components; English in `/docs`.
 
 ---
@@ -52,8 +47,14 @@ Do **not** write the full backend brief before the UI path is walked end-to-end 
 
 ## Current focus
 
-**Done:** Block A UI, auth API, leagues API, refactor aligned with auth patterns.
+**Done:** auth API (cookies), leagues API, cleanup (no mocks, no localStorage).
 
-**Next (when backend ready):** `GET /api/favorite-clubs` — see `CURRENT_STATE.md`.
+**Waiting for backend:**
 
-**Optional without backend:** tab shell, match status UI, prediction depth (Sprint 4).
+1. `GET /api/leagues` — correct 5 featured leagues + search
+2. `PUT /api/players/me` — favorite leagues/clubs
+3. `GET /api/teams?leagueIds=`
+4. `GET /api/matches`
+5. predictions API
+
+See `CURRENT_STATE.md` for priority order.

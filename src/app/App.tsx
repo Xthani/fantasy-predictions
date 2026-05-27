@@ -6,16 +6,12 @@ import { LoginPage } from '@/pages/login/page';
 import { OnboardingLeaguesPage } from '@/pages/onboarding-leagues/page';
 import { OnboardingClubsPage } from '@/pages/onboarding-clubs/page';
 import { MatchesPage } from '@/pages/matches/page';
-import { getPreferences, isOnboardingComplete } from '@/features/onboarding/lib/preferencesStorage';
 
 const RootRedirect = () => {
   const { status, user } = useAuth();
 
   if (status === 'loading' || status === 'idle') return null;
   if (!user) return <Navigate to="/login" replace />;
-  if (isOnboardingComplete()) return <Navigate to="/matches" replace />;
-  const { favoriteLeagueIds } = getPreferences();
-  if (favoriteLeagueIds.length > 0) return <Navigate to="/onboarding/clubs" replace />;
   return <Navigate to="/onboarding/leagues" replace />;
 };
 

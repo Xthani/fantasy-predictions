@@ -10,7 +10,7 @@ UI block (demoable) → tech closure (lint, refactor) → backend brief (contrac
 
 Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** is a deliberate shortcut to first playable UX (Decision 013).
 
-**Текущая правда по фронту:** [`CURRENT_STATE.md`](CURRENT_STATE.md) — что на API, что на моках, что делать дальше.
+**Текущая правда по фронту:** [`CURRENT_STATE.md`](CURRENT_STATE.md) — auth + leagues на API; clubs/matches ждут бэк.
 
 ---
 
@@ -20,12 +20,12 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 |------|--------|
 | Sprint 0 — Setup & docs | **Done** |
 | Sprint 1 — App shell | **In progress** |
-| **Block A — Fast onboarding** | **Done** — UI + tech + backend brief |
-| **Partial API wiring** | **In progress** — auth + leagues live; clubs/matches — mocks |
+| **Block A — Fast onboarding UI** | **Done** |
+| **Partial API wiring** | **Waiting for backend** — auth + leagues live; clubs/matches — stubs |
 
 ## Current Goal
 
-Подключать фронт **по мере готовности бэка**, по одной ручке. Сейчас живые: Google auth + leagues. Детали и очередь: **`CURRENT_STATE.md`**.
+**Ждём бэкенд.** Фронт готов к подключению ручек по одной. Живые: auth + leagues. Детали: **`CURRENT_STATE.md`**.
 
 ---
 
@@ -41,8 +41,8 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 | Shared UI | `Button`, `Screen`, `SearchField`, `Toast` |
 | HTTP client | ✅ `shared/api/httpClient.ts` |
 | **API wired** | ✅ auth (Google + email), ✅ `GET /api/leagues` |
-| **Still mocks** | clubs, matches, quick predictions |
-| Local persistence | auth keys + `fp_preferences`, `fp_quick_predictions` |
+| **Waiting for backend** | clubs, matches, profile PUT, predictions |
+| Persistence | auth tokens in **cookies** only; onboarding in **React state** |
 | ESLint / Prettier | ✅ |
 | Bottom tab navigation | ❌ later |
 | Backend brief (future endpoints) | ✅ `BACKEND_BRIEF.md` |
@@ -54,8 +54,8 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 |------|--------|-------------|
 | `/login` | Google + email sign-in/sign-up | API |
 | `/onboarding/leagues` | Multi-select leagues + search | API |
-| `/onboarding/clubs` | Multi-select clubs | Mocks (empty until favorite-clubs API) |
-| `/matches` | Feed + filters + quick Exact Score | Mocks + localStorage |
+| `/onboarding/clubs` | Clubs picker | Stub — waiting for `GET /api/teams` |
+| `/matches` | Match feed | Stub — waiting for `GET /api/matches` |
 
 ---
 

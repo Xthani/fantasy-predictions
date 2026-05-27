@@ -60,6 +60,20 @@
   text-align: center;
 }
 
+.stateMessage {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-label);
+}
+
+.stateBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .backLink {
   display: block;
   margin-top: var(--space-4);
@@ -69,16 +83,11 @@
   text-decoration: none;
 }
 
-.noLeagues {
-  padding: var(--space-4);
+.leaguePreview {
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
-  text-align: center;
-}
-
-.noLeagues p {
-  margin: 0 0 var(--space-3);
-  color: var(--color-text-secondary);
   font-size: var(--text-label);
+  color: var(--color-text-secondary);
 }

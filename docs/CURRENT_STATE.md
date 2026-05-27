@@ -1,24 +1,24 @@
 # Current State (frontend)
 
-**Обновлено:** 2026-05-22  
-**Главный файл для вопроса «что работает / что дальше».** Остальные docs: видение, полный roadmap, бриф для бэка.
+**Обновлено:** 2026-05-24  
+**Главный файл для вопроса «что работает / что дальше».**
 
 ---
 
-## Что работает сейчас (реальный API)
+## Статус: ждём бэкенд
 
-| Шаг | Экран | Данные |
-|-----|--------|--------|
-| 1 | `/login` | **API** — Google (`POST /api/auth/google`), опционально email login/signup если бэк отвечает |
-| 2 | `/onboarding/leagues` | **API** — `GET /api/leagues` (snake_case → доменная модель `League`) |
-| 3 | `/onboarding/clubs` | **Моки** — `shared/mocks/favoriteClubs.ts` |
-| 4 | `/matches` | **Моки** — `shared/mocks/matches.ts` + quick score в `localStorage` |
+Фронт приведён в порядок: **моки и localStorage удалены**. Работает только то, что подключено к API. Остальные шаги — заглушки «ждём API».
 
-**Бэкенд готов:** только Google-auth и каталог лиг. Остальные ручки из `BACKEND_BRIEF.md` — **план для бэка**, не требование к фронту сегодня.
+| # | Шаг | Экран | Статус | Источник данных |
+|---|-----|--------|--------|-----------------|
+| 1 | Auth | `/login` | ✅ **Работает** | API — Google + email login/signup |
+| 2 | Лиги | `/onboarding/leagues` | ✅ **Работает** | API — `GET /api/leagues` + `PATCH /api/profiles/me` |
+| 3 | Клубы | `/onboarding/clubs` | ✅ **Работает** | API — `GET /api/teams?leagueIds=` + `PATCH` профиля |
+| 4 | Матчи | `/matches` | ⏳ **Ждём бэк** | Заглушка; API не подключён |
 
 ---
 
-## Демо-путь
+## Что работает end-to-end
 
 ```bash
 cp .env.example .env   # VITE_API_BASE_URL, VITE_GOOGLE_WEB_CLIENT_ID
@@ -26,18 +26,41 @@ npm install
 npm run dev
 ```
 
-1. [http://localhost:3000/login](http://localhost:3000/login) → Google  
-2. Выбрать лиги (список с API, логотипы) → **Далее**  
-3. Клубы — **см. ограничение ниже**  
-4. Матчи → quick Exact Score  
+1. [http://localhost:3000/login](http://localhost:3000/login) → Google или email  
+2. Редирект на `/onboarding/leagues`  
+3. Список лиг с API → выбор → «Далее» → **`PATCH /api/profiles/me`** с `favoriteLeagueIds` → `/onboarding/clubs`  
+4. Клубы — экран-заглушка (кнопка «К матчам» disabled)  
+5. `/matches` — экран-заглушка (доступен только если есть выбранные лиги в сессии)
 
-### Ограничение шага «Клубы»
+**После перезагрузки страницы** выбранные лиги/клубы **сбрасываются** — это намеренно, чтобы не мешать тестированию.
 
-Мок-клубы привязаны к id вида `league_la_liga`. После выбора лиг из API id другие (`"302"`, `"152"` …) — **список клубов пуст**, пока бэк не отдаст `GET /api/favorite-clubs`.
+---
 
-На экране клубов показывается пояснение; названия выбранных лиг отображаются из сохранённых метаданных (`fp_preferences.favoriteLeagues`).
+## Хранение данных
 
-**Сброс онбординга:** DevTools → Application → Local Storage → удалить `accessToken`, `refreshToken`, `user`, `fp_preferences`, `fp_quick_predictions`.
+| Что | Где | Примечание |
+|-----|-----|------------|
+| JWT (access + refresh) | **Cookies** (`fp_access_token`, `fp_refresh_token`) | Единственное персистентное хранилище |
+| User (displayName, id…) | **React state** | Восстанавливается через `GET /api/auth/me` при reload |
+| Выбранные лиги/клубы | **React state** (`OnboardingProvider`) | Только в рамках сессии, без localStorage |
+| Прогнозы | — | Не реализовано до API |
+
+**localStorage не используется.**
+
+---
+
+## Что ждём от бэкенда (приоритет)
+
+| # | Endpoint | Блокирует |
+|---|----------|-----------|
+| 1 | `GET /api/leagues` — **5 featured лиг** + `search` по всей базе | Корректный список на шаге 2 |
+| 2 | ~~`PATCH /api/profiles/me` — `favoriteLeagueIds`~~ | ✅ Подключено |
+| 3 | `GET /api/teams?leagueIds=` (+ `name`) | ✅ Подключено |
+| 4 | ~~`PATCH /api/profiles/me` — `favoriteClubIds`~~ | ✅ Подключено |
+| 5 | `GET /api/matches` — по leagues+clubs, max 10, sort by date | Шаг 6 |
+| 6 | `POST/GET /api/predictions` | Прогнозы |
+
+Контракты переданы бэкендеру. Детали: `BACKEND_BRIEF.md`, `API_CONTRACT.md`.
 
 ---
 
@@ -45,39 +68,15 @@ npm run dev
 
 | Область | Статус |
 |---------|--------|
-| `shared/api/httpClient.ts` | ✅ fetch, JWT, refresh, `ApiError`, ngrok header |
-| `features/auth/api/auth.ts` | ✅ |
+| `shared/api/httpClient.ts` | ✅ fetch, JWT из cookies, refresh, `credentials: include` |
+| `features/auth/lib/authCookies.ts` | ✅ токены в cookies |
+| `features/auth/api/auth.ts` | ✅ Google + email |
 | `features/onboarding/api/leagues.ts` | ✅ |
-| `shared/hooks/useAsyncRequest.ts` | ✅ загрузка списков (лиги) |
-| `shared/lib/getApiErrorMessage.ts` | ✅ базовые сообщения об ошибках |
+| `features/onboarding/api/teams.ts` | ✅ GET `/api/teams` по `leagueIds` |
+| `features/profile/api/profile.ts` | ✅ GET + PATCH `/api/profiles/me` |
+| `features/onboarding/model/OnboardingProvider.tsx` | ✅ in-memory state |
+| `shared/mocks/` | ❌ **удалено** |
 | ESLint / Prettier / `npm run build` | ✅ |
-
-**Env:** `VITE_API_BASE_URL` (без `/api` в конце), `VITE_GOOGLE_WEB_CLIENT_ID`.
-
----
-
-## Local storage (факт)
-
-| Ключ | Назначение |
-|------|------------|
-| `accessToken`, `refreshToken`, `user` | Сессия auth |
-| `fp_preferences` | `favoriteLeagueIds`, `favoriteLeagues` (id+name), `favoriteClubIds` |
-| `fp_quick_predictions` | Quick Exact Score (моки матчей) |
-
----
-
-## Что делать дальше (приоритет)
-
-Когда бэк отдаст следующую ручку — подключать по образцу лиг (`features/.../api` + `useAsyncRequest` + обновить этот файл).
-
-| # | Когда готов бэк | Фронт |
-|---|-----------------|--------|
-| **1** | `GET /api/favorite-clubs?leagueIds=` | `features/onboarding/api/clubs.ts`, `useClubsPage` → API |
-| **2** | `PUT /api/players/me/preferences` | сохранять лиги/клубы на сервер вместо только `fp_preferences` |
-| **3** | `GET /api/matches/week` | `useMatchesPage` → API |
-| **4** | `POST/GET /api/predictions` | quick score → API |
-
-**Параллельно (без бэка):** нижние табы, статусы матчей, полный экран прогноза (energy/styles) — см. `PROJECT_ROADMAP.md` Sprint 3–4.
 
 ---
 
@@ -85,11 +84,9 @@ npm run dev
 
 | Симптом | Причина |
 |---------|--------|
-| `leagues` **дважды** на reload | Было: `restoreSession` → `loading` → `RequireAuth` снимал страницу и монтировал снова. **Исправлено:** refresh сессии в фоне без `loading` |
-| `leagues` **304** | Нормальный кэш: бэк отдал `ETag`, второй запрос с `If-None-Match` → «не изменилось», тело из кэша браузера |
-| `[GSI_LOGGER]: button width invalid: 100%` | У Google кнопки `width` только в **пикселях** — исправлено на login |
-| `Cross-Origin-Opener-Policy` + `postMessage` | Шум от popup/iframe Google OAuth; если вход работает — можно игнорировать |
-| `favicon.ico` 404 | Файл должен быть в корневом `public/favicon.ico` (не `src/public/`) |
+| `leagues` **304** | Нормальный кэш браузера |
+| `[GSI_LOGGER]: button width invalid` | Шум Google OAuth |
+| `Cross-Origin-Opener-Policy` + `postMessage` | Шум Google popup; если вход работает — игнорировать |
 
 ---
 
@@ -97,7 +94,7 @@ npm run dev
 
 | Документ | Зачем |
 |----------|--------|
-| [`API_CONTRACT.md`](API_CONTRACT.md) | Форматы **живых** ручек (auth, leagues) + черновик остального |
-| [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md) | Задание бэкенду на будущее (не чеклист готовности фронта) |
-| [`PROJECT_ROADMAP.md`](PROJECT_ROADMAP.md) | Полный MVP по спринтам |
+| [`API_CONTRACT.md`](API_CONTRACT.md) | Форматы живых и планируемых ручек |
+| [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md) | Задание бэкенду |
+| [`PROJECT_ROADMAP.md`](PROJECT_ROADMAP.md) | Roadmap по спринтам |
 | [`SPRINT_LOG.md`](SPRINT_LOG.md) | Журнал поставок |

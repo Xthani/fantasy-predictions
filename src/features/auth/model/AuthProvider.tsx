@@ -8,11 +8,10 @@ import {
   signupWithEmailPassword,
 } from '@/features/auth/api/auth';
 import {
-  clearAuthSession,
-  getStoredAuthSession,
-  readStoredAuthSessionSync,
-  saveAuthSession,
-} from '@/features/auth/lib/authStorage';
+  clearAuthCookies,
+  readAuthTokensFromCookies,
+  saveAuthTokensToCookies,
+} from '@/features/auth/lib/authCookies';
 import { AuthContext, type AuthContextValue } from '@/features/auth/model/authContext';
 import type {
   AuthResponse,
@@ -26,46 +25,38 @@ import { configureAuthClient } from '@/shared/api/httpClient';
 
 type AuthAction =
   | { type: 'loading' }
-  | { type: 'authenticated'; payload: AuthResponse }
-  | {
-      type: 'sessionRestored';
-      payload: { user: AuthUser; accessToken: string; refreshToken: string };
-    }
+  | { type: 'authenticated'; payload: { user: AuthUser; accessToken: string; refreshToken: string } }
   | { type: 'unauthenticated' }
   | { type: 'error'; payload: string }
   | { type: 'clearError' };
 
-const storedSession = readStoredAuthSessionSync();
+const createInitialState = (): AuthState => {
+  const tokens = readAuthTokensFromCookies();
 
-const initialState: AuthState = storedSession
-  ? {
-      user: storedSession.user,
-      accessToken: storedSession.accessToken,
-      refreshToken: storedSession.refreshToken,
-      status: 'authenticated',
-      error: null,
-    }
-  : {
+  if (tokens) {
+    return {
       user: null,
-      accessToken: null,
-      refreshToken: null,
-      status: 'unauthenticated',
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      status: 'idle',
       error: null,
     };
+  }
+
+  return {
+    user: null,
+    accessToken: null,
+    refreshToken: null,
+    status: 'unauthenticated',
+    error: null,
+  };
+};
 
 const reducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'loading':
       return { ...state, status: 'loading', error: null };
     case 'authenticated':
-      return {
-        user: action.payload.user,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
-        status: 'authenticated',
-        error: null,
-      };
-    case 'sessionRestored':
       return {
         user: action.payload.user,
         accessToken: action.payload.accessToken,
@@ -97,27 +88,47 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
 
   useEffect(() => {
     configureAuthClient({
-      getAccessToken: () => readStoredAuthSessionSync()?.accessToken ?? null,
-      getRefreshToken: () => readStoredAuthSessionSync()?.refreshToken ?? null,
+      getAccessToken: () => readAuthTokensFromCookies()?.accessToken ?? null,
+      getRefreshToken: () => readAuthTokensFromCookies()?.refreshToken ?? null,
       onSessionRefreshed: async (session) => {
         const nextSession = normalizeAuthResponse(session);
-        await saveAuthSession(nextSession);
-        dispatch({ type: 'authenticated', payload: nextSession });
+        saveAuthTokensToCookies({
+          accessToken: nextSession.accessToken,
+          refreshToken: nextSession.refreshToken,
+        });
+        dispatch({
+          type: 'authenticated',
+          payload: {
+            user: nextSession.user,
+            accessToken: nextSession.accessToken,
+            refreshToken: nextSession.refreshToken,
+          },
+        });
       },
       onAuthExpired: async () => {
-        await clearAuthSession();
+        clearAuthCookies();
         dispatch({ type: 'unauthenticated' });
       },
     });
   }, []);
 
   const persistAuth = useCallback(async (response: AuthResponse) => {
-    await saveAuthSession(response);
-    dispatch({ type: 'authenticated', payload: response });
+    saveAuthTokensToCookies({
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    });
+    dispatch({
+      type: 'authenticated',
+      payload: {
+        user: response.user,
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      },
+    });
   }, []);
 
   const runAuthAction = useCallback(
@@ -155,9 +166,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 
   const restoreSession = useCallback(async () => {
-    const session = await getStoredAuthSession();
+    const tokens = readAuthTokensFromCookies();
 
-    if (!session) {
+    if (!tokens) {
       dispatch({ type: 'unauthenticated' });
       return;
     }
@@ -166,16 +177,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // data pages and repeats API calls (e.g. GET /api/leagues twice on reload).
     try {
       const user = await getCurrentUser();
-      const restoredSession = { ...session, user };
-      await saveAuthSession(restoredSession);
-      dispatch({ type: 'sessionRestored', payload: restoredSession });
+      dispatch({
+        type: 'authenticated',
+        payload: { user, ...tokens },
+      });
     } catch {
-      dispatch({ type: 'sessionRestored', payload: session });
+      clearAuthCookies();
+      dispatch({ type: 'unauthenticated' });
     }
   }, []);
 
   const logout = useCallback(async () => {
-    const refreshToken = readStoredAuthSessionSync()?.refreshToken;
+    const refreshToken = readAuthTokensFromCookies()?.refreshToken;
 
     if (refreshToken) {
       try {
@@ -185,7 +198,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     }
 
-    await clearAuthSession();
+    clearAuthCookies();
     dispatch({ type: 'unauthenticated' });
   }, []);
 

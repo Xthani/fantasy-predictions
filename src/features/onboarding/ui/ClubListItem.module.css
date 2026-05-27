@@ -35,6 +35,24 @@
   border-radius: var(--radius-sm);
   background: var(--color-bg-muted);
   font-size: 22px;
+  overflow: hidden;
+}
+
+.crestImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.crestEmoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.crestFallback {
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--color-text-secondary);
 }
 
 .info {

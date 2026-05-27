@@ -6,56 +6,26 @@
 
 **Status:** Done (2026-05-22)
 
-**Deliverables:** `/docs`, FSD-light, `ARCHITECTURE.md`, Decisions 001–016.
-
 ---
 
 ## Block A — Fast Onboarding UI
 
-**Status:** **Done** (2026-05-22) — экраны и UX; моки **удалены** 2026-05-24.
+**Status:** Done (2026-05-22)
+
+Экраны: login → leagues → clubs → matches + quick score.
 
 ---
 
-## Partial API integration
+## Phase 1 — `fantasy-predictions-back`
 
-**Status:** **Waiting for backend** (2026-05-24)
+**Status:** Done (2026-05-27)
 
-| Endpoint | Frontend |
-|----------|----------|
-| `POST /api/auth/google` (+ email auth) | ✅ |
-| `GET /api/auth/me` | ✅ |
-| `GET /api/leagues` | ✅ |
-| `GET /api/profiles/me` | ✅ |
-| `PATCH /api/profiles/me` | ✅ — leagues + clubs |
-| `GET /api/teams?leagueIds=` | ✅ — clubs step |
-| `GET /api/matches` | ⏳ waiting — matches step stub |
-| predictions | ⏳ waiting |
-
-### Frontend cleanup (2026-05-24)
-
-- Removed `shared/mocks/` entirely
-- Removed localStorage (`fp_preferences`, `fp_quick_predictions`, token keys)
-- Auth tokens → cookies (`authCookies.ts`)
-- Onboarding state → `OnboardingProvider` (in-memory only)
-- Clubs/matches pages → «ждём бэкенд» stubs
-
-**Source of truth:** [`CURRENT_STATE.md`](CURRENT_STATE.md)
-
-### Quality gates
-
-- [x] `npm run build`
-- [x] `npm run lint`
+- Live API: auth, profile, leagues, clubs, matches, predictions
+- Контракт: `fantasy-predictions-back` + `docs/INTEGRATION.md`
+- Fix: бесконечный fetch матчей (`mapError` в `useAsyncRequest`)
 
 ---
 
-## Sprint 1 — App Shell & UI Foundation
+## Next phase
 
-**Status:** In progress — auth + leagues live; **blocked on backend** for clubs, matches, profile.
-
-**Next:** wire endpoints as backend ships them; see `CURRENT_STATE.md`.
-
----
-
-## Sprint 2+
-
-See `PROJECT_ROADMAP.md`.
+**TBD** — см. [`CURRENT_STATE.md`](CURRENT_STATE.md), [`PROJECT_ROADMAP.md`](PROJECT_ROADMAP.md).

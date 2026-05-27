@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_API_BASE_URL?: string;
-  readonly VITE_GOOGLE_WEB_CLIENT_ID?: string;
+  /** API origin without `/api` suffix, e.g. http://localhost:8000 */
+  readonly VITE_API_BASE_URL: string;
 }
 
 interface ImportMeta {

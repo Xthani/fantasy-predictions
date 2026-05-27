@@ -14,10 +14,12 @@ export const useAsyncRequest = <T>({ request, mapError, onSuccess }: UseAsyncReq
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const onSuccessRef = useRef(onSuccess);
+  const mapErrorRef = useRef(mapError);
 
   useEffect(() => {
     onSuccessRef.current = onSuccess;
-  }, [onSuccess]);
+    mapErrorRef.current = mapError;
+  }, [onSuccess, mapError]);
 
   useEffect(() => {
     let cancelled = false;
@@ -33,7 +35,7 @@ export const useAsyncRequest = <T>({ request, mapError, onSuccess }: UseAsyncReq
         onSuccessRef.current?.(result);
       } catch (requestError) {
         if (cancelled) return;
-        setError(mapError(requestError));
+        setError(mapErrorRef.current(requestError));
         setStatus('error');
       }
     };
@@ -43,7 +45,7 @@ export const useAsyncRequest = <T>({ request, mapError, onSuccess }: UseAsyncReq
     return () => {
       cancelled = true;
     };
-  }, [reloadToken, request, mapError]);
+  }, [reloadToken, request]);
 
   const retry = useCallback(() => {
     setStatus('loading');

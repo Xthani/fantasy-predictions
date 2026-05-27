@@ -6,5 +6,4 @@ export type League = {
   isActive: boolean;
   crestUrl?: string;
   crestEmoji?: string;
-  season?: string;
 };

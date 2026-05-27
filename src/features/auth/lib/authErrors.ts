@@ -1,18 +1,17 @@
 import { ApiError } from '@/shared/api/httpClient';
 import { getApiErrorMessage } from '@/shared/lib/getApiErrorMessage';
 
-const getConflictMessage = (code: string | null): string => {
-  const normalizedCode = code?.toUpperCase() ?? '';
-  if (normalizedCode.includes('EMAIL')) return 'Аккаунт с таким email уже существует.';
-  if (normalizedCode.includes('LOGIN')) return 'Такой логин уже занят.';
-  return 'Аккаунт с такими данными уже существует.';
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  LOGIN_TAKEN: 'Этот логин уже занят. Выбери другой.',
+  INVALID_CREDENTIALS: 'Неверный логин или пароль.',
+  VALIDATION_ERROR: 'Проверь логин и пароль.',
+  UNAUTHORIZED: 'Сессия истекла. Войди снова.',
 };
 
 export const getAuthErrorMessage = (error: unknown): string => {
-  if (error instanceof ApiError) {
-    if (error.status === 401) return 'Неверный email, логин или пароль.';
-    if (error.status === 409) return getConflictMessage(error.code);
+  if (error instanceof ApiError && AUTH_ERROR_MESSAGES[error.code]) {
+    return AUTH_ERROR_MESSAGES[error.code];
   }
 
-  return getApiErrorMessage(error, 'Что-то пошло не так. Попробуй ещё раз.');
+  return getApiErrorMessage(error, 'Не удалось выполнить вход. Попробуй ещё раз.');
 };

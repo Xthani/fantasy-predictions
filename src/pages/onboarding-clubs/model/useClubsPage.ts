@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchTeamsByLeagueIds } from '@/features/onboarding/api/teams';
-import { getTeamsLoadErrorMessage } from '@/features/onboarding/lib/onboardingErrors';
+import { fetchClubs } from '@/features/onboarding/api/clubs';
+import { getClubsLoadErrorMessage } from '@/features/onboarding/lib/onboardingErrors';
 import { useOnboarding } from '@/features/onboarding/model/onboardingContext';
 import { getMyProfile, patchMyProfile } from '@/features/profile/api/profile';
 import { getProfileSaveErrorMessage } from '@/features/profile/lib/profileErrors';
@@ -13,7 +13,7 @@ export const useClubsPage = () => {
   const { favoriteLeagues, favoriteClubIds: savedClubIds, setFavoriteClubIds } = useOnboarding();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [selectedIds, setSelectedIds] = useState<string[]>(savedClubIds);
+  const [selectedIds, setSelectedIds] = useState(() => savedClubIds);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -24,8 +24,8 @@ export const useClubsPage = () => {
     return () => window.clearTimeout(timer);
   }, [search]);
 
-  const loadTeams = useCallback(
-    () => fetchTeamsByLeagueIds(leagueIds, debouncedSearch),
+  const loadClubs = useCallback(
+    () => fetchClubs(leagueIds, debouncedSearch),
     [debouncedSearch, leagueIds],
   );
 
@@ -35,8 +35,8 @@ export const useClubsPage = () => {
     error: loadError,
     retry: retryLoad,
   } = useAsyncRequest({
-    request: loadTeams,
-    mapError: getTeamsLoadErrorMessage,
+    request: loadClubs,
+    mapError: getClubsLoadErrorMessage,
   });
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const useClubsPage = () => {
         setSelectedIds(profile.favoriteClubIds);
         setFavoriteClubIds(profile.favoriteClubIds);
       } catch {
-        // Профиль без клубов — нормально для первого прохода.
+        // Профиль без клубов — нормально.
       }
     };
 
@@ -112,8 +112,7 @@ export const useClubsPage = () => {
     }
   };
 
-  const canContinue =
-    loadStatus === 'success' && selectedIds.length > 0 && saveStatus !== 'saving';
+  const canContinue = loadStatus === 'success' && selectedIds.length > 0 && saveStatus !== 'saving';
 
   return {
     hasLeagues: favoriteLeagues.length > 0,

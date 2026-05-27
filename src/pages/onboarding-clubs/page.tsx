@@ -35,8 +35,7 @@ export const OnboardingClubsPage = () => {
 
   const handleContinue = async () => {
     if (!canContinue) return;
-    const saved = await saveAndContinue();
-    if (saved) navigate('/matches');
+    if (await saveAndContinue()) navigate('/matches');
   };
 
   return (
@@ -48,7 +47,7 @@ export const OnboardingClubsPage = () => {
         <>
           <p className={styles.selectionHint}>
             {saveStatus === 'saving'
-              ? 'Сохраняем выбор…'
+              ? 'Сохраняем…'
               : saveError
                 ? saveError
                 : selectedCount > 0
@@ -65,9 +64,7 @@ export const OnboardingClubsPage = () => {
         </>
       }
     >
-      {loadStatus === 'loading' ? (
-        <p className={styles.stateMessage}>Загружаем клубы…</p>
-      ) : null}
+      {loadStatus === 'loading' ? <p className={styles.stateMessage}>Загружаем клубы…</p> : null}
 
       {loadStatus === 'error' ? (
         <div className={styles.stateBlock}>
@@ -84,9 +81,7 @@ export const OnboardingClubsPage = () => {
 
           {isCatalogUnavailable ? (
             <div className={styles.catalogNotice}>
-              <p className={styles.empty}>
-                Для выбранных лиг бэкенд не вернул клубы. Проверь, что лиги сохранены в профиле.
-              </p>
+              <p className={styles.empty}>Для выбранных лиг пока нет клубов в каталоге.</p>
             </div>
           ) : isSearchEmpty ? (
             <p className={styles.empty}>Ничего не найдено. Попробуй другой запрос.</p>

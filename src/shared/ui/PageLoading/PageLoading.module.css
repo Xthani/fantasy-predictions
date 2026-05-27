@@ -1,0 +1,6 @@
+.message {
+  margin: var(--space-8) 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-label);
+}

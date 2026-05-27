@@ -29,8 +29,7 @@ export const OnboardingLeaguesPage = () => {
 
   const handleContinue = async () => {
     if (!canContinue) return;
-    const saved = await saveAndContinue();
-    if (saved) navigate('/onboarding/clubs');
+    if (await saveAndContinue()) navigate('/onboarding/clubs');
   };
 
   return (
@@ -42,7 +41,7 @@ export const OnboardingLeaguesPage = () => {
         <>
           <p className={styles.selectionHint}>
             {saveStatus === 'saving'
-              ? 'Сохраняем выбор…'
+              ? 'Сохраняем…'
               : saveError
                 ? saveError
                 : selectedCount > 0
@@ -56,9 +55,7 @@ export const OnboardingLeaguesPage = () => {
         </>
       }
     >
-      {loadStatus === 'loading' ? (
-        <p className={styles.stateMessage}>Загружаем лиги…</p>
-      ) : null}
+      {loadStatus === 'loading' ? <p className={styles.stateMessage}>Загружаем лиги…</p> : null}
 
       {loadStatus === 'error' ? (
         <div className={styles.stateBlock}>

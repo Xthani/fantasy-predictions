@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { fetchLeagues } from '@/features/onboarding/api/leagues';
-import { filterLeaguesBySearch, splitLeaguesByActive } from '@/features/onboarding/lib/filterLeagues';
+import { splitLeaguesByActive } from '@/features/onboarding/lib/filterLeagues';
 import { getLeaguesLoadErrorMessage } from '@/features/onboarding/lib/onboardingErrors';
 import { resolveLeagueSelection } from '@/features/onboarding/lib/leagueSelection';
 import { useOnboarding } from '@/features/onboarding/model/onboardingContext';
@@ -9,29 +9,70 @@ import { getProfileSaveErrorMessage } from '@/features/profile/lib/profileErrors
 import { useAsyncRequest } from '@/shared/hooks/useAsyncRequest';
 import type { League } from '@/shared/types/league';
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 export const useLeaguesPage = () => {
-  const { setFavoriteLeagues, setFavoriteClubIds } = useOnboarding();
+  const { favoriteLeagues, setFavoriteLeagues, setFavoriteClubIds } = useOnboarding();
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const applyProfileLeagues = useCallback((leagues: League[], favoriteLeagueIds: string[]) => {
-    const validIds = resolveLeagueSelection(favoriteLeagueIds, leagues);
-    setSelectedIds(validIds);
-    setFavoriteLeagues(
-      leagues
-        .filter((league) => validIds.includes(league.id))
-        .map((league) => ({ id: league.id, name: league.name })),
-    );
-  }, [setFavoriteLeagues]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(search), SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  const applyProfileSelection = useCallback(
+    (loadedLeagues: League[], favoriteLeagueIds: string[], favoriteClubIds: string[]) => {
+      const validIds = resolveLeagueSelection(favoriteLeagueIds, loadedLeagues);
+      setSelectedIds(validIds);
+      setFavoriteLeagues(
+        loadedLeagues
+          .filter((league) => validIds.includes(league.id))
+          .map((league) => ({ id: league.id, name: league.name })),
+      );
+      if (favoriteClubIds.length > 0) {
+        setFavoriteClubIds(favoriteClubIds);
+      }
+    },
+    [setFavoriteClubIds, setFavoriteLeagues],
+  );
 
   const syncSelectionWithCatalog = useCallback(
-    (leagues: League[]) => {
-      setSelectedIds((currentIds) => resolveLeagueSelection(currentIds, leagues));
+    (loadedLeagues: League[]) => {
+      setSelectedIds((currentIds) => {
+        const fromCurrent = resolveLeagueSelection(currentIds, loadedLeagues);
+        if (fromCurrent.length > 0) return fromCurrent;
+
+        if (favoriteLeagues.length === 0) return fromCurrent;
+
+        return resolveLeagueSelection(
+          favoriteLeagues.map((league) => league.id),
+          loadedLeagues,
+        );
+      });
+
+      void (async () => {
+        try {
+          const profile = await getMyProfile();
+          if (profile.favoriteLeagueIds.length > 0) {
+            applyProfileSelection(
+              loadedLeagues,
+              profile.favoriteLeagueIds,
+              profile.favoriteClubIds,
+            );
+          }
+        } catch {
+          // Профиль ещё пустой — нормально для нового пользователя.
+        }
+      })();
     },
-    [],
+    [applyProfileSelection, favoriteLeagues],
   );
+
+  const loadLeagues = useCallback(() => fetchLeagues(debouncedSearch), [debouncedSearch]);
 
   const {
     data: allLeagues,
@@ -39,57 +80,20 @@ export const useLeaguesPage = () => {
     error: loadError,
     retry: retryLoad,
   } = useAsyncRequest({
-    request: fetchLeagues,
+    request: loadLeagues,
     mapError: getLeaguesLoadErrorMessage,
     onSuccess: syncSelectionWithCatalog,
   });
 
   const leagues = useMemo(() => allLeagues ?? [], [allLeagues]);
 
-  useEffect(() => {
-    if (loadStatus !== 'success' || leagues.length === 0) return;
-
-    let cancelled = false;
-
-    const hydrateFromProfile = async () => {
-      try {
-        const profile = await getMyProfile();
-        if (cancelled) return;
-        if (profile.favoriteLeagueIds.length > 0) {
-          applyProfileLeagues(leagues, profile.favoriteLeagueIds);
-        }
-        if (profile.favoriteClubIds.length > 0) {
-          setFavoriteClubIds(profile.favoriteClubIds);
-        }
-      } catch {
-        // Новый пользователь или профиль ещё не создан — оставляем пустой выбор.
-      }
-    };
-
-    void hydrateFromProfile();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [applyProfileLeagues, leagues, loadStatus, setFavoriteClubIds]);
-
   const { active: activeLeagues, inactive: inactiveLeagues } = useMemo(
     () => splitLeaguesByActive(leagues),
     [leagues],
   );
 
-  const filteredActive = useMemo(
-    () => filterLeaguesBySearch(activeLeagues, search),
-    [activeLeagues, search],
-  );
-
-  const filteredInactive = useMemo(
-    () => filterLeaguesBySearch(inactiveLeagues, search),
-    [inactiveLeagues, search],
-  );
-
   const isListEmpty =
-    loadStatus === 'success' && filteredActive.length === 0 && filteredInactive.length === 0;
+    loadStatus === 'success' && activeLeagues.length === 0 && inactiveLeagues.length === 0;
 
   const toggleLeague = (leagueId: string) => {
     setSaveError(null);
@@ -122,16 +126,15 @@ export const useLeaguesPage = () => {
     }
   };
 
-  const canContinue =
-    loadStatus === 'success' && selectedIds.length > 0 && saveStatus !== 'saving';
+  const canContinue = loadStatus === 'success' && selectedIds.length > 0 && saveStatus !== 'saving';
 
   return {
     search,
     setSearch,
     selectedIds,
     toggleLeague,
-    filteredActive,
-    filteredInactive,
+    filteredActive: activeLeagues,
+    filteredInactive: inactiveLeagues,
     isListEmpty,
     canContinue,
     saveAndContinue,

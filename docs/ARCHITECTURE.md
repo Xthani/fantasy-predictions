@@ -2,16 +2,7 @@
 
 ## Overview
 
-The frontend uses **FSD-light** (Feature-Sliced Design, pragmatic variant): four layers under `src/` — `app`, `pages`, `features`, `shared`. Architecture is a tool, not a goal; prefer simple working code over perfect folder trees.
-
-**Canonical rules for agents and contributors:**
-
-| Document | Role |
-|----------|------|
-| [`.cursor/rules/00-core.mdc`](../.cursor/rules/00-core.mdc) | Always-on invariants: import direction, bans, agent behavior, async UI, size soft-limits |
-| [`.cursor/rules/10-architecture.mdc`](../.cursor/rules/10-architecture.mdc) | Full guide: layer duties, barrels, hooks, styles, tests, DB, enforcement (loaded on `src/` structure work) |
-
-This file records **project-specific** choices and the **exception registry**. Update it when introducing a deliberate deviation from the rules above.
+FSD-light: `app`, `pages`, `features`, `shared`. Правила агента: `.cursor/rules/00-core.mdc`, `10-architecture.mdc`.
 
 ---
 
@@ -19,78 +10,56 @@ This file records **project-specific** choices and the **exception registry**. U
 
 | Item | Decision |
 |------|----------|
-| App type | Mobile-first **web SPA** (Vite), not a meta-framework |
-| Global state | Local React state + Context only for now — no `app/store/` until needed |
-| Lazy loading | TBD in Sprint 1 — default: `React.lazy` + `Suspense` for route pages unless bundle stays tiny |
-| i18n | **Single-language** for MVP — short UI strings in JSX allowed; no i18n library at start |
-| UI language | Russian for user-facing copy (consistent across UI; no mixed EN toasts) |
-| Styles (Sprint 1+) | CSS variables in `app/styles/tokens.css` per `DESIGN_TOKENS.md`; SCSS Modules with **camelCase** class names when introduced |
-| HTTP / API | Transport only in `shared/api/`; domain calls in `features/<name>/api/` |
-| Data flow | `pages` → `features` (via `index.ts` barrel when required) → `shared` |
+| App type | Mobile-first SPA (Vite) |
+| Global state | React state + Context (`AuthProvider`, `OnboardingProvider`) |
+| UI language | Russian |
+| Styles | CSS variables `app/styles/tokens.css`; SCSS Modules, camelCase |
+| HTTP | `shared/api/httpClient.ts`; domain calls in `features/*/api/` |
+| Data | `pages` → `features` → `shared` |
 
 ---
 
-## Target `src/` layout (Sprint 1+)
-
-Folders are created **only when needed** — see `00-core.mdc`.
+## `src/` layout
 
 ```text
 src/
-  app/           # providers, layout, styles (tokens.css), App.tsx, main.tsx
-  pages/         # route pages (thin orchestration)
-  features/      # business slices (api / model / ui / index.ts)
-  shared/        # ui, hooks, utils, api (transport), types
+  app/           # App.tsx, layout, global styles
+  pages/         # route screens + page hooks (model/)
+  features/      # auth, onboarding, match-feed, quick-prediction, profile
+  shared/        # ui, hooks, api, types, lib
 ```
-
-Current template (pre–Sprint 1): flat `main.tsx`, `App.tsx` at `src/` root — migrate into `app/` when implementing the shell.
 
 ---
 
-## Import direction (summary)
+## Import direction
 
 ```text
-shared   ← importable everywhere
-app      ← entry + global providers; pages may use app context hooks only
-features ← pages + other features (cross-feature only via index.ts)
-pages    ← leaf nodes; never imported by other layers
+shared ← everywhere
+app    ← main.tsx, App.tsx; pages may use app providers
+features ← pages (+ cross-feature via index.ts when needed)
+pages  ← leaf nodes
 ```
 
-**Banned:** business logic or domain API methods in `shared/`; `pages` importing `features/<x>/api` or `features/<x>/model` directly; `__test-utils__` in production.
+**Banned:** domain API in `shared/`; `pages` importing `features/<x>/api` directly.
 
 ---
 
-## Mocks (MVP)
+## Data sources (Phase 1)
 
-Per `MOCK_DATA.md`:
-
-- Screens without API show «waiting for backend» stubs; wire `features/<name>/api/` when backend ships.
-- Sprint 1: feature `api/` modules call `shared/api/httpClient`; onboarding state in `OnboardingProvider` (in-memory).
+| Данные | Источник |
+|--------|----------|
+| Auth, profile, leagues, clubs, matches, predictions | `fantasy-predictions-back` API |
+| Выбор лиг/клубов в сессии | `OnboardingProvider` (in-memory) + PATCH профиля |
+| Эмодзи гербов лиг | локальный fallback `leagueCrestFallback.ts` (API не отдаёт `crestEmoji`) |
 
 ---
 
 ## Async UI
 
-Every async screen/block: **loading / error / empty / success**. No silent `catch {}`, no `null` for loading.
+Каждый async-блок: **loading / error / empty / success**. Хук `shared/hooks/useAsyncRequest.ts` — `mapError` не создавать inline (стабильная ссылка).
 
 ---
 
 ## Exception registry
 
-_None yet._ When adding an exception, use this format:
-
-```md
-## [exception-id] Short title
-- Where: path
-- Rule violated: section in 10-architecture.mdc
-- Reason: why this is better here
-- Mitigation: how to avoid spread
-- Owner: name, date
-```
-
----
-
-## Related docs
-
-- `DESIGN_TOKENS.md` — visual tokens → `app/styles/tokens.css`
-- `API_CONTRACT.md` — endpoint shapes (live + planned)
-- `DECISION_LOG.md` — Decision 012 (FSD-light adoption)
+_None._

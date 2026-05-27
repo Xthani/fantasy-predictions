@@ -1,100 +1,76 @@
 # Current State (frontend)
 
-**Обновлено:** 2026-05-24  
-**Главный файл для вопроса «что работает / что дальше».**
+**Обновлено:** 2026-05-27
 
 ---
 
-## Статус: ждём бэкенд
+## Статус: Phase 1 — live API
 
-Фронт приведён в порядок: **моки и localStorage удалены**. Работает только то, что подключено к API. Остальные шаги — заглушки «ждём API».
+Бэкенд: **`fantasy-predictions-back`** → `http://localhost:8000`  
+Интеграция: [`INTEGRATION.md`](INTEGRATION.md)
 
-| # | Шаг | Экран | Статус | Источник данных |
-|---|-----|--------|--------|-----------------|
-| 1 | Auth | `/login` | ✅ **Работает** | API — Google + email login/signup |
-| 2 | Лиги | `/onboarding/leagues` | ✅ **Работает** | API — `GET /api/leagues` + `PATCH /api/profiles/me` |
-| 3 | Клубы | `/onboarding/clubs` | ✅ **Работает** | API — `GET /api/teams?leagueIds=` + `PATCH` профиля |
-| 4 | Матчи | `/matches` | ⏳ **Ждём бэк** | Заглушка; API не подключён |
+| Шаг | Экран | API |
+|-----|--------|-----|
+| 0 | `/login` | `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me` |
+| 1 | `/onboarding/leagues` | `GET /api/leagues`, `PATCH /api/profiles/me` |
+| 2 | `/onboarding/clubs` | `GET /api/clubs`, `PATCH /api/profiles/me` |
+| 3 | `/matches` | `GET /api/matches`, `POST /api/predictions`, `GET /api/predictions/me` |
+
+**Сессия:** `localStorage` → `fp_accessToken`, заголовок `Authorization: Bearer …`.
+
+**Онбординг:** выбор лиг/клубов в `OnboardingProvider` (in-memory) + синхронизация с профилем через PATCH.
 
 ---
 
-## Что работает end-to-end
+## Запуск
 
 ```bash
-cp .env.example .env   # VITE_API_BASE_URL, VITE_GOOGLE_WEB_CLIENT_ID
+# fantasy-predictions-back
+docker compose up -d --build
+
+# fantasy-predictions
+cp .env.example .env.local
 npm install
 npm run dev
 ```
 
-1. [http://localhost:3000/login](http://localhost:3000/login) → Google или email  
-2. Редирект на `/onboarding/leagues`  
-3. Список лиг с API → выбор → «Далее» → **`PATCH /api/profiles/me`** с `favoriteLeagueIds` → `/onboarding/clubs`  
-4. Клубы — экран-заглушка (кнопка «К матчам» disabled)  
-5. `/matches` — экран-заглушка (доступен только если есть выбранные лиги в сессии)
+`.env.local`:
 
-**После перезагрузки страницы** выбранные лиги/клубы **сбрасываются** — это намеренно, чтобы не мешать тестированию.
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
 
----
-
-## Хранение данных
-
-| Что | Где | Примечание |
-|-----|-----|------------|
-| JWT (access + refresh) | **Cookies** (`fp_access_token`, `fp_refresh_token`) | Единственное персистентное хранилище |
-| User (displayName, id…) | **React state** | Восстанавливается через `GET /api/auth/me` при reload |
-| Выбранные лиги/клубы | **React state** (`OnboardingProvider`) | Только в рамках сессии, без localStorage |
-| Прогнозы | — | Не реализовано до API |
-
-**localStorage не используется.**
+E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
 
 ---
 
-## Что ждём от бэкенда (приоритет)
+## Код (Phase 1)
 
-| # | Endpoint | Блокирует |
-|---|----------|-----------|
-| 1 | `GET /api/leagues` — **5 featured лиг** + `search` по всей базе | Корректный список на шаге 2 |
-| 2 | ~~`PATCH /api/profiles/me` — `favoriteLeagueIds`~~ | ✅ Подключено |
-| 3 | `GET /api/teams?leagueIds=` (+ `name`) | ✅ Подключено |
-| 4 | ~~`PATCH /api/profiles/me` — `favoriteClubIds`~~ | ✅ Подключено |
-| 5 | `GET /api/matches` — по leagues+clubs, max 10, sort by date | Шаг 6 |
-| 6 | `POST/GET /api/predictions` | Прогнозы |
-
-Контракты переданы бэкендеру. Детали: `BACKEND_BRIEF.md`, `API_CONTRACT.md`.
+| Слой | Файлы |
+|------|--------|
+| HTTP | `shared/api/httpClient.ts` |
+| Auth | `features/auth/api/auth.ts`, `AuthProvider`, `RequireAuth` |
+| Profile | `features/profile/api/profile.ts` |
+| Onboarding | `features/onboarding/api/leagues.ts`, `clubs.ts` |
+| Matches | `features/match-feed/api/matches.ts` |
+| Predictions | `features/quick-prediction/api/predictions.ts` |
 
 ---
 
-## Техника на фронте
+## Следующий этап (TBD)
 
-| Область | Статус |
-|---------|--------|
-| `shared/api/httpClient.ts` | ✅ fetch, JWT из cookies, refresh, `credentials: include` |
-| `features/auth/lib/authCookies.ts` | ✅ токены в cookies |
-| `features/auth/api/auth.ts` | ✅ Google + email |
-| `features/onboarding/api/leagues.ts` | ✅ |
-| `features/onboarding/api/teams.ts` | ✅ GET `/api/teams` по `leagueIds` |
-| `features/profile/api/profile.ts` | ✅ GET + PATCH `/api/profiles/me` |
-| `features/onboarding/model/OnboardingProvider.tsx` | ✅ in-memory state |
-| `shared/mocks/` | ❌ **удалено** |
-| ESLint / Prettier / `npm run build` | ✅ |
+Определяется продуктом. Кандидаты после Phase 1:
+
+- logout в UI, guard онбординга по `GET /api/profiles/me`
+- фильтры лиг на ленте матчей
+- energy / official picks / game club (см. `PROJECT_ROADMAP.md`)
+
+Идеи без срока → [`BACKLOG.md`](BACKLOG.md).
 
 ---
 
-## DevTools: частые сообщения (не баги)
+## Документы
 
-| Симптом | Причина |
-|---------|--------|
-| `leagues` **304** | Нормальный кэш браузера |
-| `[GSI_LOGGER]: button width invalid` | Шум Google OAuth |
-| `Cross-Origin-Opener-Policy` + `postMessage` | Шум Google popup; если вход работает — игнорировать |
+См. [`README.md`](README.md) — полный индекс.
 
----
-
-## Связанные документы
-
-| Документ | Зачем |
-|----------|--------|
-| [`API_CONTRACT.md`](API_CONTRACT.md) | Форматы живых и планируемых ручек |
-| [`BACKEND_BRIEF.md`](BACKEND_BRIEF.md) | Задание бэкенду |
-| [`PROJECT_ROADMAP.md`](PROJECT_ROADMAP.md) | Roadmap по спринтам |
-| [`SPRINT_LOG.md`](SPRINT_LOG.md) | Журнал поставок |
+Бэкенд-спеки и seed — **только** в `fantasy-predictions-back`.

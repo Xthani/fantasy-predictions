@@ -1,16 +1,18 @@
 # Project Roadmap
 
+**Текущая правда:** [`CURRENT_STATE.md`](CURRENT_STATE.md)
+
+---
+
 ## Development approach
 
-**Frontend-led delivery** — see `DEVELOPMENT_WORKFLOW.md`.
+**Frontend-led delivery** — см. [`DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md).
 
 ```text
-UI block (demoable) → tech closure (lint, refactor) → backend brief (contracts prompt)
+UI block → tech closure → API wiring → docs sync
 ```
 
-Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** is a deliberate shortcut to first playable UX (Decision 013).
-
-**Текущая правда по фронту:** [`CURRENT_STATE.md`](CURRENT_STATE.md) — auth + leagues на API; clubs/matches ждут бэк.
+**Block A** (fast onboarding + quick score) — **Done** на live API Phase 1.
 
 ---
 
@@ -19,13 +21,10 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 | Item | Status |
 |------|--------|
 | Sprint 0 — Setup & docs | **Done** |
-| Sprint 1 — App shell | **In progress** |
-| **Block A — Fast onboarding UI** | **Done** |
-| **Partial API wiring** | **Waiting for backend** — auth + leagues live; clubs/matches — stubs |
-
-## Current Goal
-
-**Ждём бэкенд.** Фронт готов к подключению ручек по одной. Живые: auth + leagues. Детали: **`CURRENT_STATE.md`**.
+| Block A — Fast onboarding + matches | **Done** (live API) |
+| Phase 1 API (`fantasy-predictions-back`) | **Done** |
+| Sprint 1 — App shell | **Done** (базовый shell) |
+| **Next phase** | **TBD** — см. `CURRENT_STATE.md` |
 
 ---
 
@@ -35,107 +34,68 @@ Classic Sprint 2–9 in this file remain the **full game MVP** map; **Block A** 
 |------|--------|
 | React 19 + Vite 8 + TS strict | ✅ |
 | `react-router-dom` | ✅ |
-| FSD-light (`app`, `pages`, `features`, `shared`) | ✅ |
-| Design tokens in `app/styles/tokens.css` | ✅ |
-| Mobile shell `AppShell` (max-width 480px) | ✅ |
-| Shared UI | `Button`, `Screen`, `SearchField`, `Toast` |
-| HTTP client | ✅ `shared/api/httpClient.ts` |
-| **API wired** | ✅ auth (Google + email), ✅ `GET /api/leagues` |
-| **Waiting for backend** | clubs, matches, profile PUT, predictions |
-| Persistence | auth tokens in **cookies** only; onboarding in **React state** |
+| FSD-light | ✅ |
+| Design tokens | ✅ `app/styles/tokens.css` |
+| `shared/api/httpClient.ts` | ✅ |
+| Phase 1 API wired | ✅ |
 | ESLint / Prettier | ✅ |
 | Bottom tab navigation | ❌ later |
-| Backend brief (future endpoints) | ✅ `BACKEND_BRIEF.md` |
 | Game logic (energy, official, club league) | ❌ Sprint 4+ |
 
-**Routes today:**
+**Routes:**
 
-| Path | Screen | Data source |
-|------|--------|-------------|
-| `/login` | Google + email sign-in/sign-up | API |
-| `/onboarding/leagues` | Multi-select leagues + search | API |
-| `/onboarding/clubs` | Clubs picker | Stub — waiting for `GET /api/teams` |
-| `/matches` | Match feed | Stub — waiting for `GET /api/matches` |
-
----
-
-## Block A vs classic sprints (mapping)
-
-| Block A (done on mocks) | Overlaps roadmap |
-|-------------------------|------------------|
-| Login + shell + tokens | Sprint 1 |
-| Leagues + clubs onboarding | Sprint 2 (simplified; no country) |
-| Match feed + filters | Sprint 3 |
-| Quick Exact Score only | Sprint 4 (partial) |
-
-**Not in Block A:** energy, styles, components, official/shadow, profile rating, game club, virtual match, bots.
+| Path | Screen | Data |
+|------|--------|------|
+| `/login` | Login / Register | API |
+| `/onboarding/leagues` | Leagues | API |
+| `/onboarding/clubs` | Clubs | API |
+| `/matches` | Match feed + quick score | API |
+| `/profile` | Profile summary + saved predictions | API + local onboarding state |
 
 ---
 
-## MVP Roadmap (full product — unchanged direction)
+## Block A vs full MVP
+
+| Block A (done) | Full roadmap |
+|----------------|--------------|
+| Login + onboarding + match feed | Sprint 1–3 |
+| Quick Exact Score only | Sprint 4+ (energy, components, official) |
+| Local-first onboarding completion → profile | Full profile/game identity |
+| — | Sprint 5–9: profile rating, game club, virtual match, bots |
+
+---
+
+## MVP Roadmap (full product)
 
 ### Sprint 0 — Setup & Documentation ✅
 
-- [x] Template, docs, FSD-light, design tokens sketch, mock plan
+### Sprint 1 — App Shell ✅ (Phase 1 scope)
 
-### Sprint 1 — App Shell & UI Foundation
-
-- [x] Routing, layout, theme tokens, base components (partial: no Card, no tabs)
-- [x] Block A fast onboarding UI
-- [x] Block A — tech + backend brief
-- [x] Partial API: auth + leagues
-- [ ] Wire remaining Block A endpoints when backend ready (see `CURRENT_STATE.md`)
+- [x] Routing, layout, tokens, base UI
+- [x] Auth + onboarding + matches on API
 
 ### Sprint 2 — Onboarding (classic)
 
-- [x] League + favorite club pick *(Block A variant)*
-- [ ] Country, full profile
-- [ ] Defer until after more API slices or backend
+- [x] League + club pick *(Block A)*
+- [ ] Country, extended profile
 
 ### Sprint 3 — Match Feed
 
-- [x] List, filters, cards *(Block A mocks)*
-- [ ] Status chips: open / locked / finished in UI
-- [ ] `GET /api/matches/week` when backend ready
+- [x] List, cards, quick score *(Block A)*
+- [x] Offset pagination + profile CTA after first prediction
+- [ ] League filter chips, status UX (open/locked/finished)
 
 ### Sprint 4 — Prediction Core
 
-- [x] Exact Score input *(quick sheet only)*
-- [ ] Prediction Components, Energy, Styles, points preview
+- [x] Exact Score input *(quick sheet)*
+- [ ] Prediction Components, Energy, Styles
 
-### Sprint 5 — Official Picks
+### Sprint 5–9
 
-- [ ] Official vs Shadow, limits, deadlines
-
-### Sprint 6 — Player Profile
-
-- [ ] Official Rating, form, stats
-
-### Sprint 7 — Clubs (game)
-
-- [ ] Starter clubs, Bot Club, squad screen
-
-### Sprint 8 — Virtual Match
-
-- [ ] XI, Team Energy, results
-
-### Sprint 9 — Divisions & Bots
-
-- [ ] Table, Bot Player, Bot Club automation
+Official picks, profile rating, game clubs, virtual match, divisions — см. `PROJECT_VISION.md`, `GAME_RULES.md`.
 
 ---
 
 ## Later (post-MVP)
 
-Economy, transfers, scout, monetization (cosmetics / no ads only), social, creator leagues — see `PROJECT_VISION.md`.
-
----
-
-## Recommended order (next moves)
-
-См. приоритетную таблицу в **`CURRENT_STATE.md`**.
-
-1. **Backend next:** `GET /api/favorite-clubs` (unblocks clubs step with API league ids).
-2. **Frontend:** wire clubs API по образцу `features/onboarding/api/leagues.ts`.
-3. Затем preferences PUT, matches week, predictions — по готовности бэка.
-4. **Без бэка (опционально):** tab shell, match status chips, full prediction screen.
+Economy, monetization (cosmetics only), social — `PROJECT_VISION.md`, `BACKLOG.md`.

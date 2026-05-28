@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from '@/features/auth/model/authContext';
+import { PageLoading } from '@/shared/ui/PageLoading/PageLoading';
 
 type RequireAuthProps = {
   children: ReactNode;
@@ -10,8 +11,8 @@ export const RequireAuth = ({ children }: RequireAuthProps) => {
   const location = useLocation();
   const { status, user } = useAuth();
 
-  if (status === 'loading' || status === 'idle') {
-    return null;
+  if (status === 'idle' || status === 'loading') {
+    return <PageLoading />;
   }
 
   if (!user) {

@@ -1,12 +1,10 @@
 import { createContext, useContext } from 'react';
-import type { AuthState, LoginInput, SignupInput } from '@/features/auth/model/auth.types';
+import type { AuthState, LoginInput, RegisterInput } from '@/features/auth/model/auth.types';
 
 export type AuthContextValue = AuthState & {
-  signInWithGoogle: (idToken: string) => Promise<void>;
-  signInWithEmailPassword: (input: LoginInput) => Promise<void>;
-  signUpWithEmailPassword: (input: SignupInput) => Promise<void>;
-  restoreSession: () => Promise<void>;
-  logout: () => Promise<void>;
+  login: (input: LoginInput) => Promise<void>;
+  register: (input: RegisterInput) => Promise<void>;
+  logout: () => void;
   clearAuthError: () => void;
 };
 

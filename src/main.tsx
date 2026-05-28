@@ -1,10 +1,9 @@
 import { createRoot } from 'react-dom/client';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@/app/styles/tokens.css';
 import '@/app/styles/global.css';
 import { App } from '@/app/App';
-import { AuthProvider } from '@/features/auth/model/AuthProvider';
-import { OnboardingProvider } from '@/features/onboarding/model/OnboardingProvider';
+import { AuthProvider } from '@/features/auth';
+import { OnboardingProvider } from '@/features/onboarding';
 
 const rootElement = document.getElementById('root');
 
@@ -13,11 +12,9 @@ if (!rootElement) {
 }
 
 createRoot(rootElement).render(
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID ?? ''}>
-    <AuthProvider>
-      <OnboardingProvider>
-        <App />
-      </OnboardingProvider>
-    </AuthProvider>
-  </GoogleOAuthProvider>
+  <AuthProvider>
+    <OnboardingProvider>
+      <App />
+    </OnboardingProvider>
+  </AuthProvider>,
 );

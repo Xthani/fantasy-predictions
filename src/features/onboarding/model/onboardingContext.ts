@@ -10,6 +10,7 @@ export type OnboardingContextValue = {
   setFavoriteLeagues: (leagues: FavoriteLeagueRef[]) => void;
   favoriteClubIds: string[];
   setFavoriteClubIds: (ids: string[]) => void;
+  resetOnboarding: () => void;
   hasSelectedLeagues: boolean;
 };
 

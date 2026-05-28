@@ -13,7 +13,8 @@ alwaysApply: true
 - Always read `/docs/PROJECT_ROADMAP.md` before starting implementation.
 - Always read `/docs/DEVELOPMENT_WORKFLOW.md` for block rhythm (UI → tech → backend brief).
 - Always read `/docs/ARCHITECTURE.md` before changing `src/` structure, layers, imports, or feature boundaries.
-- Always check `/docs/API_CONTRACT.md` before creating or changing API/service contracts.
+- Always check `/docs/API_CONTRACT.md` and `/docs/INTEGRATION.md` before creating or changing API/service contracts.
+- Backend specs and full integration guide live in **`fantasy-predictions-back`** only — no duplicate `BACKEND_*` docs on the frontend.
 - Cursor layer rules: `00-core.mdc` (always), `10-architecture.mdc` (structure/refactor tasks).
 - Always update `/docs/CURRENT_STATE.md` when wiring or removing a live API endpoint.
 - Always update `/docs/SPRINT_LOG.md` after meaningful implementation progress.
@@ -71,12 +72,11 @@ The app is a **bare React 19 + Vite 8 + TypeScript** template.
 Before implementing features, check:
 
 - `package.json` — scripts and dependencies;
-- `src/` — only `main.tsx`, `App.tsx`, `vite-env.d.ts` (FSD folders in Sprint 1 per `ARCHITECTURE.md`);
+- `docs/CURRENT_STATE.md` — what is wired to API today;
 - `vite.config.ts` — `@/` alias, port 3000;
-- `tsconfig.json` + `tsconfig.node.json` — strict TS;
-- no router, no CSS system, no mock layer, no ESLint/Prettier yet.
+- Phase 1: router, ESLint, Prettier, `shared/api/httpClient.ts`, live backend.
 
-See `PROJECT_ROADMAP.md` → **Current Tech State** and `SPRINT_LOG.md` for what is done vs missing.
+See `PROJECT_ROADMAP.md` and `SPRINT_LOG.md` for roadmap vs done.
 
 ## Product summary (quick reference)
 

@@ -1,60 +1,44 @@
 # Development Workflow
 
-**Frontend leads the project.** The app is built in visible UI blocks first; infrastructure and backend follow from what the UI proved.
-
-**Что работает сейчас:** [`CURRENT_STATE.md`](CURRENT_STATE.md).
+**Frontend leads.** См. [`CURRENT_STATE.md`](CURRENT_STATE.md) для актуального статуса.
 
 ---
 
-## Current phase: waiting for backend
+## Phase 1 — завершён
 
-Auth + leagues работают на API. Клубы, матчи, profile PUT — **заглушки на фронте**, ждём ручки.
-
-**Моки удалены.** localStorage не используется (кроме cookies для JWT).
+Live API: **`fantasy-predictions-back`**. Контракт: [`INTEGRATION.md`](INTEGRATION.md), кратко — [`API_CONTRACT.md`](API_CONTRACT.md).
 
 ---
 
-## Rhythm (per block)
+## Rhythm (следующие блоки)
 
 ```text
-1. UI/UX block     → touchable screens (stub or API)
-2. Tech closure    → lint, format, small refactors, docs sync
-3. Backend pack    → contract brief for API
-4. Wire endpoint   → features/<name>/api/ + hook + update CURRENT_STATE.md
+1. UI/UX block     → экран или доработка flow
+2. Tech closure    → lint, refactor, docs
+3. Backend (если нужен новый контракт) → fantasy-predictions-back
+4. Wire            → features/*/api + page hook + CURRENT_STATE.md
 ```
 
 ---
 
-## Frontend-led rules
+## Правила
 
-- New dependencies only when a **visible** screen or shared UI needs them.
-- **No mocks** — screens without API show honest «waiting for backend» stubs.
-- Onboarding state lives in `OnboardingProvider` (in-memory); auth tokens in cookies.
-- After each integration slice: update **`CURRENT_STATE.md`**, `SPRINT_LOG.md`, `API_CONTRACT.md`.
-- Russian UI copy in components; English in `/docs`.
-
----
-
-## Wiring a new backend endpoint (checklist)
-
-1. Add `features/<feature>/api/<resource>.ts` — raw DTO + `map*` + `fetch*`.
-2. Use `httpRequest` from `shared/api/httpClient.ts`.
-3. Page hook: `useAsyncRequest` or feature-specific hook; **loading / error / empty / success**.
-4. Map errors via `shared/lib/getApiErrorMessage` + `features/<feature>/lib/*Errors.ts` if needed.
-5. Update `CURRENT_STATE.md` and `API_CONTRACT.md`.
+- Новые зависимости — только под видимую фичу.
+- Без half-wired API: либо ручка есть, либо честная заглушка.
+- После интеграции: `CURRENT_STATE.md`, `API_CONTRACT.md`, `SPRINT_LOG.md`.
+- UI на русском; `/docs` на русском или английском по контексту.
 
 ---
 
-## Current focus
+## Wiring endpoint (чеклист)
 
-**Done:** auth API (cookies), leagues API, cleanup (no mocks, no localStorage).
+1. Контракт в `fantasy-predictions-back` + Swagger.
+2. `features/<feature>/api/<resource>.ts` + `httpClient`.
+3. Page hook: `useAsyncRequest` — 4 состояния; **стабильный** `mapError`.
+4. Обновить `CURRENT_STATE.md`, `API_CONTRACT.md`.
 
-**Waiting for backend:**
+---
 
-1. `GET /api/leagues` — correct 5 featured leagues + search
-2. `PUT /api/players/me` — favorite leagues/clubs
-3. `GET /api/teams?leagueIds=`
-4. `GET /api/matches`
-5. predictions API
+## Следующий этап
 
-See `CURRENT_STATE.md` for priority order.
+Определяется владельцем продукта. Трекинг идей: [`BACKLOG.md`](BACKLOG.md).

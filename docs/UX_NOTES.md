@@ -13,18 +13,21 @@
 9. **Official vs Shadow** — always visible which picks affect **Official Rating** and **Club**.
 10. **Show why it matters** — each prediction screen links to rating, club, virtual match, rewards.
 
-## Fast onboarding (MVP — mock-first)
+## Fast onboarding (Phase 1 — live)
 
 Goal: player makes a **first Exact Score** in minutes. Advanced mechanics (Official Picks, club league, energy styles) come **after** this path.
 
 | Step | Screen | Rule |
 |------|--------|------|
-| 1 | **Login** | Google only at launch; UI reserves **email/password sign-in** and **manual sign-up** (disabled until backend) |
-| 2 | **Leagues** | Pick one or more favorite **competition leagues** (backend list + search later) |
-| 3 | **Clubs** | Pick one or more favorite **clubs** from selected leagues (backend filter + search later) |
-| 4 | **Match feed** | Upcoming matches for selected leagues; tap match → quick **Exact Score** sheet (minimal fields) |
+| 0 | **Login / Register** | `login` + `password` (без email, без Google) |
+| 1 | **Leagues** | 5 featured + search → `PATCH` профиля с `favoriteLeagueIds` |
+| 2 | **Clubs** | 2 клуба на лигу + search → `PATCH` с `favoriteClubIds` |
+| 3 | **Match feed** | пагинируемая лента → `POST` прогноз счёта |
+| 4 | **Profile** | появляется после первого прогноза; показывает любимые лиги/клубы и сохранённые прогнозы |
 
-Order: **leagues → clubs → matches** (club choices scoped by league).
+Order: **login → leagues → clubs → matches → profile**. API: `docs/INTEGRATION.md`.
+
+Navigation is local-first: after a user selects leagues/clubs or saves the first prediction, the UI moves forward immediately from local state while backend sync continues separately. Logout clears this local progress before another user signs in on the same device.
 
 Skip / defer: country picker, bot clubs, official vs shadow, energy styles, club apply — not on this path.
 

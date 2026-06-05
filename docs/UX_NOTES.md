@@ -23,9 +23,13 @@ Goal: player makes a **first Exact Score** in minutes. Advanced mechanics (Offic
 | 1 | **Leagues** | 5 featured + search → `PATCH` профиля с `favoriteLeagueIds` |
 | 2 | **Clubs** | 2 клуба на лигу + search → `PATCH` с `favoriteClubIds` |
 | 3 | **Match feed** | пагинируемая лента → `POST` прогноз счёта |
-| 4 | **Profile** | появляется после первого прогноза; показывает любимые лиги/клубы и сохранённые прогнозы |
+| 4 | **Profile** | после первого прогноза; лиги/клубы, история прогнозов с результатом (90 мин), друзья |
+| 5 | **Friends** | поиск, заявки, список; доступен после завершения онбординга |
+| 6 | **User profile** | `/users/:id` — чужой профиль, добавить/удалить друга |
 
-Order: **login → leagues → clubs → matches → profile**. API: `docs/INTEGRATION.md`.
+Order: **login → leagues → clubs → matches → profile**. Далее: `/friends`, `/users/:id`. API: `docs/INTEGRATION.md`.
+
+**Прогнозы в профиле:** счёт игрока vs результат матча по **основному времени**. На плей-офф-карточках — «Возможны доп. время и пенальти · прогноз только на 90 мин». Если матч решён в пенальти — пояснение, что зачёт всё равно по 90 минутам.
 
 Navigation is local-first: after a user selects leagues/clubs or saves the first prediction, the UI moves forward immediately from local state while backend sync continues separately. Logout clears this local progress before another user signs in on the same device.
 

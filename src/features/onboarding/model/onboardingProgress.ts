@@ -9,7 +9,11 @@ export type OnboardingProgress = {
   hasAnyPrediction: boolean;
 };
 
-export type OnboardingTarget = '/onboarding/leagues' | '/onboarding/clubs' | '/matches' | '/profile';
+export type OnboardingTarget =
+  | '/onboarding/leagues'
+  | '/onboarding/clubs'
+  | '/matches'
+  | '/profile';
 
 export const getOnboardingTarget = (progress: OnboardingProgress): OnboardingTarget => {
   if (!progress.hasLeagues) return '/onboarding/leagues';

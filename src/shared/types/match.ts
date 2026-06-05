@@ -1,5 +1,9 @@
 export type MatchStatus = 'open' | 'locked' | 'finished';
 
+export type MatchScoringPeriod = 'regularTime';
+
+export type MatchResultDuration = 'regular' | 'extraTime' | 'penaltyShootout';
+
 export type Match = {
   id: string;
   homeTeam: string;
@@ -11,4 +15,9 @@ export type Match = {
   competition: string;
   leagueId: string;
   week: number;
+  homeResultScore?: number | null;
+  awayResultScore?: number | null;
+  scoringPeriod?: MatchScoringPeriod;
+  mayHaveExtraTime?: boolean;
+  resultDuration?: MatchResultDuration | null;
 };

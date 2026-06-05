@@ -91,16 +91,18 @@ export const UserProfilePage = () => {
 
           <div className={styles.kpiRow}>
             <div className={styles.kpi}>
+              <p className={styles.kpiLabel}>Офиц. рейтинг</p>
+              <p className={styles.kpiValue}>{profile.stats.officialRating}</p>
+            </div>
+            <div className={styles.kpi}>
+              <p className={styles.kpiLabel}>Форма</p>
+              <p className={styles.kpiValue}>
+                {profile.stats.form != null ? `${profile.stats.form}%` : '—'}
+              </p>
+            </div>
+            <div className={styles.kpi}>
               <p className={styles.kpiLabel}>Прогнозы</p>
               <p className={styles.kpiValue}>{profile.stats.predictionsCount}</p>
-            </div>
-            <div className={styles.kpi}>
-              <p className={styles.kpiLabel}>Лиги</p>
-              <p className={styles.kpiValue}>{profile.stats.favoriteLeaguesCount}</p>
-            </div>
-            <div className={styles.kpi}>
-              <p className={styles.kpiLabel}>Клубы</p>
-              <p className={styles.kpiValue}>{profile.stats.favoriteClubsCount}</p>
             </div>
           </div>
 

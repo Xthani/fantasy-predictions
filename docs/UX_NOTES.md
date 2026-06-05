@@ -53,8 +53,8 @@ Implemented after onboarding: energy styles (3 presets), official toggle, friend
 | Home | Next matches, club snapshot |
 | Match feed | Weekly list, status, filter |
 | Prediction | Exact Score, components preview, energy style, official toggle |
-| Official picks | Dedicated screen + order official slots (Sprint 5) |
-| Profile | Official Rating, form, shadow toggle (Sprint 5) |
+| Official picks | Dedicated screen + order official slots (backlog) |
+| Profile | Official Rating, form, shadow filter ✅ (Sprint 5) |
 | Friend profile | Head-to-head duels on shared matches |
 | Club | Squad, virtual fixture, apply |
 | Virtual match | XI, Team Energy, contributions |

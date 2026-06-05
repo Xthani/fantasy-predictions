@@ -26,7 +26,8 @@ UI block → tech closure → API wiring → docs sync
 | Sprint 1 — App shell | **Done** |
 | Sprint 4 — Prediction core | **Done** (backend + frontend) |
 | Friend duels (social compare) | **Done** |
-| **Next** | **Sprint 5** — Official Rating — см. `CURRENT_STATE.md` |
+| Sprint 5 — Official Rating + Shadow Stats | **Done** |
+| **Next** | **Sprint 6** — game club / virtual match — см. `CURRENT_STATE.md` |
 
 ---
 
@@ -45,7 +46,8 @@ UI block → tech closure → API wiring → docs sync
 | ESLint / Prettier | ✅ |
 | Vercel SPA deploy | ✅ |
 | Bottom tab navigation | ❌ later |
-| Official Rating / game club | ❌ Sprint 5+ |
+| Official Rating + Shadow Stats | ✅ |
+| Game club / virtual match | ❌ Sprint 6+ |
 
 **Routes:**
 
@@ -107,9 +109,14 @@ UI block → tech closure → API wiring → docs sync
 - [x] `GET /api/friends/:id/duels`
 - [x] «Сравнение прогнозов» на `/users/:userId`
 
-### Sprint 5–9
+### Sprint 5 — Official Rating ✅
 
-- [ ] Official Rating 0–110 + Shadow Stats
+- [x] `GET /api/stats/me` — rating, form, official/shadow buckets
+- [x] Profile UI: rating KPI, stats cards, prediction filter
+- [x] Public profile: `officialRating`, `form`
+- [ ] Dedicated Official Picks screen
+
+### Sprint 6–9
 - [ ] Game clubs, virtual match, divisions, bots
 
 ---

@@ -13,6 +13,7 @@
 | POST | `/api/auth/login` | ✅ |
 | GET | `/api/auth/me` | ✅ |
 | GET | `/api/profiles/me` | `features/profile/api/profile.ts` |
+| GET | `/api/stats/me` | `features/profile/api/stats.ts` |
 | PATCH | `/api/profiles/me` | ✅ |
 | GET | `/api/leagues` | `features/onboarding/api/leagues.ts` |
 | GET | `/api/clubs` | `features/onboarding/api/clubs.ts` |
@@ -139,9 +140,17 @@ These keys are cleared when the frontend enters unauthenticated state, so local 
 
 ---
 
+## Stats (Sprint 5)
+
+`GET /api/stats/me` — Official Rating, Form, buckets `official` / `shadow`. Формула: `GAME_RULES.md` §8.
+
+`GET /api/users/:id` → `stats.officialRating`, `stats.form`.
+
+---
+
 ## Out of scope (Phase 1+)
 
-Google OAuth, refresh token, Official Rating aggregation, game clubs, virtual matches.
+Google OAuth, refresh token, dedicated Official Picks screen, game clubs, virtual matches.
 
 Новые ручки — сначала в `fantasy-predictions-back`, затем обновить этот файл.
 

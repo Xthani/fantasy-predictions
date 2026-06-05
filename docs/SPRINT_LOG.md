@@ -97,6 +97,18 @@
 
 ---
 
+## Sprint 5 — Official Rating + Shadow Stats (2026-06-05)
+
+**Status:** Done (backend + frontend)
+
+- Backend: `GET /api/stats/me`, `player_stats_service.py`, rating formula in `GAME_RULES.md` §8
+- Backend: public profile `stats.officialRating`, `stats.form`
+- Frontend: `/profile` — rating KPI, official/shadow cards, prediction filter
+- Frontend: `/users/:userId` — rating + form in KPI
+- Tests: `tests/test_player_stats.py`
+
+---
+
 ## Next phase
 
-**Sprint 5** — Official Rating, shadow stats aggregation — см. [`CURRENT_STATE.md`](CURRENT_STATE.md).
+**Sprint 6** — game club / virtual match — см. [`CURRENT_STATE.md`](CURRENT_STATE.md).

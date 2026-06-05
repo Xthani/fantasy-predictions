@@ -41,4 +41,4 @@ Live API: **`fantasy-predictions-back`**. Контракт: [`INTEGRATION.md`](I
 
 ## Следующий этап
 
-**Sprint 5** — Official Rating (0–110) + Shadow Stats aggregation. Детали: [`CURRENT_STATE.md`](CURRENT_STATE.md). Polish без блокера — [`BACKLOG.md`](BACKLOG.md).
+**Sprint 6** — game club / virtual match. Детали: [`CURRENT_STATE.md`](CURRENT_STATE.md). Polish — [`BACKLOG.md`](BACKLOG.md).

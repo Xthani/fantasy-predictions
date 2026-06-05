@@ -158,6 +158,12 @@
   color: var(--color-gold-bright);
 }
 
+.sideScoreBlurred {
+  filter: blur(10px);
+  user-select: none;
+  pointer-events: none;
+}
+
 .sideMeta {
   margin: var(--space-1) 0 0;
   font-size: var(--text-caption);

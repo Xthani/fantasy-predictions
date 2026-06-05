@@ -111,9 +111,23 @@ If wrong:   points = 0
 
 ## 8. Official Rating & Shadow Stats
 
-- **Official Rating**: 0–110, driven by Official Predictions.
-- **Shadow Stats**: practice / non-official performance, no rating impact.
-- **Form**: recent official performance indicator (formula TBD).
+### Official Rating (0–110)
+
+- Считается только по **зачтённым** official picks (матч `finished`, есть результат 90 мин).
+- Окно: последние **20** official матчей (по `kickoffAt`, новые первыми).
+- **Эффективность** одного прогноза: `totalPoints / maxPossiblePoints`, где `maxPossiblePoints = Σ(energy × multiplier)` по 10 компонентам.
+- **Рейтинг** = `round(avgEfficiency × 110)`, clamp `[0, 110]`.
+- Если нет ни одного зачтённого official pick → **50** (нейтральный старт).
+
+### Form (0–100)
+
+- Средняя эффективность последних **5** official picks × 100, округление до целого.
+- Если official graded picks < 1 → `null` (UI показывает «—»).
+
+### Shadow Stats
+
+- Агрегация по **неофициальным** прогнозам: `predictionsCount`, `gradedCount`, `pendingCount`, `totalPoints`, `averagePoints`, `averageEfficiency`.
+- На рейтинг и клуб **не влияют**.
 
 ---
 

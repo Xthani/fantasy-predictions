@@ -23,6 +23,8 @@ export type PublicUserProfile = {
     predictionsCount: number;
     favoriteLeaguesCount: number;
     favoriteClubsCount: number;
+    officialRating: number;
+    form: number | null;
   };
 };
 

@@ -106,7 +106,15 @@ export const FriendDuelsSection = ({ data, friendName }: FriendDuelsSectionProps
 
               <div className={styles.side}>
                 <p className={styles.sideLabel}>{friendName}</p>
-                <p className={styles.sideScore}>
+                <p
+                  className={[
+                    styles.sideScore,
+                    duel.outcome === 'pending' ? styles.sideScoreBlurred : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  aria-hidden={duel.outcome === 'pending'}
+                >
                   {duel.friend.homeScore}:{duel.friend.awayScore}
                 </p>
                 <p className={styles.sideMeta}>{STYLE_LABELS[duel.friend.style]}</p>

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/features/auth';
 import { useProfilePage } from '@/pages/profile/model/useProfilePage';
@@ -7,6 +7,8 @@ import { PageLoading } from '@/shared/ui/PageLoading/PageLoading';
 import { Screen } from '@/shared/ui/Screen/Screen';
 import { PredictionHistoryItem } from '@/pages/profile/ui/PredictionHistoryItem';
 import styles from './page.module.css';
+
+type PredictionFilter = 'all' | 'official' | 'shadow';
 
 const formatSavedAt = (iso: string): string => {
   const date = new Date(iso);
@@ -22,10 +24,12 @@ const formatSavedAt = (iso: string): string => {
 export const ProfilePage = () => {
   const { user, logout } = useAuth();
   const { data, status, error, retry } = useProfilePage();
+  const [predictionFilter, setPredictionFilter] = useState<PredictionFilter>('all');
 
   const leagues = data?.leagues ?? [];
   const clubs = data?.clubs ?? [];
   const predictions = data?.predictions ?? [];
+  const stats = data?.stats;
   const incomingFriendRequestsCount = data?.friendRequests.incoming.length ?? 0;
 
   const leaguesLabel = useMemo(
@@ -34,11 +38,24 @@ export const ProfilePage = () => {
   );
   const clubsLabel = useMemo(() => (clubs.length > 0 ? `${clubs.length}` : '0'), [clubs.length]);
 
+  const filteredPredictions = useMemo(() => {
+    const sorted = predictions
+      .slice()
+      .sort((a, b) => (b.savedAt ?? '').localeCompare(a.savedAt ?? ''));
+    if (predictionFilter === 'official') {
+      return sorted.filter((prediction) => prediction.isOfficial);
+    }
+    if (predictionFilter === 'shadow') {
+      return sorted.filter((prediction) => !prediction.isOfficial);
+    }
+    return sorted;
+  }, [predictions, predictionFilter]);
+
   return (
     <Screen
       eyebrow="Профиль"
       title={user?.displayName || user?.login || 'Игрок'}
-      subtitle="Тут будут твой прогресс, рейтинг и история"
+      subtitle="Официальный рейтинг, форма и история прогнозов"
       footer={
         <div className={styles.footerStack}>
           <Button type="button" variant="secondary" fullWidth onClick={logout}>
@@ -68,6 +85,58 @@ export const ProfilePage = () => {
         <div className={styles.stack}>
           <div className={styles.kpiRow}>
             <div className={styles.kpi}>
+              <p className={styles.kpiLabel}>Офиц. рейтинг</p>
+              <p className={styles.kpiValue}>{stats?.officialRating ?? '—'}</p>
+            </div>
+            <div className={styles.kpi}>
+              <p className={styles.kpiLabel}>Форма</p>
+              <p className={styles.kpiValue}>
+                {stats?.form != null ? `${stats.form}%` : '—'}
+              </p>
+            </div>
+            <div className={styles.kpi}>
+              <p className={styles.kpiLabel}>Офиц. матчи</p>
+              <p className={styles.kpiValue}>{stats?.official.gradedCount ?? 0}</p>
+            </div>
+          </div>
+
+          {stats ? (
+            <div className={styles.statsGrid}>
+              <div className={styles.statsCard}>
+                <p className={styles.statsTitle}>Официальные</p>
+                <p className={styles.statsLine}>
+                  Зачтено: {stats.official.gradedCount} · В ожидании: {stats.official.pendingCount}
+                </p>
+                <p className={styles.statsLine}>
+                  Очки: {stats.official.totalPoints}
+                  {stats.official.averagePoints != null
+                    ? ` · ср. ${stats.official.averagePoints}`
+                    : ''}
+                </p>
+                {stats.official.averageEfficiency != null ? (
+                  <p className={styles.statsMuted}>
+                    Эффективность {stats.official.averageEfficiency}%
+                  </p>
+                ) : null}
+              </div>
+              <div className={styles.statsCard}>
+                <p className={styles.statsTitle}>Теневые</p>
+                <p className={styles.statsLine}>
+                  Зачтено: {stats.shadow.gradedCount} · В ожидании: {stats.shadow.pendingCount}
+                </p>
+                <p className={styles.statsLine}>
+                  Очки: {stats.shadow.totalPoints}
+                  {stats.shadow.averagePoints != null ? ` · ср. ${stats.shadow.averagePoints}` : ''}
+                </p>
+                {stats.shadow.averageEfficiency != null ? (
+                  <p className={styles.statsMuted}>Эффективность {stats.shadow.averageEfficiency}%</p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
+          <div className={styles.kpiRow}>
+            <div className={styles.kpi}>
               <p className={styles.kpiLabel}>Лиги</p>
               <p className={styles.kpiValue}>{leaguesLabel}</p>
             </div>
@@ -76,7 +145,7 @@ export const ProfilePage = () => {
               <p className={styles.kpiValue}>{clubsLabel}</p>
             </div>
             <div className={styles.kpi}>
-              <p className={styles.kpiLabel}>Прогнозы</p>
+              <p className={styles.kpiLabel}>Всего прогнозов</p>
               <p className={styles.kpiValue}>{predictions.length}</p>
             </div>
           </div>
@@ -155,14 +224,39 @@ export const ProfilePage = () => {
               </Link>
             </div>
 
+            <div className={styles.filterRow} role="tablist" aria-label="Фильтр прогнозов">
+              {(
+                [
+                  ['all', 'Все'],
+                  ['official', 'Официальные'],
+                  ['shadow', 'Теневые'],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={predictionFilter === value}
+                  className={[
+                    styles.filterChip,
+                    predictionFilter === value ? styles.filterChipActive : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => setPredictionFilter(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             {predictions.length === 0 ? (
               <p className={styles.muted}>Пока нет прогнозов — сделай первый на странице матчей</p>
+            ) : filteredPredictions.length === 0 ? (
+              <p className={styles.muted}>Нет прогнозов в этой категории</p>
             ) : (
               <ul className={styles.predictionList}>
-                {predictions
-                  .slice()
-                  .sort((a, b) => (b.savedAt ?? '').localeCompare(a.savedAt ?? ''))
-                  .map((prediction) => (
+                {filteredPredictions.map((prediction) => (
                     <PredictionHistoryItem
                       key={prediction.id}
                       prediction={prediction}

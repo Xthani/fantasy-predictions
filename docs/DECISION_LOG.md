@@ -90,3 +90,11 @@ Superseded integration churn (mocks, old backends): [`archive/DECISION_LOG_ARCHI
 - **Context:** Friends who predict the same matches want parallel competition without a separate league UI.
 - **Decision:** `GET /api/friends/:userId/duels` returns **intersection** of predictions only; compare `totalPoints` per match; `outcome` win/loss/draw/pending from viewer POV. Friends-only (`NOT_FRIENDS`). UI block «Сравнение прогнозов» on `/users/:userId`. No public list of all friend predictions.
 - **Status:** Implemented (2026-06-05)
+
+---
+
+## Decision 028 — Official Rating & Shadow Stats (Sprint 5)
+
+- **Context:** Players need a visible skill score from official picks; shadow picks should be tracked separately without affecting rating.
+- **Decision:** `GET /api/stats/me` aggregates on read (lazy grade like predictions list). **Official Rating** = `round(avgEfficiency × 110)` over last **20** official graded picks; default **50** if none. **Form** = avg efficiency of last **5** official picks × 100. Efficiency = `totalPoints / maxPossiblePoints`. Separate `official` / `shadow` stat buckets. Public profile exposes `officialRating` + `form`. Dedicated Official Picks screen deferred.
+- **Status:** Implemented (2026-06-05)

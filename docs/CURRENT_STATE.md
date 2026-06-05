@@ -4,7 +4,7 @@
 
 ---
 
-## Статус: Phase 1 — live API + prediction core + social + friend duels
+## Статус: Phase 1 — live API + prediction core + social + rating (Sprint 5)
 
 Бэкенд: **`fantasy-predictions-back`** → `http://localhost:8000`  
 Интеграция: [`INTEGRATION.md`](INTEGRATION.md)
@@ -15,7 +15,7 @@
 | 1 | `/onboarding/leagues` | `GET /api/leagues`, `PATCH /api/profiles/me` |
 | 2 | `/onboarding/clubs` | `GET /api/clubs`, `PATCH /api/profiles/me` |
 | 3 | `/matches` | `GET /api/matches`, `POST /api/predictions`, `POST /api/predictions/preview`, `GET /api/predictions/me` |
-| 4 | `/profile` | `GET /api/profiles/me`, `GET /api/predictions/me`, catalog lookups, `GET /api/friend-requests` |
+| 4 | `/profile` | `GET /api/profiles/me`, `GET /api/stats/me`, `GET /api/predictions/me`, catalog lookups, `GET /api/friend-requests` |
 | 5 | `/friends` | `GET /api/users/search`, `GET/DELETE /api/friends`, friend-request endpoints |
 | 6 | `/users/:userId` | `GET /api/users/:id`, `GET /api/friends/:id/duels`, friend-request endpoints |
 
@@ -32,6 +32,7 @@
 - `GET /api/predictions/me` — каждый прогноз с вложенным `match` (команды, лига, kickoff, результат).
 - Сравнение прогноза с результатом: **только основное время (90 мин)** — см. `GAME_RULES.md` §1.1.
 - UI лист прогноза: стиль энергии, превью компонентов, official toggle, `maxPoints`.
+- UI профиль: **Official Rating**, **Form**, блоки official/shadow stats, фильтр прогнозов (все / офиц. / теневые).
 - UI профиль: `totalPoints`, breakdown по компонентам, метки official/shadow, стиль.
 - Для плей-офф — пометка о доп. времени и пенальти.
 - Утилиты: `shared/utils/predictionOutcome.ts`, `shared/utils/matchScoring.ts`.
@@ -85,6 +86,7 @@ E2E: [`fantasy-predictions-back/docs/integration/frontend-wiring.md`](../fantasy
 | Onboarding | `features/onboarding/` |
 | Matches | `features/match-feed/` |
 | Predictions | `features/quick-prediction/` |
+| Player stats | `features/profile/api/stats.ts` |
 | Friends | `features/friends/` |
 | Profile page | `pages/profile/` |
 | Friends page | `pages/friends/` |
@@ -94,7 +96,7 @@ E2E: [`fantasy-predictions-back/docs/integration/frontend-wiring.md`](../fantasy
 
 ## Следующий этап
 
-**Sprint 5** — Official Rating 0–110, Shadow Stats aggregation.
+**Sprint 6** — game club / virtual match (см. `PROJECT_ROADMAP.md`).
 
 Polish (без блокера):
 

@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { FriendDuelsSection } from '@/features/friends';
 import { useUserProfilePage } from '@/pages/user-profile/model/useUserProfilePage';
 import { Button } from '@/shared/ui/Button/Button';
 import { PageLoading } from '@/shared/ui/PageLoading/PageLoading';
@@ -22,6 +23,7 @@ export const UserProfilePage = () => {
     retry,
     actionStatus,
     actionError,
+    duels,
     actionLabel,
     sendRequest,
     removeCurrentFriend,
@@ -101,6 +103,13 @@ export const UserProfilePage = () => {
               <p className={styles.kpiValue}>{profile.stats.favoriteClubsCount}</p>
             </div>
           </div>
+
+          {profile.friendshipStatus === 'friend' && duels ? (
+            <FriendDuelsSection
+              data={duels}
+              friendName={profile.user.displayName || profile.user.login}
+            />
+          ) : null}
 
           <Link className={styles.backLink} to="/friends">
             ← К друзьям

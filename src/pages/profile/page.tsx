@@ -5,12 +5,7 @@ import { useProfilePage } from '@/pages/profile/model/useProfilePage';
 import { Button } from '@/shared/ui/Button/Button';
 import { PageLoading } from '@/shared/ui/PageLoading/PageLoading';
 import { Screen } from '@/shared/ui/Screen/Screen';
-import { formatKickoff } from '@/shared/utils/formatKickoff';
-import { getResultDurationNote, getScoringPeriodLabel } from '@/shared/utils/matchScoring';
-import {
-  getPredictionOutcome,
-  hasMatchResult,
-} from '@/shared/utils/predictionOutcome';
+import { PredictionHistoryItem } from '@/pages/profile/ui/PredictionHistoryItem';
 import styles from './page.module.css';
 
 const formatSavedAt = (iso: string): string => {
@@ -167,53 +162,13 @@ export const ProfilePage = () => {
                 {predictions
                   .slice()
                   .sort((a, b) => (b.savedAt ?? '').localeCompare(a.savedAt ?? ''))
-                  .map((p) => {
-                    const outcome = getPredictionOutcome(p.homeScore, p.awayScore, p.match);
-                    const showResult = hasMatchResult(p.match);
-                    const resultDurationNote = getResultDurationNote(p.match.resultDuration);
-
-                    return (
-                      <li key={p.id} className={styles.predictionRow}>
-                        <span className={styles.predictionScore}>
-                          {p.homeScore}:{p.awayScore}
-                        </span>
-                        <span className={styles.predictionBody}>
-                          <span className={styles.predictionTitle}>
-                            {p.match.homeTeam} — {p.match.awayTeam}
-                          </span>
-                          <span className={styles.predictionMeta}>
-                            {p.match.competition}
-                            {p.match.kickoffAt ? ` · ${formatKickoff(p.match.kickoffAt)}` : ''}
-                            {p.savedAt ? ` · сохранён ${formatSavedAt(p.savedAt)}` : ''}
-                          </span>
-                          {showResult ? (
-                            <span className={styles.predictionResultRow}>
-                              <span className={styles.predictionResultScore}>
-                                Результат {p.match.homeResultScore}:{p.match.awayResultScore} (
-                                {getScoringPeriodLabel()})
-                              </span>
-                              <span
-                                className={[
-                                  styles.predictionOutcome,
-                                  outcome === 'exact' ? styles.predictionOutcomeExact : '',
-                                  outcome === 'miss' ? styles.predictionOutcomeMiss : '',
-                                ]
-                                  .filter(Boolean)
-                                  .join(' ')}
-                              >
-                                {outcome === 'exact' ? 'Точный счёт' : 'Не угадал'}
-                              </span>
-                            </span>
-                          ) : (
-                            <span className={styles.predictionPending}>Ожидаем результат</span>
-                          )}
-                          {resultDurationNote ? (
-                            <span className={styles.predictionDurationNote}>{resultDurationNote}</span>
-                          ) : null}
-                        </span>
-                      </li>
-                    );
-                  })}
+                  .map((prediction) => (
+                    <PredictionHistoryItem
+                      key={prediction.id}
+                      prediction={prediction}
+                      savedAtLabel={prediction.savedAt ? formatSavedAt(prediction.savedAt) : ''}
+                    />
+                  ))}
               </ul>
             )}
           </div>

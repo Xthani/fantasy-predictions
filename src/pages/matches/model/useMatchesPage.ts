@@ -5,6 +5,7 @@ import {
   getPredictionSaveErrorMessage,
   savePrediction,
   type PredictionDto,
+  type QuickScoreSavePayload,
 } from '@/features/quick-prediction';
 import { onboardingStorage, useOnboarding } from '@/features/onboarding';
 import { useAsyncRequest } from '@/shared/hooks/useAsyncRequest';
@@ -17,6 +18,8 @@ const toQuickPrediction = (dto: PredictionDto): QuickPrediction => ({
   homeScore: dto.homeScore,
   awayScore: dto.awayScore,
   savedAt: dto.savedAt,
+  style: dto.style,
+  isOfficial: dto.isOfficial,
 });
 
 const DEFAULT_MATCHES_LIMIT = 10;
@@ -148,7 +151,7 @@ export const useMatchesPage = () => {
     setActiveMatchId(null);
   };
 
-  const saveMatchPrediction = async (homeScore: number, awayScore: number) => {
+  const saveMatchPrediction = async (payload: QuickScoreSavePayload) => {
     if (!activeMatchId) return;
 
     setIsSaving(true);
@@ -157,8 +160,10 @@ export const useMatchesPage = () => {
     try {
       const saved = await savePrediction({
         matchId: activeMatchId,
-        homeScore,
-        awayScore,
+        homeScore: payload.homeScore,
+        awayScore: payload.awayScore,
+        style: payload.style,
+        isOfficial: payload.isOfficial,
       });
       setPredictionsByMatchId((current) => ({
         ...current,

@@ -14,10 +14,10 @@
 | 0 | `/login` | `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me` |
 | 1 | `/onboarding/leagues` | `GET /api/leagues`, `PATCH /api/profiles/me` |
 | 2 | `/onboarding/clubs` | `GET /api/clubs`, `PATCH /api/profiles/me` |
-| 3 | `/matches` | `GET /api/matches`, `POST /api/predictions`, `GET /api/predictions/me` |
+| 3 | `/matches` | `GET /api/matches`, `POST /api/predictions`, `POST /api/predictions/preview`, `GET /api/predictions/me` |
 | 4 | `/profile` | `GET /api/profiles/me`, `GET /api/predictions/me`, catalog lookups, `GET /api/friend-requests` |
 | 5 | `/friends` | `GET /api/users/search`, `GET/DELETE /api/friends`, friend-request endpoints |
-| 6 | `/users/:userId` | `GET /api/users/:id`, `POST /api/friend-requests`, `DELETE /api/friends/:id` |
+| 6 | `/users/:userId` | `GET /api/users/:id`, `GET /api/friends/:id/duels`, friend-request endpoints |
 
 **Сессия:** `localStorage` → `fp_accessToken`, заголовок `Authorization: Bearer …`.
 
@@ -31,7 +31,9 @@
 
 - `GET /api/predictions/me` — каждый прогноз с вложенным `match` (команды, лига, kickoff, результат).
 - Сравнение прогноза с результатом: **только основное время (90 мин)** — см. `GAME_RULES.md` §1.1.
-- UI: «Точный счёт» / «Не угадал» / «Ожидаем результат»; для плей-офф — пометка о доп. времени и пенальти.
+- UI лист прогноза: стиль энергии, превью компонентов, official toggle, `maxPoints`.
+- UI профиль: `totalPoints`, breakdown по компонентам, метки official/shadow, стиль.
+- Для плей-офф — пометка о доп. времени и пенальти.
 - Утилиты: `shared/utils/predictionOutcome.ts`, `shared/utils/matchScoring.ts`.
 
 ---
@@ -39,7 +41,7 @@
 ## Друзья
 
 - `/friends` — поиск, входящие/исходящие заявки, список друзей, удаление через меню `…`.
-- `/users/:userId` — публичный профиль, добавить/удалить друга.
+- `/users/:userId` — публичный профиль, добавить/удалить друга; для друзей — блок **«Сравнение прогнозов»** (общие матчи, очки, win/loss/draw).
 - `/profile` — блок «Друзья» с плашкой входящих заявок.
 
 ---
@@ -93,8 +95,9 @@ E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
 ## Следующий этап (TBD)
 
 - фильтры лиг на ленте матчей
-- опциональные прогнозы на доп. время / пенальти (`mayHaveExtraTime`) — см. `BACKLOG.md`
-- energy / official picks / game club — `PROJECT_ROADMAP.md`
+- manual style (ручное распределение energy)
+- Official Rating aggregation (Sprint 5)
+- game club / virtual match — `PROJECT_ROADMAP.md`
 
 Идеи без срока → [`BACKLOG.md`](BACKLOG.md).
 

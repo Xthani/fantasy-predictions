@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import {
+  fetchFriendDuels,
   fetchPublicUserProfile,
   getFriendsFeatureErrorMessage,
   removeFriend,
   sendFriendRequest,
+  type FriendDuelsResponse,
   type PublicUserProfile,
 } from '@/features/friends';
 import { useAsyncRequest } from '@/shared/hooks/useAsyncRequest';
@@ -14,23 +16,36 @@ const getLoadErrorMessage = (error: unknown) =>
 const getActionErrorMessage = (error: unknown) =>
   getFriendsFeatureErrorMessage(error, 'Не удалось выполнить действие');
 
+type UserProfileData = {
+  profile: PublicUserProfile;
+  duels: FriendDuelsResponse | null;
+};
+
 export const useUserProfilePage = (userId: string | undefined) => {
   const [optimisticProfile, setOptimisticProfile] = useState<PublicUserProfile | null>(null);
   const [actionStatus, setActionStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [actionError, setActionError] = useState<string | null>(null);
 
-  const loadProfile = useCallback(async () => {
+  const loadProfile = useCallback(async (): Promise<UserProfileData> => {
     if (!userId) throw new Error('Не указан пользователь');
-    return fetchPublicUserProfile(userId);
+
+    const profile = await fetchPublicUserProfile(userId);
+    if (profile.friendshipStatus !== 'friend') {
+      return { profile, duels: null };
+    }
+
+    const duels = await fetchFriendDuels(userId);
+    return { profile, duels };
   }, [userId]);
 
   const { data, status, error, retry } = useAsyncRequest({
     request: loadProfile,
     mapError: getLoadErrorMessage,
-    onSuccess: setOptimisticProfile,
+    onSuccess: (result) => setOptimisticProfile(result.profile),
   });
 
-  const profile = optimisticProfile ?? data;
+  const profile = optimisticProfile ?? data?.profile;
+  const duels = data?.duels ?? null;
 
   const sendRequest = useCallback(async () => {
     if (!profile) return;
@@ -81,6 +96,7 @@ export const useUserProfilePage = (userId: string | undefined) => {
 
   return {
     profile,
+    duels,
     status,
     error,
     retry,
@@ -91,4 +107,3 @@ export const useUserProfilePage = (userId: string | undefined) => {
     removeCurrentFriend,
   };
 };
-

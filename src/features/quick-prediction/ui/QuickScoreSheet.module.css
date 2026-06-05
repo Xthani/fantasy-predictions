@@ -11,6 +11,8 @@
 .sheet {
   width: 100%;
   max-width: var(--layout-max-width);
+  max-height: 92vh;
+  overflow-y: auto;
   padding: var(--space-5) var(--space-4) var(--space-6);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--color-bg-elevated);
@@ -33,7 +35,7 @@
 }
 
 .subtitle {
-  margin: 0 0 var(--space-5);
+  margin: 0 0 var(--space-4);
   font-size: var(--text-caption);
   color: var(--color-text-secondary);
   text-align: center;
@@ -44,7 +46,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .teamCol {
@@ -95,6 +97,143 @@
   color: var(--color-gold);
 }
 
+.section {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.sectionLabel {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.styleRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+.styleBtn {
+  min-height: var(--touch-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  font-size: var(--text-label);
+  cursor: pointer;
+}
+
+.styleBtnActive {
+  border-color: var(--color-border-gold);
+  background: var(--color-gold-soft);
+  color: var(--color-gold-bright);
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.maxPoints {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-gold-bright);
+}
+
+.previewHint {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.componentChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 999px;
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border-subtle);
+  font-size: var(--text-caption);
+  color: var(--color-text-primary);
+}
+
+.energyList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.energyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-caption);
+}
+
+.energyName {
+  color: var(--color-text-secondary);
+}
+
+.energyValue {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.officialToggle {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-gold-subtle);
+  background: var(--color-gold-soft);
+  cursor: pointer;
+}
+
+.officialToggle input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--color-gold);
+}
+
+.officialTitle {
+  display: block;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.officialHint {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -108,4 +247,10 @@
   color: var(--color-text-muted);
   font-size: var(--text-label);
   cursor: pointer;
+}
+
+@media (min-width: 400px) {
+  .styleRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

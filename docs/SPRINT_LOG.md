@@ -53,6 +53,36 @@
 
 ---
 
+## Sprint 4 — Prediction Core (backend, 2026-06-05)
+
+**Status:** Done (backend + frontend UI)
+
+- Backend migration 005: `style`, `energy_distribution`, `components_snapshot`, `is_official`, `total_points`, `component_results`, `graded_at`
+- Domain: derive components from exact score; energy presets (defensive/balanced/aggressive/manual); grading `energy × multiplier`
+- API: `POST /api/predictions/preview`, расширенный `POST /api/predictions`, `PATCH /api/predictions/:id/official`
+- Official: лимит 10 на тур, дедлайн 4 ч до kickoff
+- Docs: `API_CONTRACT.md`, `frontend-wiring.md` §9
+
+---
+
+### Sprint 4 — Prediction Core (frontend, 2026-06-05)
+
+- `QuickScoreSheet`: стиль (defensive/balanced/aggressive), live preview через `POST /api/predictions/preview`, official toggle
+- `MatchCard`: бейджи стиля и official
+- `/profile`: `totalPoints`, top component breakdown, official/shadow tags
+- API client: `previewPrediction`, расширенный `savePrediction`, типы `PredictionDto`
+
+---
+
+## Friend duels (2026-06-05)
+
+**Status:** Done
+
+- Backend: `GET /api/friends/:userId/duels` — общие матчи, сравнение `totalPoints`, summary win/loss/draw
+- Frontend: блок «Сравнение прогнозов» на `/users/:userId` (только для друзей)
+
+---
+
 ## Next phase
 
-**TBD** — см. [`CURRENT_STATE.md`](CURRENT_STATE.md), [`PROJECT_ROADMAP.md`](PROJECT_ROADMAP.md).
+**Sprint 5** — Official Rating, shadow stats aggregation — см. [`CURRENT_STATE.md`](CURRENT_STATE.md).

@@ -236,6 +236,78 @@
   color: var(--color-text-secondary);
 }
 
+.predictionTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.predictionTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.predictionTagOfficial {
+  color: var(--color-gold-bright);
+  background: var(--color-gold-soft);
+  border-color: var(--color-border-gold-subtle);
+}
+
+.predictionTagMuted {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.predictionPoints {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: var(--text-caption);
+  font-weight: 800;
+  color: var(--color-gold-bright);
+  background: var(--color-gold-soft);
+  border: 1px solid var(--color-border-gold-subtle);
+}
+
+.componentResults {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.componentResult {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-caption);
+}
+
+.componentResultHit {
+  color: var(--color-success);
+  background: rgba(45, 184, 122, 0.08);
+}
+
+.componentResultMiss {
+  color: var(--color-text-muted);
+  background: var(--color-bg-subtle);
+}
+
 .predictionResultRow {
   display: flex;
   flex-wrap: wrap;

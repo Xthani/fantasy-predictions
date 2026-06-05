@@ -17,11 +17,14 @@
 | GET | `/api/leagues` | `features/onboarding/api/leagues.ts` |
 | GET | `/api/clubs` | `features/onboarding/api/clubs.ts` |
 | GET | `/api/matches` | `features/match-feed/api/matches.ts` |
+| POST | `/api/predictions/preview` | `features/quick-prediction/api/predictions.ts` |
 | POST | `/api/predictions` | `features/quick-prediction/api/predictions.ts` |
+| PATCH | `/api/predictions/:id/official` | `features/quick-prediction/api/predictions.ts` |
 | GET | `/api/predictions/me` | `features/quick-prediction/api/predictions.ts` |
 | GET | `/api/users/search` | `features/friends/api/friends.ts` |
 | GET | `/api/users/:id` | `pages/user-profile/` |
 | GET | `/api/friends` | `pages/friends/` |
+| GET | `/api/friends/:id/duels` | `pages/user-profile/` |
 | DELETE | `/api/friends/:id` | ✅ |
 | GET | `/api/friend-requests` | ✅ |
 | POST | `/api/friend-requests` | ✅ |
@@ -88,6 +91,24 @@ These keys are cleared when the frontend enters unauthenticated state, so local 
   "matchId": "m_1",
   "homeScore": 2,
   "awayScore": 1,
+  "style": "balanced",
+  "energyByComponent": { "exactScore": 10, "matchOutcome": 10 },
+  "components": {
+    "matchOutcome": "home",
+    "doubleChance": "1X",
+    "totalGoals": "over25",
+    "btts": "yes",
+    "homeIndividualTotal": 2,
+    "awayIndividualTotal": 1,
+    "goalDifference": 1,
+    "exactTotalGoals": 3,
+    "teamGoals": { "home": 2, "away": 1 },
+    "exactScore": { "home": 2, "away": 1 }
+  },
+  "isOfficial": false,
+  "totalPoints": null,
+  "componentResults": null,
+  "gradedAt": null,
   "savedAt": "2026-05-27T12:00:00Z",
   "match": {
     "id": "m_1",
@@ -102,7 +123,11 @@ These keys are cleared when the frontend enters unauthenticated state, so local 
 }
 ```
 
-Для `status: "finished"` поля `homeResultScore` / `awayResultScore` — **счёт основного времени (90 мин)** (`score.regularTime`, fallback `score.fullTime`). На `/profile` фронт сравнивает их с прогнозом игрока.
+Для `status: "finished"` бэкенд заполняет `totalPoints` и `componentResults`; `homeResultScore` / `awayResultScore` — **счёт основного времени (90 мин)**.
+
+**POST body (расширенный):** `{ matchId, homeScore, awayScore, style?, energyByComponent?, isOfficial? }` — без `style` → `balanced`.
+
+**Official:** до 10 на тур лиги; смена за 4 ч до kickoff. Ошибки: `OFFICIAL_LIMIT_REACHED`, `OFFICIAL_DEADLINE_PASSED`, `INVALID_ENERGY`.
 
 Доп. поля матча:
 
@@ -114,9 +139,9 @@ These keys are cleared when the frontend enters unauthenticated state, so local 
 
 ---
 
-## Out of scope (Phase 1)
+## Out of scope (Phase 1+)
 
-Google OAuth, refresh token, energy, official picks, game clubs, virtual matches.
+Google OAuth, refresh token, Official Rating aggregation, game clubs, virtual matches.
 
 Новые ручки — сначала в `fantasy-predictions-back`, затем обновить этот файл.
 
@@ -140,6 +165,7 @@ Google OAuth, refresh token, energy, official picks, game clubs, virtual matches
 - `GET /api/users/search` → `{ users: Array<{ id, login, displayName? }> }`
 - `GET /api/users/:id` → `{ user, friendshipStatus, stats: { predictionsCount, favoriteLeaguesCount, favoriteClubsCount } }`
 - `GET /api/friends` → `{ friends: Array<{ id, login, displayName? }> }`
+- `GET /api/friends/:id/duels` → только для `friendshipStatus === friend`. Общие матчи, где оба сделали прогноз: `{ friend, summary, duels[] }`. `duels[].outcome`: `win` \| `loss` \| `draw` \| `pending` (относительно текущего пользователя). Сравнение по `totalPoints` после 90 мин. Ошибка `NOT_FRIENDS` (403).
 - `DELETE /api/friends/:id` → `204 No Content`
 - `GET /api/friend-requests` → `{ incoming: FriendRequest[], outgoing: FriendRequest[] }`
 - `FriendRequest` → `{ id, fromUser, toUser, status, createdAt? }`

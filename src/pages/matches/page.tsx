@@ -107,7 +107,9 @@ export const MatchesPage = () => {
             match={activeMatch}
             initialHome={activePrediction?.homeScore ?? 0}
             initialAway={activePrediction?.awayScore ?? 0}
-            onSave={(homeScore, awayScore) => void saveMatchPrediction(homeScore, awayScore)}
+            initialStyle={activePrediction?.style}
+            initialIsOfficial={activePrediction?.isOfficial}
+            onSave={(payload) => void saveMatchPrediction(payload)}
             onClose={closeSheet}
           />
           {saveError ? <p className={styles.sheetError}>{saveError}</p> : null}

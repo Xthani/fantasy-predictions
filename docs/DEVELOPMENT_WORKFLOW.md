@@ -41,4 +41,4 @@ Live API: **`fantasy-predictions-back`**. Контракт: [`INTEGRATION.md`](I
 
 ## Следующий этап
 
-Определяется владельцем продукта. Трекинг идей: [`BACKLOG.md`](BACKLOG.md).
+**Sprint 5** — Official Rating (0–110) + Shadow Stats aggregation. Детали: [`CURRENT_STATE.md`](CURRENT_STATE.md). Polish без блокера — [`BACKLOG.md`](BACKLOG.md).

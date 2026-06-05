@@ -83,6 +83,20 @@
 
 ---
 
+## Docs sync (2026-06-05)
+
+**Status:** Done
+
+- Fixed broken `FRONTEND_INTEGRATION.md` links → `frontend-wiring.md`
+- Backend `CURRENT_STATE.md`: Sprint 4 + duels, removed stale «not implemented»
+- `PROJECT_ROADMAP`, `DECISION_LOG` 026–027, `GLOSSARY`, `UX_NOTES`, `BACKLOG`, E2E §12
+- `ARCHITECTURE.md`: `features/friends`, data sources
+- Backend `phase1-api.md` disclaimer → `CURRENT_STATE` / `frontend-wiring` for Sprint 4+
+- Backend `docs/README.md`, frontend `docs/README.md` index
+- `DEVELOPMENT_WORKFLOW.md` → Sprint 5 as next block
+
+---
+
 ## Next phase
 
 **Sprint 5** — Official Rating, shadow stats aggregation — см. [`CURRENT_STATE.md`](CURRENT_STATE.md).

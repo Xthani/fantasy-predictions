@@ -19,3 +19,8 @@
 | [archive/DECISION_LOG_ARCHIVE.md](archive/DECISION_LOG_ARCHIVE.md) | Superseded integration history |
 
 Backend specs and seed data: **`../fantasy-predictions-back`**.
+
+| Backend doc | Role |
+|-------------|------|
+| [`fantasy-predictions-back/docs/CURRENT_STATE.md`](../fantasy-predictions-back/docs/CURRENT_STATE.md) | Implemented endpoints, migrations, tests |
+| [`fantasy-predictions-back/docs/integration/frontend-wiring.md`](../fantasy-predictions-back/docs/integration/frontend-wiring.md) | HTTP examples, errors, E2E §12 |

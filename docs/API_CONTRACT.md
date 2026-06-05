@@ -1,7 +1,7 @@
 # API Contract — Phase 1 (live)
 
 **Обновлено:** 2026-06-05  
-**Детали:** [`INTEGRATION.md`](INTEGRATION.md) → `fantasy-predictions-back/FRONTEND_INTEGRATION.md`
+**Детали:** [`INTEGRATION.md`](INTEGRATION.md) → [`fantasy-predictions-back/docs/integration/frontend-wiring.md`](../fantasy-predictions-back/docs/integration/frontend-wiring.md)
 
 ---
 

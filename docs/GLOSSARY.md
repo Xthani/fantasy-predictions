@@ -22,6 +22,9 @@ Unified terms — use these names in code, docs, and UI copy (EN).
 | **Shadow Prediction** | Non-official pick; tracked in **Shadow Stats** only |
 | **Official Rating** | Player skill score 0–110 from official picks |
 | **Shadow Stats** | Stats from non-official predictions |
+| **Component Result** | Per-component grading row: `energy`, `multiplier`, `correct`, `points` |
+| **Friend Duel** | Head-to-head on a shared match between friends; winner = higher `totalPoints` after 90 min |
+| **Duel Outcome** | `win` / `loss` / `draw` / `pending` — viewer's result vs friend on one shared match |
 | **Club** | Team of players competing in virtual league |
 | **Bot Club** | Automated club filling league slots |
 | **Bot Player** | Automated player with Defensive/Balanced/Aggressive style |

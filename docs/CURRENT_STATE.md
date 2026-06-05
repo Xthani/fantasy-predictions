@@ -4,7 +4,7 @@
 
 ---
 
-## Статус: Phase 1 — live API + social + profile predictions
+## Статус: Phase 1 — live API + prediction core + social + friend duels
 
 Бэкенд: **`fantasy-predictions-back`** → `http://localhost:8000`  
 Интеграция: [`INTEGRATION.md`](INTEGRATION.md)
@@ -51,7 +51,7 @@
 ```bash
 # fantasy-predictions-back
 docker compose up -d --build
-docker compose exec api alembic upgrade head   # миграции 003–004
+docker compose exec api alembic upgrade head   # миграции до 005
 
 # fantasy-predictions
 cp .env.example .env.local
@@ -65,7 +65,7 @@ npm run dev
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
+E2E: [`fantasy-predictions-back/docs/integration/frontend-wiring.md`](../fantasy-predictions-back/docs/integration/frontend-wiring.md) §12.
 
 ### Vercel (frontend)
 
@@ -92,12 +92,19 @@ E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
 
 ---
 
-## Следующий этап (TBD)
+## Следующий этап
 
+**Sprint 5** — Official Rating 0–110, Shadow Stats aggregation.
+
+Polish (без блокера):
+
+- manual style UI (API готов)
+- PATCH official из профиля
 - фильтры лиг на ленте матчей
-- manual style (ручное распределение energy)
-- Official Rating aggregation (Sprint 5)
-- game club / virtual match — `PROJECT_ROADMAP.md`
+- полный breakdown 10 компонентов в профиле
+- friend duels: счётчик общих матчей на `/friends`
+
+Дальше: game club / virtual match — `PROJECT_ROADMAP.md`
 
 Идеи без срока → [`BACKLOG.md`](BACKLOG.md).
 

@@ -23,8 +23,10 @@ UI block → tech closure → API wiring → docs sync
 | Sprint 0 — Setup & docs | **Done** |
 | Block A — Fast onboarding + matches | **Done** (live API) |
 | Phase 1 API (`fantasy-predictions-back`) | **Done** |
-| Sprint 1 — App shell | **Done** (базовый shell) |
-| **Next phase** | **TBD** — см. `CURRENT_STATE.md` |
+| Sprint 1 — App shell | **Done** |
+| Sprint 4 — Prediction core | **Done** (backend + frontend) |
+| Friend duels (social compare) | **Done** |
+| **Next** | **Sprint 5** — Official Rating — см. `CURRENT_STATE.md` |
 
 ---
 
@@ -38,9 +40,12 @@ UI block → tech closure → API wiring → docs sync
 | Design tokens | ✅ `app/styles/tokens.css` |
 | `shared/api/httpClient.ts` | ✅ |
 | Phase 1 API wired | ✅ |
+| Prediction core (energy, components, styles) | ✅ |
+| Friend duels UI | ✅ |
 | ESLint / Prettier | ✅ |
+| Vercel SPA deploy | ✅ |
 | Bottom tab navigation | ❌ later |
-| Game logic (energy, official, club league) | ❌ Sprint 4+ |
+| Official Rating / game club | ❌ Sprint 5+ |
 
 **Routes:**
 
@@ -49,8 +54,10 @@ UI block → tech closure → API wiring → docs sync
 | `/login` | Login / Register | API |
 | `/onboarding/leagues` | Leagues | API |
 | `/onboarding/clubs` | Clubs | API |
-| `/matches` | Match feed + quick score | API |
-| `/profile` | Profile summary + saved predictions | API + local onboarding state |
+| `/matches` | Match feed + prediction sheet | API |
+| `/profile` | Profile + prediction history | API |
+| `/friends` | Friends + requests | API |
+| `/users/:userId` | Public profile + friend duels | API |
 
 ---
 
@@ -58,10 +65,11 @@ UI block → tech closure → API wiring → docs sync
 
 | Block A (done) | Full roadmap |
 |----------------|--------------|
-| Login + onboarding + match feed | Sprint 1–3 |
-| Quick Exact Score only | Sprint 4+ (energy, components, official) |
-| Local-first onboarding completion → profile | Full profile/game identity |
-| — | Sprint 5–9: profile rating, game club, virtual match, bots |
+| Login + onboarding + match feed | Sprint 1–3 ✅ |
+| Quick Exact Score only | Sprint 4 ✅ (components, energy, styles) |
+| Local-first onboarding | ✅ |
+| Friends + duels | ✅ (Phase 1 social) |
+| — | Sprint 5–9: rating, game club, virtual match, bots |
 
 ---
 
@@ -69,7 +77,7 @@ UI block → tech closure → API wiring → docs sync
 
 ### Sprint 0 — Setup & Documentation ✅
 
-### Sprint 1 — App Shell ✅ (Phase 1 scope)
+### Sprint 1 — App Shell ✅
 
 - [x] Routing, layout, tokens, base UI
 - [x] Auth + onboarding + matches on API
@@ -85,17 +93,27 @@ UI block → tech closure → API wiring → docs sync
 - [x] Offset pagination + profile CTA after first prediction
 - [ ] League filter chips, status UX (open/locked/finished)
 
-### Sprint 4 — Prediction Core
+### Sprint 4 — Prediction Core ✅
 
-- [x] Exact Score input *(quick sheet)*
-- [ ] Prediction Components, Energy, Styles
+- [x] Exact Score input (quick sheet)
+- [x] Prediction Components preview (`POST /api/predictions/preview`)
+- [x] Energy + Styles (defensive / balanced / aggressive)
+- [x] Official toggle on save; grading `totalPoints` on profile
+- [ ] Manual style UI (sliders)
+- [ ] Dedicated Official Picks screen
+
+### Social — Friend duels ✅
+
+- [x] `GET /api/friends/:id/duels`
+- [x] «Сравнение прогнозов» на `/users/:userId`
 
 ### Sprint 5–9
 
-Official picks, profile rating, game clubs, virtual match, divisions — см. `PROJECT_VISION.md`, `GAME_RULES.md`.
+- [ ] Official Rating 0–110 + Shadow Stats
+- [ ] Game clubs, virtual match, divisions, bots
 
 ---
 
 ## Later (post-MVP)
 
-Economy, monetization (cosmetics only), social — `PROJECT_VISION.md`, `BACKLOG.md`.
+Economy, monetization (cosmetics only) — `PROJECT_VISION.md`, `BACKLOG.md`.

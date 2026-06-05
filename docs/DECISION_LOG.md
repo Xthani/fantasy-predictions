@@ -74,3 +74,19 @@ Superseded integration churn (mocks, old backends): [`archive/DECISION_LOG_ARCHI
 - **Context:** Players need to find each other and compare progress without turning the app into a social network.
 - **Decision:** Backend `friend_requests` + search/users/friends endpoints; frontend `/friends`, `/users/:userId`, friends block on `/profile`. Delete friend via overflow menu; incoming requests badge on profile. Routes allowed after onboarding via `RequireOnboarding allowWhenComplete`.
 - **Status:** Accepted (2026-06-05)
+
+---
+
+## Decision 026 — Prediction core (Sprint 4)
+
+- **Context:** Block A only stored exact score; `GAME_RULES.md` defines components, energy, styles, and multipliers.
+- **Decision:** Backend migration 005 + derive/grade services; API `preview`, extended `POST /predictions`, `PATCH .../official`. Frontend: style picker, live preview, official toggle, `totalPoints` on profile. Default style `balanced`; backward-compatible POST without `style`. Grading uses **90 min** result only.
+- **Status:** Implemented (2026-06-05)
+
+---
+
+## Decision 027 — Friend duels (head-to-head)
+
+- **Context:** Friends who predict the same matches want parallel competition without a separate league UI.
+- **Decision:** `GET /api/friends/:userId/duels` returns **intersection** of predictions only; compare `totalPoints` per match; `outcome` win/loss/draw/pending from viewer POV. Friends-only (`NOT_FRIENDS`). UI block «Сравнение прогнозов» on `/users/:userId`. No public list of all friend predictions.
+- **Status:** Implemented (2026-06-05)

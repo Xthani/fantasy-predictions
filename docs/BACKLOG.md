@@ -10,6 +10,9 @@ Ideas outside the current sprint. Do not implement silently — add here.
 - [ ] Captain badge on lineup slot
 - [ ] Progressive disclosure for Manual Style
 - [ ] Match feed filter by favorite tournaments
+- [ ] Friend duels: shared-match count badge on `/friends` list
+- [ ] Full 10-component breakdown on `/profile` (not top-4 only)
+- [ ] Toggle official from profile without re-saving score
 
 ## Soon After MVP
 

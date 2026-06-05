@@ -25,7 +25,7 @@ FSD-light: `app`, `pages`, `features`, `shared`. Правила агента: `.
 src/
   app/           # App.tsx, layout, global styles
   pages/         # route screens + page hooks (model/)
-  features/      # auth, onboarding, match-feed, quick-prediction, profile
+  features/      # auth, onboarding, match-feed, quick-prediction, profile, friends
   shared/        # ui, hooks, api, types, lib
 ```
 
@@ -48,7 +48,7 @@ pages  ← leaf nodes
 
 | Данные | Источник |
 |--------|----------|
-| Auth, profile, leagues, clubs, matches, predictions | `fantasy-predictions-back` API |
+| Auth, profile, leagues, clubs, matches, predictions, friends, friend duels | `fantasy-predictions-back` API |
 | Выбор лиг/клубов в сессии | local-first `OnboardingProvider` + `features/onboarding/lib/onboardingStorage.ts`; PATCH профиля идёт фоном; logout очищает локальный прогресс |
 | Завершение первого прогноза | local flag `fp_hasAnyPrediction` + `GET /api/predictions/me` для восстановления |
 | Эмодзи гербов лиг | локальный fallback `leagueCrestFallback.ts` (API не отдаёт `crestEmoji`) |
@@ -70,6 +70,7 @@ pages  ← leaf nodes
 - `features/profile`
 - `features/match-feed`
 - `features/quick-prediction`
+- `features/friends`
 
 Страницы не импортируют внутренние пути `features/<name>/api`, `features/<name>/model`, `features/<name>/lib` или `features/<name>/ui` напрямую.
 

@@ -22,10 +22,10 @@ Goal: player makes a **first Exact Score** in minutes. Advanced mechanics (Offic
 | 0 | **Login / Register** | `login` + `password` (без email, без Google) |
 | 1 | **Leagues** | 5 featured + search → `PATCH` профиля с `favoriteLeagueIds` |
 | 2 | **Clubs** | 2 клуба на лигу + search → `PATCH` с `favoriteClubIds` |
-| 3 | **Match feed** | пагинируемая лента → `POST` прогноз счёта |
-| 4 | **Profile** | после первого прогноза; лиги/клубы, история прогнозов с результатом (90 мин), друзья |
-| 5 | **Friends** | поиск, заявки, список; доступен после завершения онбординга |
-| 6 | **User profile** | `/users/:id` — чужой профиль, добавить/удалить друга |
+| 3 | **Match feed** | лента → sheet: счёт + стиль + preview компонентов + official toggle |
+| 4 | **Profile** | история прогнозов с `totalPoints`, стиль, official/shadow |
+| 5 | **Friends** | поиск, заявки, список; доступен после онбординга |
+| 6 | **User profile** | `/users/:id` — друг: KPI + **«Сравнение прогнозов»** (общие матчи, очки, win/loss) |
 
 Order: **login → leagues → clubs → matches → profile**. Далее: `/friends`, `/users/:id`. API: `docs/INTEGRATION.md`.
 
@@ -33,7 +33,9 @@ Order: **login → leagues → clubs → matches → profile**. Далее: `/fr
 
 Navigation is local-first: after a user selects leagues/clubs or saves the first prediction, the UI moves forward immediately from local state while backend sync continues separately. Logout clears this local progress before another user signs in on the same device.
 
-Skip / defer: country picker, bot clubs, official vs shadow, energy styles, club apply — not on this path.
+Skip / defer on onboarding path: country picker, bot clubs, manual style, club apply.
+
+Implemented after onboarding: energy styles (3 presets), official toggle, friend duels.
 
 ## Onboarding (full product, later)
 
@@ -50,9 +52,10 @@ Skip / defer: country picker, bot clubs, official vs shadow, energy styles, club
 |--------|--------|
 | Home | Next matches, club snapshot |
 | Match feed | Weekly list, status, filter |
-| Prediction | Exact Score, components, energy, style |
-| Official picks | Select & order official slots |
-| Profile | Official Rating, form, shadow toggle |
+| Prediction | Exact Score, components preview, energy style, official toggle |
+| Official picks | Dedicated screen + order official slots (Sprint 5) |
+| Profile | Official Rating, form, shadow toggle (Sprint 5) |
+| Friend profile | Head-to-head duels on shared matches |
 | Club | Squad, virtual fixture, apply |
 | Virtual match | XI, Team Energy, contributions |
 

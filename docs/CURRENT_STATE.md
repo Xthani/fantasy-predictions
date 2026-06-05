@@ -65,6 +65,12 @@ VITE_API_BASE_URL=http://localhost:8000
 
 E2E: `fantasy-predictions-back/FRONTEND_INTEGRATION.md` §11.
 
+### Vercel (frontend)
+
+- Build: `npm run build` → `dist/`
+- `vercel.json` — SPA rewrite: все пути → `index.html` (иначе F5 на `/profile`, `/friends` и т.д. даёт 404)
+- Env: `VITE_API_BASE_URL` → URL Render-бэкенда
+
 ---
 
 ## Код

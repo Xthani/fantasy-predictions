@@ -13,6 +13,7 @@ Ideas outside the current sprint. Do not implement silently — add here.
 
 ## Soon After MVP
 
+- [ ] **Extra time / penalty predictions** on `mayHaveExtraTime` matches — optional second/third picks; if omitted, only 90-minute score counts (same as today)
 - [ ] Private league by invite code
 - [ ] Daily login reward (virtual currency)
 - [ ] Achievements / badges

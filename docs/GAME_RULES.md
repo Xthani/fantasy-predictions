@@ -10,6 +10,13 @@
 - Real match results come from an agreed data source (see `API_CONTRACT.md`).
 - One account per human player (enforcement TBD).
 
+### 1.1 Scoring period (Phase 1)
+
+- **All predictions are for regular time (90 minutes)** — not extra time, not penalty shootout.
+- **Result comparison** uses `score.regularTime` from football-data.org when available; otherwise `score.fullTime` (league matches where they are the same).
+- Example: PSG 1–1 Arsenal after 90 min, PSG wins on penalties → stored result for grading is **1:1**, not the shootout winner.
+- Cup knockout matches may show `mayHaveExtraTime: true` (finals, play-off legs). Player is informed; optional extra-time / penalty predictions are **out of scope** until a later phase (see `BACKLOG.md`).
+
 ---
 
 ## 2. Exact Score as Main Input

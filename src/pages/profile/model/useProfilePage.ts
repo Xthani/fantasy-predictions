@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { fetchFriendRequests } from '@/features/friends';
 import { fetchClubs, fetchLeagues } from '@/features/onboarding';
 import { getMyProfile } from '@/features/profile';
 import { fetchMyPredictions } from '@/features/quick-prediction';
@@ -58,13 +59,17 @@ const loadClubsByIds = async (leagueIds: string[], clubIds: string[]): Promise<F
 
 export const useProfilePage = () => {
   const loadProfileData = useCallback(async () => {
-    const [profile, predictions] = await Promise.all([getMyProfile(), fetchMyPredictions()]);
+    const [profile, predictions, friendRequests] = await Promise.all([
+      getMyProfile(),
+      fetchMyPredictions(),
+      fetchFriendRequests(),
+    ]);
     const [leagues, clubs] = await Promise.all([
       loadLeaguesByIds(profile.favoriteLeagueIds),
       loadClubsByIds(profile.favoriteLeagueIds, profile.favoriteClubIds),
     ]);
 
-    return { profile, leagues, clubs, predictions };
+    return { profile, leagues, clubs, predictions, friendRequests };
   }, []);
 
   return useAsyncRequest({

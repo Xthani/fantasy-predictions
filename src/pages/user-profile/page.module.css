@@ -1,0 +1,140 @@
+.stack {
+  display: grid;
+  gap: 16px;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.hero {
+  display: grid;
+  gap: 10px;
+}
+
+.login {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+.status {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.kpi {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.kpiLabel {
+  margin: 0 0 4px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.kpiValue {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.stateMessage {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.moreMenu {
+  position: relative;
+}
+
+.moreButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  cursor: pointer;
+  list-style: none;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.moreButton::-webkit-details-marker {
+  display: none;
+}
+
+.morePanel {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 2;
+  min-width: 180px;
+  padding: 6px;
+  border-radius: 12px;
+  background: #15171d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.dangerAction {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffb4b4;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dangerAction:hover:not(:disabled) {
+  background: rgba(255, 120, 120, 0.1);
+}
+
+.dangerAction:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: 6px;
+  opacity: 0.8;
+  text-decoration: none;
+  color: inherit;
+}
+
+.backLink:hover {
+  opacity: 1;
+}
+

@@ -1,6 +1,6 @@
 # API Contract — Phase 1 (live)
 
-**Обновлено:** 2026-05-27  
+**Обновлено:** 2026-06-05  
 **Детали:** [`INTEGRATION.md`](INTEGRATION.md) → `fantasy-predictions-back/FRONTEND_INTEGRATION.md`
 
 ---
@@ -18,7 +18,15 @@
 | GET | `/api/clubs` | `features/onboarding/api/clubs.ts` |
 | GET | `/api/matches` | `features/match-feed/api/matches.ts` |
 | POST | `/api/predictions` | `features/quick-prediction/api/predictions.ts` |
-| GET | `/api/predictions/me` | ✅ |
+| GET | `/api/predictions/me` | `features/quick-prediction/api/predictions.ts` |
+| GET | `/api/users/search` | `features/friends/api/friends.ts` |
+| GET | `/api/users/:id` | `pages/user-profile/` |
+| GET | `/api/friends` | `pages/friends/` |
+| DELETE | `/api/friends/:id` | ✅ |
+| GET | `/api/friend-requests` | ✅ |
+| POST | `/api/friend-requests` | ✅ |
+| POST | `/api/friend-requests/:id/accept` | ✅ |
+| DELETE | `/api/friend-requests/:id` | ✅ |
 
 ---
 
@@ -70,6 +78,40 @@ These keys are cleared when the frontend enters unauthenticated state, so local 
 
 `leagueIds`, `clubIds`, `matchIds` — повторяющиеся query-параметры: `?leagueIds=a&leagueIds=b`
 
+### Predictions
+
+`POST /api/predictions` и `GET /api/predictions/me` возвращают прогноз с вложенным `match` (тот же shape, что `GET /api/matches`):
+
+```json
+{
+  "id": "pred_1",
+  "matchId": "m_1",
+  "homeScore": 2,
+  "awayScore": 1,
+  "savedAt": "2026-05-27T12:00:00Z",
+  "match": {
+    "id": "m_1",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Chelsea",
+    "kickoffAt": "2026-05-28T15:00:00Z",
+    "competition": "Premier League",
+    "status": "open",
+    "homeResultScore": null,
+    "awayResultScore": null
+  }
+}
+```
+
+Для `status: "finished"` поля `homeResultScore` / `awayResultScore` — **счёт основного времени (90 мин)** (`score.regularTime`, fallback `score.fullTime`). На `/profile` фронт сравнивает их с прогнозом игрока.
+
+Доп. поля матча:
+
+| Field | Значение |
+|-------|----------|
+| `scoringPeriod` | всегда `"regularTime"` в Phase 1 |
+| `mayHaveExtraTime` | `true` на плей-офф/финалах, где возможны доп. время и пенальти |
+| `resultDuration` | `regular` \| `extraTime` \| `penaltyShootout` — как реально завершился матч (инфо; зачёт всё равно по 90 мин) |
+
 ---
 
 ## Out of scope (Phase 1)
@@ -77,3 +119,27 @@ These keys are cleared when the frontend enters unauthenticated state, so local 
 Google OAuth, refresh token, energy, official picks, game clubs, virtual matches.
 
 Новые ручки — сначала в `fantasy-predictions-back`, затем обновить этот файл.
+
+---
+
+## Friends
+
+| Method | Path | Body / query |
+|--------|------|----------------|
+| GET | `/api/users/search` | `query` — поиск по логину/имени |
+| GET | `/api/users/:id` | публичный профиль игрока |
+| GET | `/api/friends` | — |
+| DELETE | `/api/friends/:id` | удалить друга |
+| GET | `/api/friend-requests` | — |
+| POST | `/api/friend-requests` | `{ userId }` |
+| POST | `/api/friend-requests/:id/accept` | — |
+| DELETE | `/api/friend-requests/:id` | отклонить (входящая) / отменить (исходящая) |
+
+### Response shapes
+
+- `GET /api/users/search` → `{ users: Array<{ id, login, displayName? }> }`
+- `GET /api/users/:id` → `{ user, friendshipStatus, stats: { predictionsCount, favoriteLeaguesCount, favoriteClubsCount } }`
+- `GET /api/friends` → `{ friends: Array<{ id, login, displayName? }> }`
+- `DELETE /api/friends/:id` → `204 No Content`
+- `GET /api/friend-requests` → `{ incoming: FriendRequest[], outgoing: FriendRequest[] }`
+- `FriendRequest` → `{ id, fromUser, toUser, status, createdAt? }`

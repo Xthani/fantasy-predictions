@@ -7,6 +7,10 @@ Unified terms — use these names in code, docs, and UI copy (EN).
 | **Player** | Human user with profile, predictions, rating, club membership |
 | **Prediction** | Player's forecast for a real match, anchored on **Exact Score** |
 | **Exact Score** | Primary input: home and away goals (e.g. 2–1) |
+| **Scoring Period** | Phase 1: always **regular time (90 min)**; extra time / penalties out of scope until backlog item ships |
+| **Regular Time Result** | Goals after 90 minutes — used to grade predictions (football-data `score.regularTime`) |
+| **May Have Extra Time** | Match flag (cup knockout) where ET/penalties are possible; prediction still 90 min only in Phase 1 |
+| **Result Duration** | How the real match ended: `regular`, `extraTime`, or `penaltyShootout` — informational; grading uses regular time |
 | **Local-first Onboarding** | Frontend flow where selected leagues/clubs and first-prediction completion are saved locally first, then synced to backend |
 | **Prediction Component** | Auto-derived market from Exact Score (outcome, totals, BTTS, etc.) |
 | **Energy** | 100 points per match to allocate across components |

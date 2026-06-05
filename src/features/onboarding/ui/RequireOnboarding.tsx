@@ -16,11 +16,16 @@ import { Screen } from '@/shared/ui/Screen/Screen';
 type RequireOnboardingProps = {
   children: ReactNode;
   allow?: OnboardingTarget;
+  allowWhenComplete?: boolean;
 };
 
 const getProgressLoadErrorMessage = () => 'Не удалось загрузить прогресс онбординга';
 
-export const RequireOnboarding = ({ children, allow }: RequireOnboardingProps) => {
+export const RequireOnboarding = ({
+  children,
+  allow,
+  allowWhenComplete = false,
+}: RequireOnboardingProps) => {
   const location = useLocation();
   const { favoriteLeagues, favoriteClubIds, setFavoriteLeagues, setFavoriteClubIds } =
     useOnboarding();
@@ -125,6 +130,10 @@ export const RequireOnboarding = ({ children, allow }: RequireOnboardingProps) =
     if (!cameFromOnboardingAction && target !== allow) {
       return <Navigate to={target} replace state={{ from: location.pathname }} />;
     }
+  }
+
+  if (allowWhenComplete && target === '/profile') {
+    return children;
   }
 
   // If onboarding is complete, keep user in profile by default.

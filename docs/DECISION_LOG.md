@@ -58,3 +58,19 @@ Superseded integration churn (mocks, old backends): [`archive/DECISION_LOG_ARCHI
 - **Context:** Onboarding step transitions must not wait for profile PATCH/read-after-write consistency.
 - **Decision:** Store selected leagues, selected clubs, and first-prediction completion in localStorage through `OnboardingProvider`; sync backend profile/predictions separately. Guards may use backend data for recovery, but local state is authoritative for immediate step navigation. Local onboarding state is cleared when the app becomes unauthenticated.
 - **Status:** Accepted (2026-05-27)
+
+---
+
+## Decision 024 — Regular time only for predictions (Phase 1)
+
+- **Context:** Cup finals can end 1–1 after 90 min and be decided on penalties; players expect to predict the 90-minute score, not the shootout.
+- **Decision:** Phase 1 grades predictions against **regular time (90 min)** only. Sync stores `homeResultScore` / `awayResultScore` from football-data `score.regularTime` (fallback `fullTime`). API exposes `scoringPeriod: "regularTime"`, `mayHaveExtraTime` on knockout fixtures, and `resultDuration` when the real match went to ET/penalties (informational). Optional extra-time / penalty predictions deferred to backlog.
+- **Status:** Accepted (2026-06-05)
+
+---
+
+## Decision 025 — Friends (Phase 1 social)
+
+- **Context:** Players need to find each other and compare progress without turning the app into a social network.
+- **Decision:** Backend `friend_requests` + search/users/friends endpoints; frontend `/friends`, `/users/:userId`, friends block on `/profile`. Delete friend via overflow menu; incoming requests badge on profile. Routes allowed after onboarding via `RequireOnboarding allowWhenComplete`.
+- **Status:** Accepted (2026-06-05)

@@ -1,8 +1,10 @@
 import { apiRequest } from '@/shared/api/httpClient';
+import type { Match } from '@/shared/types/match';
 import type { QuickPrediction } from '@/shared/types/quickPrediction';
 
 export type PredictionDto = QuickPrediction & {
   id: string;
+  match: Match;
 };
 
 type PredictionsResponse = {

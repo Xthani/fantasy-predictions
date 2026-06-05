@@ -1,6 +1,7 @@
 import type { Match } from '@/shared/types/match';
 import type { QuickPrediction } from '@/shared/types/quickPrediction';
 import { formatKickoff } from '@/shared/utils/formatKickoff';
+import { getExtraTimeHint } from '@/shared/utils/matchScoring';
 import styles from './MatchCard.module.css';
 
 type MatchCardProps = {
@@ -10,7 +11,10 @@ type MatchCardProps = {
   onOpen: (matchId: string) => void;
 };
 
-export const MatchCard = ({ match, prediction, isFavorite, onOpen }: MatchCardProps) => (
+export const MatchCard = ({ match, prediction, isFavorite, onOpen }: MatchCardProps) => {
+  const extraTimeHint = getExtraTimeHint(match);
+
+  return (
   <button
     type="button"
     className={[
@@ -38,5 +42,7 @@ export const MatchCard = ({ match, prediction, isFavorite, onOpen }: MatchCardPr
     ) : (
       <p className={styles.competition}>{match.competition}</p>
     )}
+    {extraTimeHint ? <p className={styles.extraTimeHint}>{extraTimeHint}</p> : null}
   </button>
-);
+  );
+};

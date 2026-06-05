@@ -16,6 +16,8 @@ import { OnboardingLeaguesPage } from '@/pages/onboarding-leagues/page';
 import { OnboardingClubsPage } from '@/pages/onboarding-clubs/page';
 import { MatchesPage } from '@/pages/matches/page';
 import { ProfilePage } from '@/pages/profile/page';
+import { FriendsPage } from '@/pages/friends/page';
+import { UserProfilePage } from '@/pages/user-profile/page';
 
 const skipProgressRequest = async () => null;
 const getProgressLoadErrorMessage = () => 'Не удалось загрузить прогресс';
@@ -107,6 +109,26 @@ export const App = () => (
             <RequireAuth>
               <RequireOnboarding allow="/profile">
                 <ProfilePage />
+              </RequireOnboarding>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/friends"
+          element={
+            <RequireAuth>
+              <RequireOnboarding allow="/profile" allowWhenComplete>
+                <FriendsPage />
+              </RequireOnboarding>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <RequireAuth>
+              <RequireOnboarding allow="/profile" allowWhenComplete>
+                <UserProfilePage />
               </RequireOnboarding>
             </RequireAuth>
           }

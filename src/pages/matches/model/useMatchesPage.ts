@@ -72,7 +72,11 @@ export const useMatchesPage = () => {
     return matches;
   }, [favoriteClubIds, leagueIds]);
 
-  const { status: loadStatus, error: loadError, retry: retryLoad } = useAsyncRequest({
+  const {
+    status: loadStatus,
+    error: loadError,
+    retry: retryLoad,
+  } = useAsyncRequest({
     request: loadMatchesFeed,
     mapError: getMatchesLoadErrorMessage,
   });
@@ -125,14 +129,7 @@ export const useMatchesPage = () => {
     } finally {
       setIsLoadingMore(false);
     }
-  }, [
-    favoriteClubIds,
-    isLoadingMore,
-    leagueIds,
-    loadStatus,
-    pagination,
-    predictionsByMatchId,
-  ]);
+  }, [favoriteClubIds, isLoadingMore, leagueIds, loadStatus, pagination, predictionsByMatchId]);
 
   const activeMatch = useMemo(
     () => matchList.find((match) => match.id === activeMatchId) ?? null,

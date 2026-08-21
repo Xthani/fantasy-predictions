@@ -8,7 +8,9 @@ const RESULT_DURATION_LABELS: Record<MatchResultDuration, string> = {
 
 export const getScoringPeriodLabel = (): string => 'основное время (90 мин)';
 
-export const getResultDurationNote = (duration: MatchResultDuration | null | undefined): string | null => {
+export const getResultDurationNote = (
+  duration: MatchResultDuration | null | undefined,
+): string | null => {
   if (!duration || duration === 'regular') return null;
   return `Матч решён в ${RESULT_DURATION_LABELS[duration]} · зачёт по основному времени`;
 };

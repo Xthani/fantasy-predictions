@@ -66,7 +66,9 @@ export const FriendDuelsSection = ({ data, friendName }: FriendDuelsSectionProps
       {summary.finishedDuels > 0 ? (
         <p className={styles.pointsTotal}>
           Очки на общих матчах: <strong>ты {summary.myTotalPoints}</strong> ·{' '}
-          <strong>{friendName} {summary.friendTotalPoints}</strong>
+          <strong>
+            {friendName} {summary.friendTotalPoints}
+          </strong>
         </p>
       ) : null}
 

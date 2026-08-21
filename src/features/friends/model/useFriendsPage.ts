@@ -35,7 +35,9 @@ const loadFriendsPage = async () => {
 export const useFriendsPage = () => {
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<PublicUser[]>([]);
-  const [searchStatus, setSearchStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
+  const [searchStatus, setSearchStatus] = useState<'idle' | 'loading' | 'error' | 'success'>(
+    'idle',
+  );
   const [searchError, setSearchError] = useState<string | null>(null);
   const [actionStatus, setActionStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [actionError, setActionError] = useState<string | null>(null);
@@ -120,15 +122,12 @@ export const useFriendsPage = () => {
     [runAction],
   );
 
-  const friends = data?.friends ?? [];
-  const incoming = data?.incoming ?? [];
-  const outgoing = data?.outgoing ?? [];
+  const friends = useMemo(() => data?.friends ?? [], [data?.friends]);
+  const incoming = useMemo(() => data?.incoming ?? [], [data?.incoming]);
+  const outgoing = useMemo(() => data?.outgoing ?? [], [data?.outgoing]);
 
   const friendIds = useMemo(() => new Set(friends.map((u) => u.id)), [friends]);
-  const outgoingToUserIds = useMemo(
-    () => new Set(outgoing.map((r) => r.toUser.id)),
-    [outgoing],
-  );
+  const outgoingToUserIds = useMemo(() => new Set(outgoing.map((r) => r.toUser.id)), [outgoing]);
   const incomingFromUserIds = useMemo(
     () => new Set(incoming.map((r) => r.fromUser.id)),
     [incoming],
@@ -165,4 +164,3 @@ export const useFriendsPage = () => {
     incomingFromUserIds,
   };
 };
-

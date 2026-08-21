@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { previewPrediction } from '@/features/quick-prediction/api/predictions';
-import type { PredictionPreview, PredictionStyle } from '@/features/quick-prediction/types/prediction';
+import type {
+  PredictionPreview,
+  PredictionStyle,
+} from '@/features/quick-prediction/types/prediction';
 
 const clampScore = (value: number) => Math.min(9, Math.max(0, value));
 

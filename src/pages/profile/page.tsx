@@ -28,7 +28,7 @@ export const ProfilePage = () => {
 
   const leagues = data?.leagues ?? [];
   const clubs = data?.clubs ?? [];
-  const predictions = data?.predictions ?? [];
+  const predictions = useMemo(() => data?.predictions ?? [], [data?.predictions]);
   const stats = data?.stats;
   const incomingFriendRequestsCount = data?.friendRequests.incoming.length ?? 0;
 
@@ -90,9 +90,7 @@ export const ProfilePage = () => {
             </div>
             <div className={styles.kpi}>
               <p className={styles.kpiLabel}>Форма</p>
-              <p className={styles.kpiValue}>
-                {stats?.form != null ? `${stats.form}%` : '—'}
-              </p>
+              <p className={styles.kpiValue}>{stats?.form != null ? `${stats.form}%` : '—'}</p>
             </div>
             <div className={styles.kpi}>
               <p className={styles.kpiLabel}>Офиц. матчи</p>
@@ -129,7 +127,9 @@ export const ProfilePage = () => {
                   {stats.shadow.averagePoints != null ? ` · ср. ${stats.shadow.averagePoints}` : ''}
                 </p>
                 {stats.shadow.averageEfficiency != null ? (
-                  <p className={styles.statsMuted}>Эффективность {stats.shadow.averageEfficiency}%</p>
+                  <p className={styles.statsMuted}>
+                    Эффективность {stats.shadow.averageEfficiency}%
+                  </p>
                 ) : null}
               </div>
             </div>
@@ -257,12 +257,12 @@ export const ProfilePage = () => {
             ) : (
               <ul className={styles.predictionList}>
                 {filteredPredictions.map((prediction) => (
-                    <PredictionHistoryItem
-                      key={prediction.id}
-                      prediction={prediction}
-                      savedAtLabel={prediction.savedAt ? formatSavedAt(prediction.savedAt) : ''}
-                    />
-                  ))}
+                  <PredictionHistoryItem
+                    key={prediction.id}
+                    prediction={prediction}
+                    savedAtLabel={prediction.savedAt ? formatSavedAt(prediction.savedAt) : ''}
+                  />
+                ))}
               </ul>
             )}
           </div>

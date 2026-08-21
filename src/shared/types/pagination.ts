@@ -4,4 +4,3 @@ export type PaginationMeta = {
   total: number;
   hasMore: boolean;
 };
-

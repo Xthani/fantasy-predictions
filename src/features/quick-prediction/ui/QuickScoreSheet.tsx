@@ -75,7 +75,9 @@ export const QuickScoreSheet = ({
         <h2 id="quick-score-title" className={styles.title}>
           Твой прогноз
         </h2>
-        <p className={styles.subtitle}>Точный счёт — главный ввод. Стиль распределяет 100 энергии.</p>
+        <p className={styles.subtitle}>
+          Точный счёт — главный ввод. Стиль распределяет 100 энергии.
+        </p>
 
         <div className={styles.scoreRow}>
           <div className={styles.teamCol}>
@@ -159,7 +161,9 @@ export const QuickScoreSheet = ({
           {preview ? (
             <>
               <div className={styles.componentChips}>
-                <span className={styles.chip}>Исход: {formatOutcome(preview.components.matchOutcome)}</span>
+                <span className={styles.chip}>
+                  Исход: {formatOutcome(preview.components.matchOutcome)}
+                </span>
                 <span className={styles.chip}>
                   Тотал: {formatTotalGoals(preview.components.totalGoals)}
                 </span>
@@ -196,7 +200,10 @@ export const QuickScoreSheet = ({
         </label>
 
         <div className={styles.actions}>
-          <Button fullWidth onClick={() => onSave({ homeScore: home, awayScore: away, style, isOfficial })}>
+          <Button
+            fullWidth
+            onClick={() => onSave({ homeScore: home, awayScore: away, style, isOfficial })}
+          >
             Сохранить прогноз
           </Button>
           <button type="button" className={styles.closeBtn} onClick={onClose}>

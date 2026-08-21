@@ -1,4 +1,7 @@
-import type { PredictionComponents, PredictionStyle } from '@/features/quick-prediction/types/prediction';
+import type {
+  PredictionComponents,
+  PredictionStyle,
+} from '@/features/quick-prediction/types/prediction';
 
 export const STYLE_OPTIONS: PredictionStyle[] = ['defensive', 'balanced', 'aggressive'];
 

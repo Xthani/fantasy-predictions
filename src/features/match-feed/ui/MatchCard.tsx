@@ -38,7 +38,9 @@ export const MatchCard = ({ match, prediction, isFavorite, onOpen }: MatchCardPr
           <div className={styles.badges}>
             {prediction.isOfficial ? <span className={styles.badgeOfficial}>Офиц.</span> : null}
             {prediction.style ? (
-              <span className={styles.badge}>{STYLE_SHORT[prediction.style] ?? prediction.style}</span>
+              <span className={styles.badge}>
+                {STYLE_SHORT[prediction.style] ?? prediction.style}
+              </span>
             ) : (
               <span className={styles.badge}>Прогноз</span>
             )}

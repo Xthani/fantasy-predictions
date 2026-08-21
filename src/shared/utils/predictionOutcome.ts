@@ -3,9 +3,7 @@ import type { Match } from '@/shared/types/match';
 export type PredictionOutcome = 'pending' | 'exact' | 'miss';
 
 export const hasMatchResult = (match: Match): boolean =>
-  match.status === 'finished' &&
-  match.homeResultScore != null &&
-  match.awayResultScore != null;
+  match.status === 'finished' && match.homeResultScore != null && match.awayResultScore != null;
 
 export const getPredictionOutcome = (
   homeScore: number,

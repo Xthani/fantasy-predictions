@@ -34,4 +34,3 @@ export const loadOnboardingProgress = async (): Promise<OnboardingProgress> => {
     hasAnyPrediction: predictions.length > 0,
   };
 };
-

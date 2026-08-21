@@ -218,7 +218,9 @@ export const FriendsPage = () => {
                       <Link className={styles.login} to={`/users/${u.id}`}>
                         {getUserTitle(u.login, u.displayName)}
                       </Link>
-                      {u.displayName ? <span className={styles.displayName}>Логин: {u.login}</span> : null}
+                      {u.displayName ? (
+                        <span className={styles.displayName}>Логин: {u.login}</span>
+                      ) : null}
                     </div>
                     <details className={styles.moreMenu}>
                       <summary className={styles.moreButton} aria-label="Действия с другом">
@@ -251,4 +253,3 @@ export const FriendsPage = () => {
     </Screen>
   );
 };
-

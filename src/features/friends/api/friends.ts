@@ -67,4 +67,3 @@ export const declineFriendRequest = (requestId: string): Promise<void> =>
 
 export const removeFriend = (userId: string): Promise<void> =>
   apiRequest<void>(`/api/friends/${userId}`, { method: 'DELETE' });
-
